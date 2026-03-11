@@ -1,0 +1,41 @@
+@media print {
+  html,
+  body {
+    background: #ffffff;
+    color: #111827;
+  }
+
+  .print-hidden {
+    display: none !important;
+  }
+
+  .template-print-root {
+    max-width: none !important;
+    gap: 1rem !important;
+  }
+
+  .template-print-page {
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+
+  .template-print-page * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .template-print-card {
+    break-inside: avoid;
+    border-color: #d1d5db !important;
+    background: #ffffff !important;
+  }
+
+  .template-print-rubric {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  }
+
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+}
