@@ -70,6 +70,7 @@ For unattended work:
 4. keep the tracker truthful
 5. keep the run report truthful
 6. do not claim blocked runtime-dependent work as complete
+7. when a task is truly complete and its DoD/verification is satisfied, create a git commit before moving on to the next task
 
 ### 4.2 Status classification for periodic checks
 A periodic check should classify the current state into one of four modes:
@@ -209,6 +210,18 @@ It must explicitly include:
 
 The TODO is not a vague idea list.
 It must be usable as the next unattended implementation tracker.
+
+### 8.4 Task-close commit rule
+When a TODO task is moved to `done`, the unattended worker should:
+1. verify that the task's DoD and stated verification method were truthfully satisfied
+2. update the tracker and run report
+3. create a git commit before starting the next task
+
+Commit requirements:
+- follow `docs/guides/COMMIT_RULE.md`
+- include the current `package.json` version string in the title line
+- keep the commit scoped to the completed task as much as practical
+- if a task cannot be truthfully closed, do not commit it as if it were done
 
 ---
 
