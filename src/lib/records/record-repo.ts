@@ -4,6 +4,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  getDocsFromServer,
   orderBy,
   query,
   setDoc,
@@ -86,7 +87,7 @@ export async function getUserRecord(
 }
 
 export async function listUserRecords(uid: string): Promise<WorksheetRecord[]> {
-  const snapshot = await getDocs(
+  const snapshot = await getDocsFromServer(
     query(getUserRecordsCollection(uid), orderBy('updatedAt', 'desc')),
   );
 
