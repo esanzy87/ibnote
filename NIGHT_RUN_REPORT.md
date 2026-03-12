@@ -23,7 +23,7 @@
 
 ## Current in-progress task
 
-- `C-07` Build record editor route (`in_progress`)
+- `C-08` Build records list route (`todo`)
 
 ## Verification results per task
 
@@ -199,11 +199,11 @@
 
 ## Blockers encountered
 
-- Runtime bootstrap blocker re-opened during `C-07` verification: the configured Firebase project is denying current-user record access (`403 PERMISSION_DENIED`) for `/users/{uid}/records`, so `/my/records/new?template=...` does not complete draft creation and `/my/records/[id]` cannot be truthfully verified against real data.
-- Verification pass 1: code inspection confirmed `src/components/records/record-editor.tsx`, `src/lib/records/use-record.ts`, and `src/lib/records/record-repo.ts` already implement the expected editor UI and current-user-scoped fetch path for `C-07`.
-- Verification pass 2: `npm run lint`, `npm run typecheck`, and `npm run build` all passed, and the route manifest still includes `/my/records/[id]` plus `/my/records/new`.
-- Verification pass 3: manual browser QA on `http://127.0.0.1:3005` reproduced the blocker with a real Firebase email/password session: signing in succeeded, opening `Start record` stalled on `/my/records/new?template=my-opinion-matters`, and an authenticated REST read against `projects/ibnote-7e23e/databases/(default)/documents/users/{uid}/records` returned `403 PERMISSION_DENIED` for the same signed-in user.
-- Result: `C-07` is not truthfully completable from the current environment, so `docs/features/000_bootstrap/todo.md` has been updated to mark `C-07` as `blocked` until Firebase rules/deployment allow current-user record reads and writes again.
+- Historical blocker note: an earlier verification pass reproduced `403 PERMISSION_DENIED` for current-user `/users/{uid}/records` access, which is why `C-07` had been marked `blocked`.
+- Protocol correction applied on 2026-03-12: after the human reported an external Firebase rules update, that older blocker should have been downgraded to `pending revalidation` instead of being treated as still-confirmed truth without a fresh runtime check.
+- Latest manual revalidation supplied by the human on 2026-03-12 showed a different runtime reality: login succeeded, `/templates` loaded, `/my/records/<record-id>` opened, and no Firestore `403 PERMISSION_DENIED` signal was observed in the browser console during that check.
+- Updated interpretation: the previously confirmed Firestore permission blocker is no longer the best current explanation for `C-07`. The blocker is resolved for record-open verification, and the remaining limitation is product scope: the editor save/submit behaviors are still placeholder UX and belong to `C-09`, not to a runtime permission blocker.
+- Process blocker discovered: stale blocker text survived an external change because no mandatory smoke revalidation step ran immediately after the human update. The protocol/docs were updated so future external fixes move blocker state to `pending revalidation` until a fresh smoke check confirms `resolved` or `blocked` again.
 - End-of-run notification command failed because the local `openclaw` gateway on `ws://127.0.0.1:18789` was unavailable (`1006 abnormal closure`).
 
 ## Assumptions made
@@ -214,12 +214,14 @@
 
 ## Deferred env/config items
 
-- Resolve the configured Firebase project's deployed Firestore permissions so the signed-in user can read and write `/users/{uid}/records/*` in runtime. The local rules file exists, but the active project currently returns `PERMISSION_DENIED` for current-user record access during manual QA.
+- No current Firebase permission blocker is confirmed after the latest human manual revalidation. Keep using the new revalidation protocol whenever a future external Firebase change is reported.
 
 ## Next recommended steps
 
-- Fix or deploy Firebase Firestore rules for the active project first, then rerun `C-06` and `C-07` manual QA before resuming with `C-08`.
+- Update the bootstrap tracker so `C-07` is no longer marked `blocked` by the stale Firebase permission claim.
+- Treat the latest truthful state as: record-open/runtime verification now passes at a smoke level, while save/submit behavior remains future work under `C-09`.
+- Resume Phase C execution with the next unblocked task (`C-08`) or explicitly re-close `C-07` if one more fresh QA pass is captured and written back to the tracker.
 
 ## Night summary
 
-Phase A is complete and Phase B remains closed, but the current run is now blocked in Phase C. The repo still contains the partial `C-07` record editor implementation, yet real runtime verification surfaced a Firebase `PERMISSION_DENIED` blocker on current-user `/users/{uid}/records` access, so the draft-creation flow cannot finish and `C-07` cannot be closed truthfully until that environment issue is fixed.
+Phase A is complete and Phase B remains closed. The earlier Firestore `PERMISSION_DENIED` blocker should no longer be treated as the current runtime truth after the human's latest manual revalidation. The operational correction for this repo is to require immediate smoke revalidation after any external Firebase change, so stale blocker text does not survive past a human-reported fix. Current remaining work is product implementation (`C-08`, `C-09`, and later tasks), not a confirmed Firebase permission outage.

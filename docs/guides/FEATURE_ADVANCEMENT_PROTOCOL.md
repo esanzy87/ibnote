@@ -95,6 +95,32 @@ A periodic check should classify the current state into one of four modes:
 If the blocker requires real external action (for example, Firebase rules deployment, account permission changes, billing, provider setup, or admin console action), do not pretend the blocker is solved.
 If `BLACKBOARD.md` does not contain a newer resolving note, remain blocked and report the blocker clearly.
 
+### 4.4 External-change revalidation rule
+If a human reports an external change that may affect a blocker (for example: Firebase console rule update, env injection, permission grant, billing enablement, index deployment, provider setting change), the previous blocker state must no longer be treated as freshly confirmed truth.
+
+Required behavior:
+1. immediately downgrade the blocker state from "confirmed blocked" to **`pending revalidation`** unless a newer runtime verification already exists
+2. record the human note in `docs/BLACKBOARD.md` and add a consumption log entry when the agent reads it
+3. run a short, direct smoke verification before repeating or escalating the old blocker claim
+4. only after that smoke verification, update `todo.md` / `NIGHT_RUN_REPORT.md` to one of:
+   - `blocked confirmed`
+   - `resolved`
+   - `partially resolved`
+   - `still pending revalidation`
+
+Do not keep reporting an old blocker as if it is current reality after a human-reported external fix unless a newer verification pass re-confirmed it.
+
+### 4.5 Minimum smoke verification after external change
+When a human says an external blocker may have been fixed, run the smallest truthful check that can confirm or reject the claim before resuming broad unattended work.
+
+For runtime route blockers, prefer a 3-step smoke check:
+1. confirm sign-in/auth still works
+2. re-test the exact route or flow that was previously blocked
+3. inspect the concrete runtime signal (UI outcome, browser console, network status, or API response)
+
+If the smoke check passes, update trackers immediately so stale blocker text does not survive into later runs.
+If the smoke check fails, record the exact current evidence and keep the blocker confirmed.
+
 ---
 
 ## 5. Completion check for a feature

@@ -18,11 +18,13 @@ Rules for the coding agent:
 - do not mark a phase complete until all tasks in that phase and the phase QA gate are complete
 - if implementation decisions conflict with this file, `spec.md` wins and this file must be updated immediately
 - cross-phase prerequisites are allowed only when they are explicitly listed in a task's `Blocked by` field or in the `Cross-phase exceptions` section below
+- if a human reports an external fix for a blocker, do not keep the task as if it were freshly `blocked` without a new smoke verification; temporarily move it to `pending_revalidation` until current runtime truth is rechecked
 
 Allowed status values:
 - `todo`
 - `in_progress`
 - `blocked`
+- `pending_revalidation`
 - `done`
 - `cancelled`
 
@@ -81,7 +83,7 @@ Use this table as the high-level progress board.
 | C-04 | C | Define record/profile types | P0 | done | C-01 |
 | C-05 | C | Implement record repository CRUD and queries | P0 | done | C-04, C-01 |
 | C-06 | C | Implement `/my/records/new` draft creation transition | P1 | done | C-03, C-05, B-05 |
-| C-07 | C | Build record editor route | P1 | blocked | C-05, C-06 |
+| C-07 | C | Build record editor route | P1 | pending_revalidation | C-05, C-06 |
 | C-08 | C | Build records list route | P1 | todo | C-05, C-03 |
 | C-09 | C | Add save-draft and submit behaviors | P1 | todo | C-07 |
 | C-10 | C | Add Firestore security rules and baseline index config | P0 | done | C-05 |
@@ -609,10 +611,10 @@ Parallel-safe notes:
 Update this section at the start and end of each work session.
 
 - Current phase: `Phase C - Account auth and records`
-- Current task: `C-07 (blocked)`
+- Current task: `C-08`
 - Last completed task: `C-06`
-- Active blocker: `Runtime Firestore permissions are denying current-user /users/{uid}/records reads and writes, so the C-06 draft-creation path cannot be re-verified and C-07 current-user record loading cannot be truthfully closed.`
-- Notes: `Phase B remains closed and auth/template routes still verify locally, but bootstrap work is paused at C-07 because runtime verification against the configured Firebase project now shows PERMISSION_DENIED for current-user record access. Keep C-07 blocked until Firebase rules/deployment allow the signed-in user to create and read /users/{uid}/records documents again.`
+- Active blocker: `No confirmed Firebase permission blocker is currently active after the latest human smoke revalidation; remaining limitation is that save/submit behavior is still future scope under C-09.`
+- Notes: `Phase B remains closed. Latest human smoke QA indicates `/templates` and `/my/records/<record-id>` open without visible Firestore 403, so the old C-07 blocker text must not be treated as current truth. Use pending_revalidation whenever a future external fix is reported before a fresh smoke/runtime check is written back.`
 
 ## 8. Completion rule
 
