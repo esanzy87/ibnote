@@ -26,7 +26,8 @@
 ## 1. Active human notes
 > Put the newest note at the top.
 
-- [pending] 2026-03-12 09:34 Asia/Seoul — Human updated the active IBNote Firebase console Firestore rules to allow authenticated owner-only access on `/users/{uid}`, `/users/{uid}/profile/*`, and `/users/{uid}/records/*`, with a deny-all fallback for every other path.
+- [applied] 2026-03-12 18:46 Asia/Seoul — Human manually confirmed that `/my/records` currently loads successfully in the active runtime. Treat the records-list route as externally smoke-verified and update blocker/task truth before continuing unattended work.
+- [applied] 2026-03-12 09:34 Asia/Seoul — Human updated the active IBNote Firebase console Firestore rules to allow authenticated owner-only access on `/users/{uid}`, `/users/{uid}/profile/*`, and `/users/{uid}/records/*`, with a deny-all fallback for every other path.
 - [pending] 2026-03-11 23:34 Asia/Seoul — Bootstrap operating rule: when Firestore runtime permissions block record CRUD verification, prioritize environment-independent work first (`C-08`, `D-01`, then possible `E-01~E-03`), and do not claim blocked runtime flows as done.
 
 ---
@@ -34,6 +35,7 @@
 ## 2. External blockers
 > Put the newest blocker update at the top.
 
+- [resolved] 2026-03-12 18:46 Asia/Seoul — Human manually revalidated that `/my/records` loads successfully in the active runtime. Records-list access should not be treated as blocked by Firebase permissions unless a fresh runtime failure is reproduced.
 - [resolved] 2026-03-12 16:23 Asia/Seoul — Human manually revalidated the active runtime after the Firebase console rules update: login succeeded, `/templates` loaded, `/my/records/<record-id>` loaded, and no Firestore `403 PERMISSION_DENIED` signal was observed in the browser console during the check. This resolves the previously confirmed runtime permission blocker for record open/load verification.
 - [pending-revalidation] 2026-03-12 09:35 Asia/Seoul — Human reported updating the active Firebase console Firestore rules for owner-scoped `/users/{uid}` access. Re-run authenticated manual QA on `/users/{uid}/records/*` before continuing to treat the old 403 blocker as current truth.
 - [stale] 2026-03-11 23:34 Asia/Seoul — Active Firebase runtime previously returned `403 PERMISSION_DENIED` for current-user `/users/{uid}/records` access during manual QA. This blocker claim became stale once the human reported an external rules update and should not be reused without fresh verification.
@@ -59,6 +61,8 @@
 > Put the newest consumption record at the top.
 > Use this to mark what the agent actually read and acted on.
 
+- 2026-03-12 19:12 Asia/Seoul — Consumed the human `/my/records` smoke-success note during the C-08 closeout run, verified the records list route end to end, closed the route-level blocker truth, and synced the task tracker/report to mark C-08 done.
+- 2026-03-12 18:46 Asia/Seoul — Read the new human note that `/my/records` currently loads successfully, updated the blocker truth to resolved for records-list access, and prepared the repo for an unattended C-08 closeout run.
 - 2026-03-12 16:30 Asia/Seoul — Read the human Firestore rules-update notes, reclassified the old 403 claim under the new pending-revalidation protocol, and reflected the latest human manual QA outcome (`/templates` and `/my/records/<record-id>` opened without visible 403) in the blocker state.
 
 ---

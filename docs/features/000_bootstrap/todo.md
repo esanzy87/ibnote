@@ -84,7 +84,7 @@ Use this table as the high-level progress board.
 | C-05 | C | Implement record repository CRUD and queries | P0 | done | C-04, C-01 |
 | C-06 | C | Implement `/my/records/new` draft creation transition | P1 | done | C-03, C-05, B-05 |
 | C-07 | C | Build record editor route | P1 | pending_revalidation | C-05, C-06 |
-| C-08 | C | Build records list route | P1 | todo | C-05, C-03 |
+| C-08 | C | Build records list route | P1 | done | C-05, C-03 |
 | C-09 | C | Add save-draft and submit behaviors | P1 | todo | C-07 |
 | C-10 | C | Add Firestore security rules and baseline index config | P0 | done | C-05 |
 | D-01 | D | Implement summary calculation logic | P1 | todo | C-05 |
@@ -363,7 +363,7 @@ Use this table as the high-level progress board.
 
 #### C-07 Build record editor route
 - Priority: `P1`
-- Status: `blocked`
+- Status: `pending_revalidation`
 - Blocked by: `C-05`, `C-06`
 - Scope:
   - build record editor UI and data load path
@@ -376,7 +376,7 @@ Use this table as the high-level progress board.
 
 #### C-08 Build records list route
 - Priority: `P1`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `C-05`, `C-03`
 - Scope:
   - build `/my/records`
@@ -386,6 +386,8 @@ Use this table as the high-level progress board.
   - records list page
 - QA:
   - draft and submitted records appear with distinct states
+  - signed-out access redirects to `/login?next=/my/records`
+  - signed-in runtime shows `updatedAt desc`, status/template filters, loading state, empty state, and retryable error state truthfully
 
 #### C-09 Add save-draft and submit behaviors
 - Priority: `P1`
@@ -611,10 +613,10 @@ Parallel-safe notes:
 Update this section at the start and end of each work session.
 
 - Current phase: `Phase C - Account auth and records`
-- Current task: `C-08`
-- Last completed task: `C-06`
-- Active blocker: `No confirmed Firebase permission blocker is currently active after the latest human smoke revalidation; remaining limitation is that save/submit behavior is still future scope under C-09.`
-- Notes: `Phase B remains closed. Latest human smoke QA indicates `/templates` and `/my/records/<record-id>` open without visible Firestore 403, so the old C-07 blocker text must not be treated as current truth. Use pending_revalidation whenever a future external fix is reported before a fresh smoke/runtime check is written back.`
+- Current task: `C-09`
+- Last completed task: `C-08`
+- Active blocker: `No confirmed Firebase permission blocker is currently active after the latest human smoke revalidation; `/my/records` and `/my/records/<record-id>` both have human-reported smoke success, while save/submit behavior remains future scope under C-09.`
+- Notes: `C-08 is now closed after repo-backed runtime QA confirmed signed-out protection, signed-in list load, `updatedAt desc` ordering, status/template filtering, draft/submitted visual distinction, empty state, and retryable records-list error handling. Latest human smoke QA still means the old Firebase-permissions blocker must not be reused for C-07/C-08 without a fresh runtime failure.`
 
 ## 8. Completion rule
 

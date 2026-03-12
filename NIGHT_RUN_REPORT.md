@@ -20,10 +20,11 @@
 - `C-04` Define record/profile types
 - `C-05` Implement record repository CRUD and queries
 - `C-10` Add Firestore security rules and baseline index config
+- `C-08` Build records list route
 
 ## Current in-progress task
 
-- `C-08` Build records list route (`todo`)
+- `C-09` Add save-draft and submit behaviors (`todo`)
 
 ## Verification results per task
 
@@ -197,12 +198,24 @@
 - Verification pass 3: confirmed the rules file contains only `request.auth.uid == userId` scoped access and the index config contains `status` plus `updatedAt`
 - Result: task completed truthfully
 
+### C-08 Build records list route
+
+- `/my/records` was already largely implemented in-repo, but closeout QA found one truthful gap: default Firestore reads could fall back to cached/empty results under backend failure, and a server-only read could hang without surfacing the route error state.
+- Updated `src/lib/records/record-repo.ts` to use `getDocsFromServer(...)` for records-list reads so the route no longer misreports backend failure as an empty list.
+- Updated `src/lib/records/use-records.ts` to bound the records-list fetch with a timeout and normalize backend/query failures into parent-facing retry copy instead of leaking raw Firestore SDK text.
+- Verification pass 1: `npm run lint` passed after the records-list query and hook changes.
+- Verification pass 2: `npm run build` passed and the route manifest still included `/my/records`.
+- Verification pass 3: Playwright runtime QA confirmed unsigned `/my/records` redirected to `/login?next=%2Fmy%2Frecords`; a signed-in seeded account loaded 3 records in `updatedAt desc` order with working status/template filters and visually distinct draft/submitted states; a no-record account showed the empty state; and a Firestore-blocked run showed the retryable records error state with parent-facing copy.
+- Cleanup: removed the disposable Firebase QA accounts and their seeded records after verification so the runtime was not left polluted by closeout fixtures.
+- Result: task completed truthfully
+
 ## Blockers encountered
 
 - Historical blocker note: an earlier verification pass reproduced `403 PERMISSION_DENIED` for current-user `/users/{uid}/records` access, which is why `C-07` had been marked `blocked`.
 - Protocol correction applied on 2026-03-12: after the human reported an external Firebase rules update, that older blocker should have been downgraded to `pending revalidation` instead of being treated as still-confirmed truth without a fresh runtime check.
 - Latest manual revalidation supplied by the human on 2026-03-12 showed a different runtime reality: login succeeded, `/templates` loaded, `/my/records/<record-id>` opened, and no Firestore `403 PERMISSION_DENIED` signal was observed in the browser console during that check.
 - Updated interpretation: the previously confirmed Firestore permission blocker is no longer the best current explanation for `C-07`. The blocker is resolved for record-open verification, and the remaining limitation is product scope: the editor save/submit behaviors are still placeholder UX and belong to `C-09`, not to a runtime permission blocker.
+- C-08-specific blocker discovered and resolved during closeout: the records list could mis-handle backend failure by falling back to empty data or waiting too long to surface an error. The closeout run fixed that at the records query/hook layer and re-verified the route.
 - Process blocker discovered: stale blocker text survived an external change because no mandatory smoke revalidation step ran immediately after the human update. The protocol/docs were updated so future external fixes move blocker state to `pending revalidation` until a fresh smoke check confirms `resolved` or `blocked` again.
 - End-of-run notification command failed because the local `openclaw` gateway on `ws://127.0.0.1:18789` was unavailable (`1006 abnormal closure`).
 
@@ -215,13 +228,14 @@
 ## Deferred env/config items
 
 - No current Firebase permission blocker is confirmed after the latest human manual revalidation. Keep using the new revalidation protocol whenever a future external Firebase change is reported.
+- Records-list error-state QA now depends on a real backend failure or deliberate request blocking; keep using runtime verification rather than static inspection for this route.
 
 ## Next recommended steps
 
-- Update the bootstrap tracker so `C-07` is no longer marked `blocked` by the stale Firebase permission claim.
-- Treat the latest truthful state as: record-open/runtime verification now passes at a smoke level, while save/submit behavior remains future work under `C-09`.
-- Resume Phase C execution with the next unblocked task (`C-08`) or explicitly re-close `C-07` if one more fresh QA pass is captured and written back to the tracker.
+- Resume Phase C with `C-09`, which now owns the remaining save-draft and submit behavior work.
+- Re-close `C-07` only if a fresh runtime/editor QA pass is captured and written back to the tracker; do not reuse stale Firebase-permission wording as its blocker.
+- Preserve the current C-08 verification pattern for future regressions: lint/typecheck -> build -> real route QA with one signed-in account, one empty account, and one forced-backend-failure pass.
 
 ## Night summary
 
-Phase A is complete and Phase B remains closed. The earlier Firestore `PERMISSION_DENIED` blocker should no longer be treated as the current runtime truth after the human's latest manual revalidation. The operational correction for this repo is to require immediate smoke revalidation after any external Firebase change, so stale blocker text does not survive past a human-reported fix. Current remaining work is product implementation (`C-08`, `C-09`, and later tasks), not a confirmed Firebase permission outage.
+Phase A is complete and Phase B remains closed. The earlier Firestore `PERMISSION_DENIED` blocker should no longer be treated as the current runtime truth after the human's latest manual revalidation. This closeout run truthfully finished C-08 by verifying the protected `/my/records` route end to end and fixing the last records-list failure mode so backend outages now surface a retryable error state instead of a misleading empty view or indefinite spinner. Current remaining work is product implementation (`C-09` and later tasks), not a confirmed Firebase permission outage.
