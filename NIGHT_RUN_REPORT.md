@@ -207,6 +207,7 @@
 - Verification pass 2: `npm run build` passed and the route manifest still included `/my/records`.
 - Verification pass 3: Playwright runtime QA confirmed unsigned `/my/records` redirected to `/login?next=%2Fmy%2Frecords`; a signed-in seeded account loaded 3 records in `updatedAt desc` order with working status/template filters and visually distinct draft/submitted states; a no-record account showed the empty state; and a Firestore-blocked run showed the retryable records error state with parent-facing copy.
 - Cleanup: removed the disposable Firebase QA accounts and their seeded records after verification so the runtime was not left polluted by closeout fixtures.
+- Notification: `openclaw system event --text "Done: ibnote C-08 closeout run finished; check NIGHT_RUN_REPORT.md" --mode now` succeeded.
 - Result: task completed truthfully
 
 ## Blockers encountered
@@ -217,7 +218,6 @@
 - Updated interpretation: the previously confirmed Firestore permission blocker is no longer the best current explanation for `C-07`. The blocker is resolved for record-open verification, and the remaining limitation is product scope: the editor save/submit behaviors are still placeholder UX and belong to `C-09`, not to a runtime permission blocker.
 - C-08-specific blocker discovered and resolved during closeout: the records list could mis-handle backend failure by falling back to empty data or waiting too long to surface an error. The closeout run fixed that at the records query/hook layer and re-verified the route.
 - Process blocker discovered: stale blocker text survived an external change because no mandatory smoke revalidation step ran immediately after the human update. The protocol/docs were updated so future external fixes move blocker state to `pending revalidation` until a fresh smoke check confirms `resolved` or `blocked` again.
-- End-of-run notification command failed because the local `openclaw` gateway on `ws://127.0.0.1:18789` was unavailable (`1006 abnormal closure`).
 
 ## Assumptions made
 
