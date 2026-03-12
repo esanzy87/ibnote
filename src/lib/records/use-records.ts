@@ -97,7 +97,7 @@ export function useRecords({ authStatus, user }: UseRecordsOptions): UseRecordsR
         const nextRecords = await withTimeout(
           listUserRecords(currentUser.uid),
           8000,
-          '기록 목록 응답이 지연되고 있습니다. 네트워크를 확인한 뒤 다시 시도해 주세요.',
+          '기록 목록 응답이 지연되고 있습니다. 잠시 후 다시 시도해 주세요.',
         );
 
         if (!isActive) {
@@ -114,7 +114,7 @@ export function useRecords({ authStatus, user }: UseRecordsOptions): UseRecordsR
         const resolvedError =
           nextError instanceof Error && nextError.message.startsWith('기록 목록 응답이 지연되고 있습니다.')
             ? nextError
-            : new Error('기록 목록을 불러오는 중 오류가 발생했습니다. 네트워크를 확인한 뒤 다시 시도해 주세요.');
+            : new Error('기록 목록을 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
 
         setError(resolvedError);
         setStatus('error');

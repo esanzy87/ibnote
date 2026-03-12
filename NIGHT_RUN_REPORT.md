@@ -24,7 +24,7 @@
 
 ## Current in-progress task
 
-- `C-09` Add save-draft and submit behaviors (`todo`)
+- No task is currently in progress. The next queued task is `C-09`, which remains blocked by `C-07`.
 
 ## Verification results per task
 

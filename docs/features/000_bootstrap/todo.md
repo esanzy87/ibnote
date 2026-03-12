@@ -613,7 +613,7 @@ Parallel-safe notes:
 Update this section at the start and end of each work session.
 
 - Current phase: `Phase C - Account auth and records`
-- Current task: `C-09`
+- Current task: `No task currently in progress; next task is C-09 after C-07 blocker revalidation or closure`
 - Last completed task: `C-08`
 - Active blocker: `No confirmed Firebase permission blocker is currently active after the latest human smoke revalidation; `/my/records` and `/my/records/<record-id>` both have human-reported smoke success, while save/submit behavior remains future scope under C-09.`
 - Notes: `C-08 is now closed after repo-backed runtime QA confirmed signed-out protection, signed-in list load, `updatedAt desc` ordering, status/template filtering, draft/submitted visual distinction, empty state, and retryable records-list error handling. Latest human smoke QA still means the old Firebase-permissions blocker must not be reused for C-07/C-08 without a fresh runtime failure.`
