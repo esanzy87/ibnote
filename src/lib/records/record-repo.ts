@@ -24,6 +24,10 @@ function getUserRecordDocument(uid: string, recordId: string) {
   return doc(getUserRecordsCollection(uid), recordId);
 }
 
+function getUserProfileDocument(uid: string) {
+  return doc(getFirebaseFirestore(), 'users', uid, 'profile', 'main');
+}
+
 function buildChecklistState(template: WorksheetTemplate): Record<string, boolean> {
   return Object.fromEntries(template.checklist.map((item) => [item, false]));
 }
@@ -117,4 +121,15 @@ export async function deleteAllUserRecords(uid: string): Promise<void> {
   const snapshot = await getDocs(getUserRecordsCollection(uid));
 
   await Promise.all(snapshot.docs.map((documentSnapshot) => deleteDoc(documentSnapshot.ref)));
+}
+
+export async function deleteUserStoredData(uid: string): Promise<void> {
+  await deleteAllUserRecords(uid);
+
+  const profileDocument = getUserProfileDocument(uid);
+  const profileSnapshot = await getDoc(profileDocument);
+
+  if (profileSnapshot.exists()) {
+    await deleteDoc(profileDocument);
+  }
 }

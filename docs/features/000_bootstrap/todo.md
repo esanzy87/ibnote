@@ -90,7 +90,7 @@ Use this table as the high-level progress board.
 | D-01 | D | Implement summary calculation logic | P1 | done | C-05 |
 | D-02 | D | Build summary route | P1 | done | D-01, C-03 |
 | D-03 | D | Build settings route | P1 | done | C-03, C-05 |
-| D-04 | D | Implement delete-stored-record-data flow | P1 | todo | D-03, C-05 |
+| D-04 | D | Implement delete-stored-record-data flow | P1 | done | D-03, C-05 |
 | D-05 | D | Implement sign-out flow | P1 | todo | D-03, C-03 |
 | D-06 | D | Finalize summary-required Firestore indexes | P1 | todo | D-01, C-10 |
 | E-01 | E | Add required loading states across routes | P2 | todo | B-04, B-05, C-07, C-08, D-02, D-03 |
@@ -468,7 +468,7 @@ Use this table as the high-level progress board.
 
 #### D-04 Implement delete-stored-record-data flow
 - Priority: `P1`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `D-03`, `C-05`
 - Scope:
   - delete the current user's record documents
@@ -614,10 +614,10 @@ Parallel-safe notes:
 Update this section at the start and end of each work session.
 
 - Current phase: `Phase D - Summary and settings`
-- Current task: `D-04 Implement delete-stored-record-data flow`
-- Last completed task: `D-03`
+- Current task: `D-05 Implement sign-out flow`
+- Last completed task: `D-04`
 - Active blocker: `-`
-- Notes: D-03 is now complete in the repo with `src/app/my/settings/page.tsx` and `src/components/settings/settings-page-client.tsx`. The route is protected by the existing auth hook/redirect pattern, shows the current auth type plus account ownership messaging, and includes route-level delete/sign-out action placeholders that explicitly defer real execution to D-04 and D-05. Fresh 2026-03-13 verification passed with `npm run lint`, `npm run typecheck`, and the default `npm run build` path in this shell, and the route manifest now includes `/my/settings`.
+- Notes: D-04 is now complete in the repo. `src/components/settings/settings-page-client.tsx` now runs a confirmed delete-all-records flow with confirmation, in-place success/error messaging, and stay-on-page behavior, while `src/lib/records/record-repo.ts` now exposes `deleteUserStoredData(uid)` to delete the current user's record documents and optional `/profile/main` document. Fresh 2026-03-13 repo-side verification passed with `npm run lint`, `npm run typecheck`, and the default `npm run build` path in this shell. No browser/runtime QA is claimed yet for delete-flow behavior in this shell, so D-05 remains the next untouched task.
 
 ## 8. Completion rule
 

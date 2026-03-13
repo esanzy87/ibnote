@@ -2,6 +2,7 @@
 
 ## Completed tasks
 
+- `D-04` Implement delete-stored-record-data flow
 - `D-03` Build settings route
 - `D-02` Build summary route
 - `D-01` Implement summary calculation logic
@@ -29,10 +30,12 @@
 
 ## Current in-progress task
 
-- `D-04` Implement delete-stored-record-data flow is the next planned task after D-03 closeout.
-- 2026-03-13 truth sync: D-03 is now implemented in the repo as `/my/settings`, and D-04 / D-05 / D-06 have not been started in this run.
-- 2026-03-13 progress update: this slice was verified with `npm run lint`, `npm run typecheck`, and the default `npm run build` path in this shell. No browser/runtime QA is claimed for D-03 in this shell.
-- 2026-03-13 closeout note: if git permits, the truthful D-03 task-unit commit should capture the new protected settings route plus tracker/report updates only.
+- Canonical current truth as of 2026-03-13: `D-04` is complete, and `D-05` Implement sign-out flow is the next planned task.
+- Phase status: Phase A, B, and C are closed; in Phase D, `D-01` / `D-02` / `D-03` / `D-04` are done, and `D-05` / `D-06` are not started.
+- Current repo truth: `/my/settings` now includes the real delete-stored-record-data action path for the signed-in current user.
+- Current verification truth: in this shell, the latest repo-side verification for the D-04 snapshot passed with `npm run lint`, `npm run typecheck`, and the default `npm run build` path. No browser/runtime QA is claimed for D-04 in this shell.
+- Build-truth note: older report sections may mention previous Turbopack-related `npm run build` issues during earlier slices, but the latest canonical build truth for the current repo snapshot is that the default `npm run build` path passed in this shell on 2026-03-13.
+- Closeout note: if git permits, the truthful D-04 task-unit commit should capture the delete-flow implementation plus tracker/report updates only.
 
 ## Verification results per task
 
@@ -246,6 +249,17 @@
 - Verification pass 3: emitted the summary modules to `/tmp/ibnote-summary-check` with `npx tsc ... --outDir /tmp/ibnote-summary-check` and executed a seeded smoke check under Node. The result confirmed the summary includes only `submitted` records in the `2026-02-28` to `2026-03-13` window, preserves the `performedOn desc` / `updatedAt desc` recent-record ordering, counts each competency once per rated submitted record, and maps average values back to nearest letter grades.
 - Verification pass 4: `npm run build` passed in this shell on 2026-03-13, so the earlier Turbopack fallback note is no longer the best current build truth for D-01.
 - Result: task completed truthfully.
+
+### D-04 Implement delete-stored-record-data flow
+
+- Replaced the D-03 delete-action placeholder in `src/components/settings/settings-page-client.tsx` with a real current-user delete flow: confirmation prompt, working state, in-place success/error messaging, and stay-on-settings behavior after completion.
+- Added `deleteUserStoredData(uid)` in `src/lib/records/record-repo.ts` so the settings route can delete all current-user record documents first and then optionally remove `/users/{uid}/profile/main` if it exists.
+- Kept sign-out truthfully deferred: the settings screen still shows the sign-out card as a disabled placeholder because `D-05` is the next untouched task and was not pulled forward in this run.
+- Verification pass 1: `npm run lint` passed after the D-04 code changes.
+- Verification pass 2: `npm run typecheck` passed after the D-04 code changes.
+- Verification pass 3: the default `npm run build` path passed in this shell on the final D-04 snapshot, and the route manifest still included `/my/settings`.
+- Runtime QA note: no browser/server runtime QA is claimed for D-04 in this run because this shell's truthful verification for the slice remained repo-side checks only.
+- Result: task completed truthfully with lint, typecheck, and default build verification.
 
 ### D-03 Build settings route
 

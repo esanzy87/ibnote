@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { buildLoginHref } from '@/lib/auth/ensure-auth';
 import { useAuthUser } from '@/lib/auth/use-auth-user';
+import { deleteUserStoredData } from '@/lib/records/record-repo';
 
 function PageFrame({ children }: { children: React.ReactNode }) {
   return (
@@ -124,25 +125,42 @@ function AccountOwnershipCard({ user }: { user: User }) {
   );
 }
 
-function ActionPlaceholderCard({
+function SettingsActionCard({
   body,
   buttonLabel,
+  buttonTone = 'default',
+  confirmationMessage,
+  disabled = false,
   helper,
+  isWorking = false,
+  message,
+  messageTone = 'default',
+  onClick,
   title,
-  tone = 'default',
 }: {
   body: string;
   buttonLabel: string;
+  buttonTone?: 'default' | 'danger';
+  confirmationMessage?: string;
+  disabled?: boolean;
   helper: string;
+  isWorking?: boolean;
+  message: string | null;
+  messageTone?: 'default' | 'error' | 'success';
+  onClick: () => Promise<void> | void;
   title: string;
-  tone?: 'default' | 'danger';
 }) {
-  const [message, setMessage] = useState<string | null>(null);
-
   const buttonClassName =
-    tone === 'danger'
-      ? 'inline-flex items-center justify-center rounded-full bg-rose-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-rose-800'
-      : 'inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700';
+    buttonTone === 'danger'
+      ? 'inline-flex items-center justify-center rounded-full bg-rose-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-rose-800 disabled:cursor-not-allowed disabled:bg-rose-300'
+      : 'inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400';
+
+  const messageClassName =
+    messageTone === 'error'
+      ? 'text-rose-700'
+      : messageTone === 'success'
+        ? 'text-emerald-700'
+        : 'text-slate-700';
 
   return (
     <article className="rounded-[1.75rem] border border-stone-200 bg-white p-6 shadow-sm sm:p-7">
@@ -150,16 +168,20 @@ function ActionPlaceholderCard({
       <p className="mt-3 text-sm leading-6 text-slate-600 sm:text-base">{body}</p>
       <button
         type="button"
-        onClick={() => {
-          window.alert(`${buttonLabel} 기능은 다음 작업에서 실제로 연결됩니다.`);
-          setMessage(helper);
+        disabled={disabled || isWorking}
+        onClick={async () => {
+          if (confirmationMessage && !window.confirm(confirmationMessage)) {
+            return;
+          }
+
+          await onClick();
         }}
         className={`mt-6 ${buttonClassName}`}
       >
-        {buttonLabel}
+        {isWorking ? '처리 중…' : buttonLabel}
       </button>
       <p className="mt-3 text-sm leading-6 text-slate-500">{helper}</p>
-      {message ? <p className="mt-2 text-sm font-medium text-slate-700">{message}</p> : null}
+      {message ? <p className={`mt-2 text-sm font-medium ${messageClassName}`}>{message}</p> : null}
     </article>
   );
 }
@@ -167,12 +189,33 @@ function ActionPlaceholderCard({
 export function SettingsPageClient() {
   const router = useRouter();
   const { error: authError, retry: retryAuth, status: authStatus, user } = useAuthUser();
+  const [deleteStatus, setDeleteStatus] = useState<'idle' | 'working' | 'success' | 'error'>('idle');
+  const [deleteMessage, setDeleteMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (authStatus === 'unauthenticated') {
       router.replace(buildLoginHref('/my/settings'));
     }
   }, [authStatus, router]);
+
+  async function handleDeleteStoredData() {
+    if (!user) {
+      return;
+    }
+
+    setDeleteStatus('working');
+    setDeleteMessage(null);
+
+    try {
+      await deleteUserStoredData(user.uid);
+      setDeleteStatus('success');
+      setDeleteMessage('현재 계정에 저장된 기록 데이터를 삭제했습니다. 이제 내 기록과 최근 요약에서 빈 상태가 보여야 합니다.');
+      router.refresh();
+    } catch {
+      setDeleteStatus('error');
+      setDeleteMessage('기록 데이터를 삭제하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    }
+  }
 
   if (authStatus === 'loading') {
     return (
@@ -206,19 +249,27 @@ export function SettingsPageClient() {
       <AccountOwnershipCard user={user} />
 
       <section className="grid gap-4 lg:grid-cols-2">
-        <ActionPlaceholderCard
+        <SettingsActionCard
           title="모든 내 기록 삭제"
-          body="이 작업은 현재 로그인한 계정 아래에 저장된 기록 데이터를 정리하는 자리입니다. 실제 삭제 동작과 확인 절차는 다음 작업에서 연결되며, 이 단계에서는 설정 화면 구조와 설명만 먼저 준비합니다."
+          body="현재 로그인한 계정 아래에 저장된 모든 기록을 삭제합니다. 프로필 문서가 존재하면 함께 정리할 수 있으며, 삭제 후에도 설정 화면에는 그대로 머무릅니다."
           buttonLabel="모든 내 기록 삭제"
-          helper="D-03 범위: 삭제 버튼 위치와 안내만 제공했습니다. 실제 삭제 실행은 D-04에서 연결됩니다."
-          tone="danger"
+          confirmationMessage="현재 계정에 저장된 모든 기록을 삭제할까요? 이 작업은 되돌릴 수 없습니다."
+          helper="삭제 후에는 내 기록과 최근 요약 화면이 빈 상태로 보여야 합니다."
+          isWorking={deleteStatus === 'working'}
+          message={deleteMessage}
+          messageTone={deleteStatus === 'error' ? 'error' : deleteStatus === 'success' ? 'success' : 'default'}
+          onClick={handleDeleteStoredData}
+          buttonTone="danger"
         />
 
-        <ActionPlaceholderCard
+        <SettingsActionCard
           title="로그아웃"
           body="현재 세션을 종료하고 공개 첫 화면으로 돌아가는 자리입니다. 실제 로그아웃 실행과 리다이렉트는 다음 작업에서 연결되며, 이 단계에서는 버튼 위치와 계정 안내만 제공합니다."
           buttonLabel="로그아웃"
           helper="D-03 범위: 로그아웃 버튼 위치와 안내만 제공했습니다. 실제 로그아웃 실행은 D-05에서 연결됩니다."
+          message={null}
+          disabled
+          onClick={() => {}}
         />
       </section>
 
