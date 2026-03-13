@@ -2,6 +2,7 @@
 
 ## Completed tasks
 
+- `C-09` Add save-draft and submit behaviors
 - `A-01` Scaffold Next.js App Router project
 - `A-02` Install Tailwind and Firebase SDK
 - `A-03` Add Firebase env config pattern
@@ -20,11 +21,14 @@
 - `C-04` Define record/profile types
 - `C-05` Implement record repository CRUD and queries
 - `C-10` Add Firestore security rules and baseline index config
+- `C-07` Build record editor route
 - `C-08` Build records list route
 
 ## Current in-progress task
 
-- No task is currently in progress. The next queued task is `C-09`, which remains blocked by `C-07`.
+- `D-01` Implement summary calculation logic is the next planned task after Phase C closeout.
+- 2026-03-13 truth sync: repo-side verification still held with `npm run lint`, `npm run typecheck`, and `npx next build --webpack`, and human manual runtime QA closed the remaining C-09 gap.
+- 2026-03-13 progress update: the D-01 summary calculation code is now implemented and repo-verified, but the task is still in progress because this sandbox currently blocks the required closeout commit with `fatal: Unable to create '.git/index.lock': Operation not permitted`.
 
 ## Verification results per task
 
@@ -198,6 +202,14 @@
 - Verification pass 3: confirmed the rules file contains only `request.auth.uid == userId` scoped access and the index config contains `status` plus `updatedAt`
 - Result: task completed truthfully
 
+### C-07 Build record editor route
+
+- No product-code change was required. The current repo already contained the C-07 editor route in `src/app/my/records/[id]/page.tsx`, the owner-scoped record load path in `src/lib/records/use-record.ts` and `src/lib/records/record-repo.ts`, and the editor UI in `src/components/records/record-editor.tsx` with the required C-07 fields/controls plus truthful C-09 placeholder copy for save/submit.
+- Verification pass 1: `npm run lint` and `npm run typecheck` both passed with no TypeScript errors.
+- Verification pass 2: `npm run build` passed, and the route manifest included the dynamic `/my/records/[id]` route.
+- Verification pass 3: started a fresh local production server from the verified build on `http://127.0.0.1:3010` and used Playwright for end-to-end QA. A new owner account (`ibnote.c07.a.1773318007752@example.com`) created a real draft through `/my/records/new?template=my-opinion-matters`, which redirected to `/my/records/LfYr7Ci587K4BM8Zezay`; the editor loaded with the required header snapshot info, performed date input, optional child grade-band select, child reflection textarea, parent memo textarea, checklist, competency ratings limited to the template snapshot, back-to-records action, and disabled `초안 저장 예정` / `제출 예정` controls with explicit C-09 placeholder copy. After clearing auth storage, opening the same record URL redirected to `/login?next=%2Fmy%2Frecords%2FLfYr7Ci587K4BM8Zezay`. While signed back in as the owner, opening `/my/records/not-a-real-record-id` showed the dedicated missing/non-openable state with both recovery links. A second fresh account (`ibnote.c07.b.1773318125285@example.com`) then opened the first account's record URL and saw the same missing state without leaked template title or checklist content.
+- Result: task completed truthfully
+
 ### C-08 Build records list route
 
 - `/my/records` was already largely implemented in-repo, but closeout QA found one truthful gap: default Firestore reads could fall back to cached/empty results under backend failure, and a server-only read could hang without surfacing the route error state.
@@ -210,14 +222,38 @@
 - Notification: `openclaw system event --text "Done: ibnote C-08 closeout run finished; check NIGHT_RUN_REPORT.md" --mode now` succeeded.
 - Result: task completed truthfully
 
+### C-09 Add save-draft and submit behaviors
+
+- Added a real editor mutation path in `src/lib/records/use-record.ts` and `src/lib/records/record-repo.ts` so manual saves now persist to Firestore, every save/submit bumps `updatedAt`, submit enforces at least one competency rating, and later edits keep previously submitted records in `status: 'submitted'`.
+- Replaced the C-09 placeholder action area in `src/components/records/record-editor.tsx` with working save-draft / submit controls plus inline success and error messaging; save draft remains available only while the record is still `draft`, while submitted records now use the submit action to save later edits without reverting status.
+- Fixed existing Next 16 route prop typing issues in `src/app/login/page.tsx`, `src/app/my/records/new/page.tsx`, and `src/app/my/records/[id]/page.tsx` so the app can complete a truthful webpack build verification again.
+- Verification pass 1: `npm run lint` and `npm run typecheck` passed after the C-09 code changes, and both passed again during the 2026-03-13 resume check.
+- Verification pass 2: `npx next build --webpack` passed and produced the expected `/login`, `/my/records`, `/my/records/[id]`, and `/my/records/new` routes. The same webpack build passed again during the 2026-03-13 resume check. The default `npm run build` path still panics under Turbopack in this sandbox with `Failed to write app endpoint /page` while trying to create a new CSS process, so the build evidence for this run is the webpack build.
+- Verification pass 3: human manual runtime QA on 2026-03-13 completed the required owner-flow verification outside the sandbox. The reported outcomes matched the expected C-09 truth: draft save worked, submit without ratings was rejected, submit with at least one rating succeeded, and later edits preserved `submitted` status.
+- Result: task completed truthfully.
+
+### D-01 Implement summary calculation logic
+
+- Added `src/lib/records/summary-utils.ts` with the pure summary contract: 14-day local-calendar windowing by `performedOn`, submitted-only filtering, `performedOn desc` then `updatedAt desc` ordering, per-competency counts, numeric averages rounded to one decimal place, nearest letter-grade mapping, and recent-5 selection.
+- Added `src/lib/records/use-summary.ts` as the summary data hook that queries only submitted records in the active 14-day window and normalizes timeout/backend failures into parent-facing retry copy for the future summary route.
+- Added `src/lib/utils/grades.ts` for the spec-defined grade conversion helpers (`A=5` through `E=1`) used by the summary calculator.
+- Verification pass 1: `npm run lint` passed after the D-01 code changes.
+- Verification pass 2: `npm run typecheck` passed after the D-01 code changes.
+- Verification pass 3: emitted the summary modules to `/tmp/ibnote-summary-check` with `npx tsc ... --outDir /tmp/ibnote-summary-check` and executed a seeded smoke check under Node. The result confirmed the summary includes only `submitted` records in the `2026-02-28` to `2026-03-13` window, preserves the `performedOn desc` / `updatedAt desc` recent-record ordering, counts each competency once per rated submitted record, and maps average values back to nearest letter grades.
+- Verification pass 4: `npx next build --webpack` passed after the D-01 additions.
+- Current truth: implementation and repo-side verification are in place, but the task is not yet marked done because the repo protocol requires a closeout git commit and this sandbox currently blocks commit creation (`fatal: Unable to create '.git/index.lock': Operation not permitted`).
+
 ## Blockers encountered
 
 - Historical blocker note: an earlier verification pass reproduced `403 PERMISSION_DENIED` for current-user `/users/{uid}/records` access, which is why `C-07` had been marked `blocked`.
 - Protocol correction applied on 2026-03-12: after the human reported an external Firebase rules update, that older blocker should have been downgraded to `pending revalidation` instead of being treated as still-confirmed truth without a fresh runtime check.
-- Latest manual revalidation supplied by the human on 2026-03-12 showed a different runtime reality: login succeeded, `/templates` loaded, `/my/records/<record-id>` opened, and no Firestore `403 PERMISSION_DENIED` signal was observed in the browser console during that check.
-- Updated interpretation: the previously confirmed Firestore permission blocker is no longer the best current explanation for `C-07`. The blocker is resolved for record-open verification, and the remaining limitation is product scope: the editor save/submit behaviors are still placeholder UX and belong to `C-09`, not to a runtime permission blocker.
+- Latest human smoke revalidation and this repo-backed closeout run both showed a different runtime reality: the editor route opens for the owner account, invalid/missing record ids resolve to the dedicated non-openable state, and a second account does not see the first account's record content.
+- Updated interpretation: the previously confirmed Firestore permission blocker is no longer the best current explanation for `C-07`, and it was not reproduced during this closeout run. `C-07` is now complete. The remaining limitation is product scope: save/submit behaviors are still placeholder UX and belong to `C-09`, not to a runtime permission blocker.
 - C-08-specific blocker discovered and resolved during closeout: the records list could mis-handle backend failure by falling back to empty data or waiting too long to surface an error. The closeout run fixed that at the records query/hook layer and re-verified the route.
 - Process blocker discovered: stale blocker text survived an external change because no mandatory smoke revalidation step ran immediately after the human update. The protocol/docs were updated so future external fixes move blocker state to `pending revalidation` until a fresh smoke check confirms `resolved` or `blocked` again.
+- Sandbox limitation note for C-09: local runtime verification was blocked in this environment because the shell could not bind a local port and could not reach the hinted `127.0.0.1:3002` dev server. That limitation no longer blocks task truth because human manual runtime QA completed the required owner-flow verification outside the sandbox on 2026-03-13.
+- Secondary verification limitation in this sandbox: the default `npm run build` Turbopack path panics with `Failed to write app endpoint /page` while processing `src/styles/globals.css` because Turbopack cannot create its CSS subprocess here. `npx next build --webpack` did pass, so the app still has a successful production build path for this run.
+- Current closeout blocker: git commit creation is blocked in this sandbox because `.git/index.lock` cannot be created. That prevents the required scoped commit for the finished C-09 truth sync and for the D-01 task closeout, so D-01 remains in progress even though its code-level verification passed.
 
 ## Assumptions made
 
@@ -232,10 +268,11 @@
 
 ## Next recommended steps
 
-- Resume Phase C with `C-09`, which now owns the remaining save-draft and submit behavior work.
-- Re-close `C-07` only if a fresh runtime/editor QA pass is captured and written back to the tracker; do not reuse stale Firebase-permission wording as its blocker.
-- Preserve the current C-08 verification pattern for future regressions: lint/typecheck -> build -> real route QA with one signed-in account, one empty account, and one forced-backend-failure pass.
+- Start `D-01` and implement the 14-day submitted-record summary calculation logic against the current record model and ordering rules in `spec.md`.
+- If a future resume claims an already-running local app process is available, re-check that exact endpoint from the current shell before relying on it; the 2026-03-13 resume hint for `127.0.0.1:3002` was not reproducible here.
+- Once git writes are available again, create the scoped `ibnote 0.1.0 ...` commit for the finished C-09 closeout truth sync and then close D-01 with its own scoped commit if no new regressions appear.
+- Keep treating Firebase permissions as resolved unless a fresh runtime failure reintroduces that blocker.
 
 ## Night summary
 
-Phase A is complete and Phase B remains closed. The earlier Firestore `PERMISSION_DENIED` blocker should no longer be treated as the current runtime truth after the human's latest manual revalidation. This closeout run truthfully finished C-08 by verifying the protected `/my/records` route end to end and fixing the last records-list failure mode so backend outages now surface a retryable error state instead of a misleading empty view or indefinite spinner. Current remaining work is product implementation (`C-09` and later tasks), not a confirmed Firebase permission outage.
+Phase A through Phase C are now closed. The earlier Firestore `PERMISSION_DENIED` blocker should still not be treated as the current runtime truth. This run also implemented the D-01 summary calculation layer with a pure summary utility, grade-mapping helper, and summary hook that query/filter submitted records in the 14-day `performedOn` window and aggregate counts, averages, and recent records according to spec. Repo-side verification held with `npm run lint`, `npm run typecheck`, a seeded emitted-JS summary smoke test, and `npx next build --webpack`. The remaining blocker is operational rather than product logic: this sandbox cannot create `.git/index.lock`, so the required scoped commits cannot be created and D-01 remains in progress until git writes are possible again.

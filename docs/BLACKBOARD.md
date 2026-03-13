@@ -26,6 +26,8 @@
 ## 1. Active human notes
 > Put the newest note at the top.
 
+- [applied] 2026-03-13 09:19 Asia/Seoul — Human manually executed the full C-09 owner-flow runtime QA and reported all expected outcomes: draft save worked, submit without ratings was rejected, submit with at least one rating worked, and later edits preserved `submitted` status.
+- [pending] 2026-03-12 21:12 Asia/Seoul — Update the IBNote repeat-check / forward-progress protocol from every 3 hours to every hour on the hour. Future unattended restart or status-check scheduling should use hourly top-of-hour cadence unless a newer human instruction overrides it.
 - [applied] 2026-03-12 18:46 Asia/Seoul — Human manually confirmed that `/my/records` currently loads successfully in the active runtime. Treat the records-list route as externally smoke-verified and update blocker/task truth before continuing unattended work.
 - [applied] 2026-03-12 09:34 Asia/Seoul — Human updated the active IBNote Firebase console Firestore rules to allow authenticated owner-only access on `/users/{uid}`, `/users/{uid}/profile/*`, and `/users/{uid}/records/*`, with a deny-all fallback for every other path.
 - [pending] 2026-03-11 23:34 Asia/Seoul — Bootstrap operating rule: when Firestore runtime permissions block record CRUD verification, prioritize environment-independent work first (`C-08`, `D-01`, then possible `E-01~E-03`), and do not claim blocked runtime flows as done.
@@ -61,6 +63,9 @@
 > Put the newest consumption record at the top.
 > Use this to mark what the agent actually read and acted on.
 
+- 2026-03-13 09:20 Asia/Seoul — Read the human C-09 manual QA result, updated the task/report truth to close C-09, marked Phase C QA gate done, and moved the current execution focus to D-01.
+- 2026-03-12 21:22 Asia/Seoul — Consumed the earlier human `/my/records/<record-id>` smoke-success note during the C-07 closeout run, revalidated the editor route on a fresh local runtime, confirmed signed-out redirect, owner-only load, invalid-id missing state, and second-user non-access, and concluded the old Firebase-permission blocker remains resolved for C-07.
+- 2026-03-12 21:12 Asia/Seoul — Read the human scheduling instruction, updated the unattended IBNote repeat-check / forward-progress cadence from every 3 hours to every hour on the hour, and recorded the new scheduling rule for future relaunches.
 - 2026-03-12 19:12 Asia/Seoul — Consumed the human `/my/records` smoke-success note during the C-08 closeout run, verified the records list route end to end, closed the route-level blocker truth, and synced the task tracker/report to mark C-08 done.
 - 2026-03-12 18:46 Asia/Seoul — Read the new human note that `/my/records` currently loads successfully, updated the blocker truth to resolved for records-list access, and prepared the repo for an unattended C-08 closeout run.
 - 2026-03-12 16:30 Asia/Seoul — Read the human Firestore rules-update notes, reclassified the old 403 claim under the new pending-revalidation protocol, and reflected the latest human manual QA outcome (`/templates` and `/my/records/<record-id>` opened without visible 403) in the blocker state.

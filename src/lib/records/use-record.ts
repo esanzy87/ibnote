@@ -5,10 +5,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { AuthUserStatus } from '../auth/use-auth-user';
 import type { Competency, GradeBand } from '../templates/template-types';
-import { getUserRecord } from './record-repo';
+import { getUserRecord, saveUserRecord } from './record-repo';
 import type { AbsoluteGrade, WorksheetRecord } from './record-types';
 
 export type RecordLoadStatus = 'idle' | 'loading' | 'missing' | 'error' | 'ready';
+export type RecordMutationStatus = 'idle' | 'saving' | 'submitting' | 'success' | 'error';
 
 interface UseRecordOptions {
   authStatus: AuthUserStatus;
@@ -21,15 +22,19 @@ export interface UseRecordResult {
   hasAtLeastOneRating: boolean;
   isDirty: boolean;
   loadedRecord: WorksheetRecord | null;
+  mutationMessage: string | null;
+  mutationStatus: RecordMutationStatus;
   record: WorksheetRecord | null;
   retry: () => void;
   resetLocalChanges: () => void;
+  saveDraft: () => Promise<boolean>;
   setChildGradeBand: (value: GradeBand | null) => void;
   setChildReflection: (value: string) => void;
   setCompetencyRating: (competency: Competency, value: AbsoluteGrade | null) => void;
   setParentMemo: (value: string) => void;
   setPerformedOn: (value: string) => void;
   status: RecordLoadStatus;
+  submitRecord: () => Promise<boolean>;
   toggleChecklistItem: (item: string) => void;
 }
 
@@ -54,6 +59,8 @@ export function useRecord({ authStatus, recordId, user }: UseRecordOptions): Use
   const [error, setError] = useState<Error | null>(null);
   const [loadedRecord, setLoadedRecord] = useState<WorksheetRecord | null>(null);
   const [record, setRecord] = useState<WorksheetRecord | null>(null);
+  const [mutationStatus, setMutationStatus] = useState<RecordMutationStatus>('idle');
+  const [mutationMessage, setMutationMessage] = useState<string | null>(null);
   const [retryKey, setRetryKey] = useState(0);
 
   const retry = useCallback(() => {
@@ -62,11 +69,15 @@ export function useRecord({ authStatus, recordId, user }: UseRecordOptions): Use
 
   const resetLocalChanges = useCallback(() => {
     setRecord(loadedRecord);
+    setMutationStatus('idle');
+    setMutationMessage(null);
   }, [loadedRecord]);
 
   useEffect(() => {
     if (authStatus !== 'authenticated' || !user) {
       clearRecordState(setStatus, setError, setLoadedRecord, setRecord);
+      setMutationStatus('idle');
+      setMutationMessage(null);
       return;
     }
 
@@ -75,6 +86,8 @@ export function useRecord({ authStatus, recordId, user }: UseRecordOptions): Use
       setError(null);
       setLoadedRecord(null);
       setRecord(null);
+      setMutationStatus('idle');
+      setMutationMessage(null);
       return;
     }
 
@@ -85,6 +98,8 @@ export function useRecord({ authStatus, recordId, user }: UseRecordOptions): Use
     setError(null);
     setLoadedRecord(null);
     setRecord(null);
+    setMutationStatus('idle');
+    setMutationMessage(null);
 
     async function loadRecord() {
       try {
@@ -134,6 +149,8 @@ export function useRecord({ authStatus, recordId, user }: UseRecordOptions): Use
           }
         : currentRecord,
     );
+    setMutationStatus('idle');
+    setMutationMessage(null);
   }, []);
 
   const setChildGradeBand = useCallback((value: GradeBand | null) => {
@@ -145,6 +162,8 @@ export function useRecord({ authStatus, recordId, user }: UseRecordOptions): Use
           }
         : currentRecord,
     );
+    setMutationStatus('idle');
+    setMutationMessage(null);
   }, []);
 
   const setChildReflection = useCallback((value: string) => {
@@ -156,6 +175,8 @@ export function useRecord({ authStatus, recordId, user }: UseRecordOptions): Use
           }
         : currentRecord,
     );
+    setMutationStatus('idle');
+    setMutationMessage(null);
   }, []);
 
   const setParentMemo = useCallback((value: string) => {
@@ -167,6 +188,8 @@ export function useRecord({ authStatus, recordId, user }: UseRecordOptions): Use
           }
         : currentRecord,
     );
+    setMutationStatus('idle');
+    setMutationMessage(null);
   }, []);
 
   const setCompetencyRating = useCallback((competency: Competency, value: AbsoluteGrade | null) => {
@@ -188,6 +211,8 @@ export function useRecord({ authStatus, recordId, user }: UseRecordOptions): Use
         competencyRatings: nextRatings,
       };
     });
+    setMutationStatus('idle');
+    setMutationMessage(null);
   }, []);
 
   const toggleChecklistItem = useCallback((item: string) => {
@@ -202,7 +227,73 @@ export function useRecord({ authStatus, recordId, user }: UseRecordOptions): Use
           }
         : currentRecord,
     );
+    setMutationStatus('idle');
+    setMutationMessage(null);
   }, []);
+
+  const persistRecord = useCallback(
+    async (nextStatus: 'draft' | 'submitted') => {
+      if (authStatus !== 'authenticated' || !user || !record) {
+        setMutationStatus('error');
+        setMutationMessage('로그인한 계정에서만 기록을 저장할 수 있습니다.');
+        return false;
+      }
+
+      if (nextStatus === 'draft' && record.status !== 'draft') {
+        setMutationStatus('error');
+        setMutationMessage('제출 완료 기록은 초안으로 되돌릴 수 없습니다.');
+        return false;
+      }
+
+      if (nextStatus === 'submitted') {
+        if (!record.performedOn) {
+          setMutationStatus('error');
+          setMutationMessage('제출하려면 활동한 날짜가 필요합니다.');
+          return false;
+        }
+
+        if (Object.keys(record.competencyRatings).length === 0) {
+          setMutationStatus('error');
+          setMutationMessage('제출하려면 역량 평정을 1개 이상 선택해 주세요.');
+          return false;
+        }
+      }
+
+      setMutationStatus(nextStatus === 'draft' ? 'saving' : 'submitting');
+      setMutationMessage(null);
+
+      try {
+        const persistedRecord = await saveUserRecord({
+          ...record,
+          status: nextStatus === 'submitted' ? 'submitted' : record.status,
+        });
+
+        setLoadedRecord(persistedRecord);
+        setRecord(persistedRecord);
+        setMutationStatus('success');
+        setMutationMessage(
+          nextStatus === 'draft'
+            ? '초안이 저장되었습니다.'
+            : record.status === 'submitted'
+              ? '제출 완료 상태로 변경 사항이 저장되었습니다.'
+              : '기록이 제출되었습니다.',
+        );
+        return true;
+      } catch (nextError) {
+        setMutationStatus('error');
+        setMutationMessage(
+          nextError instanceof Error
+            ? nextError.message
+            : '기록을 저장하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+        );
+        return false;
+      }
+    },
+    [authStatus, record, user],
+  );
+
+  const saveDraft = useCallback(() => persistRecord('draft'), [persistRecord]);
+  const submitRecord = useCallback(() => persistRecord('submitted'), [persistRecord]);
 
   const hasAtLeastOneRating = useMemo(() => {
     if (!record) {
@@ -219,15 +310,19 @@ export function useRecord({ authStatus, recordId, user }: UseRecordOptions): Use
     hasAtLeastOneRating,
     isDirty,
     loadedRecord,
+    mutationMessage,
+    mutationStatus,
     record,
     retry,
     resetLocalChanges,
+    saveDraft,
     setChildGradeBand,
     setChildReflection,
     setCompetencyRating,
     setParentMemo,
     setPerformedOn,
     status,
+    submitRecord,
     toggleChecklistItem,
   };
 }

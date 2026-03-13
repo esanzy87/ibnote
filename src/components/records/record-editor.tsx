@@ -275,17 +275,23 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
     hasAtLeastOneRating,
     isDirty,
     loadedRecord,
+    mutationMessage,
+    mutationStatus,
     record,
     resetLocalChanges,
     retry: retryRecord,
+    saveDraft,
     setChildGradeBand,
     setChildReflection,
     setCompetencyRating,
     setParentMemo,
     setPerformedOn,
     status: recordStatus,
+    submitRecord,
     toggleChecklistItem,
   } = useRecord({ authStatus, recordId, user });
+
+  const isWritePending = mutationStatus === 'saving' || mutationStatus === 'submitting';
 
   useEffect(() => {
     if (authStatus === 'unauthenticated') {
@@ -467,42 +473,54 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
         </div>
       </Section>
 
-      <Section title="다음 동작" description="저장과 제출 동작은 이어서 연결됩니다.">
+      <Section title="다음 동작" description="초안을 저장하거나 제출 상태로 남길 수 있습니다.">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div className="max-w-2xl text-sm leading-6 text-slate-600">
-            <p>
-              이 단계에서는 기록을 불러오고 입력 구성을 점검할 수 있습니다. 실제 초안 저장과 제출 동작은 다음 작업인
-              C-09에서 Firestore와 연결됩니다.
-            </p>
+            <p>자동 저장은 하지 않습니다. 버튼을 눌렀을 때만 Firestore에 현재 입력값이 저장됩니다.</p>
             <p className="mt-2 font-medium text-slate-900">
               제출 조건: 활동 날짜와 역량 평정 하나 이상이 필요합니다.
             </p>
+            {mutationMessage ? (
+              <p
+                className={
+                  mutationStatus === 'error'
+                    ? 'mt-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-rose-900'
+                    : 'mt-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-950'
+                }
+              >
+                {mutationMessage}
+              </p>
+            ) : null}
           </div>
 
           <div className="flex flex-wrap gap-3">
             {record.status === 'draft' ? (
               <button
                 type="button"
-                disabled
-                aria-disabled="true"
-                title="초안 저장은 C-09에서 연결됩니다."
-                className="inline-flex cursor-not-allowed items-center justify-center rounded-full bg-slate-300 px-5 py-3 text-sm font-medium text-white"
+                onClick={() => {
+                  void saveDraft();
+                }}
+                disabled={isWritePending}
+                className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
               >
-                초안 저장 예정
+                {mutationStatus === 'saving' ? '초안 저장 중...' : '초안 저장'}
               </button>
             ) : null}
             <button
               type="button"
-              disabled
-              aria-disabled="true"
-              title={
-                hasAtLeastOneRating && record.performedOn
-                  ? '제출 동작은 C-09에서 연결됩니다.'
-                  : '제출하려면 활동 날짜와 역량 평정 하나 이상이 필요합니다.'
-              }
-              className="inline-flex cursor-not-allowed items-center justify-center rounded-full border border-stone-200 bg-stone-100 px-5 py-3 text-sm font-medium text-slate-500"
+              onClick={() => {
+                void submitRecord();
+              }}
+              disabled={isWritePending}
+              className="inline-flex items-center justify-center rounded-full border border-stone-200 bg-stone-100 px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-300 hover:bg-stone-200 disabled:cursor-not-allowed disabled:text-slate-500"
             >
-              제출 예정
+              {mutationStatus === 'submitting'
+                ? record.status === 'submitted'
+                  ? '변경 저장 중...'
+                  : '제출 중...'
+                : record.status === 'submitted'
+                  ? '제출 상태로 변경 저장'
+                  : '제출'}
             </button>
             <Link
               href="/my/records"
@@ -513,7 +531,7 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
             <button
               type="button"
               onClick={resetLocalChanges}
-              disabled={!loadedRecord || !isDirty}
+              disabled={!loadedRecord || !isDirty || isWritePending}
               className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
             >
               입력 되돌리기

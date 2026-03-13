@@ -1,13 +1,13 @@
 import { CreateRecordTransition } from '@/components/records/create-record-transition';
 
 type NewRecordPageProps = {
-  searchParams?:
-    | Promise<{
-        template?: string | string[] | undefined;
-      }>
-    | {
-        template?: string | string[] | undefined;
-      };
+  searchParams?: Promise<{
+    template?: string | string[] | undefined;
+  }>;
+};
+
+type NewRecordSearchParams = {
+  template?: string | string[] | undefined;
 };
 
 function getTemplateQueryValue(templateValue: string | string[] | undefined): string | null {
@@ -19,7 +19,7 @@ function getTemplateQueryValue(templateValue: string | string[] | undefined): st
 }
 
 export default async function NewRecordPage({ searchParams }: NewRecordPageProps) {
-  const resolvedSearchParams = await Promise.resolve(searchParams ?? {});
+  const resolvedSearchParams: NewRecordSearchParams = searchParams ? await searchParams : {};
   const templateSlug = getTemplateQueryValue(resolvedSearchParams.template);
 
   return <CreateRecordTransition templateSlug={templateSlug} />;

@@ -83,11 +83,11 @@ Use this table as the high-level progress board.
 | C-04 | C | Define record/profile types | P0 | done | C-01 |
 | C-05 | C | Implement record repository CRUD and queries | P0 | done | C-04, C-01 |
 | C-06 | C | Implement `/my/records/new` draft creation transition | P1 | done | C-03, C-05, B-05 |
-| C-07 | C | Build record editor route | P1 | pending_revalidation | C-05, C-06 |
+| C-07 | C | Build record editor route | P1 | done | C-05, C-06 |
 | C-08 | C | Build records list route | P1 | done | C-05, C-03 |
-| C-09 | C | Add save-draft and submit behaviors | P1 | todo | C-07 |
+| C-09 | C | Add save-draft and submit behaviors | P1 | done | C-07 |
 | C-10 | C | Add Firestore security rules and baseline index config | P0 | done | C-05 |
-| D-01 | D | Implement summary calculation logic | P1 | todo | C-05 |
+| D-01 | D | Implement summary calculation logic | P1 | in_progress | C-05 |
 | D-02 | D | Build summary route | P1 | todo | D-01, C-03 |
 | D-03 | D | Build settings route | P1 | todo | C-03, C-05 |
 | D-04 | D | Implement delete-stored-record-data flow | P1 | todo | D-03, C-05 |
@@ -363,7 +363,7 @@ Use this table as the high-level progress board.
 
 #### C-07 Build record editor route
 - Priority: `P1`
-- Status: `pending_revalidation`
+- Status: `done`
 - Blocked by: `C-05`, `C-06`
 - Scope:
   - build record editor UI and data load path
@@ -391,7 +391,7 @@ Use this table as the high-level progress board.
 
 #### C-09 Add save-draft and submit behaviors
 - Priority: `P1`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `C-07`
 - Scope:
   - implement save draft
@@ -418,7 +418,7 @@ Use this table as the high-level progress board.
   - cross-user access is denied
 
 #### Phase C QA Gate
-- Status: `todo`
+- Status: `done`
 - Pass when:
   - `C-01` through `C-10` are `done`
   - sign-in and create-account flow works
@@ -430,7 +430,7 @@ Use this table as the high-level progress board.
 
 #### D-01 Implement summary calculation logic
 - Priority: `P1`
-- Status: `todo`
+- Status: `in_progress`
 - Blocked by: `C-05`
 - Scope:
   - implement 14-day submitted-record summary logic
@@ -612,11 +612,11 @@ Parallel-safe notes:
 
 Update this section at the start and end of each work session.
 
-- Current phase: `Phase C - Account auth and records`
-- Current task: `No task currently in progress; next task is C-09 after C-07 blocker revalidation or closure`
-- Last completed task: `C-08`
-- Active blocker: `No confirmed Firebase permission blocker is currently active after the latest human smoke revalidation; `/my/records` and `/my/records/<record-id>` both have human-reported smoke success, while save/submit behavior remains future scope under C-09.`
-- Notes: `C-08 is now closed after repo-backed runtime QA confirmed signed-out protection, signed-in list load, `updatedAt desc` ordering, status/template filtering, draft/submitted visual distinction, empty state, and retryable records-list error handling. Latest human smoke QA still means the old Firebase-permissions blocker must not be reused for C-07/C-08 without a fresh runtime failure.`
+- Current phase: `Phase D - Summary and settings`
+- Current task: `D-01 Implement summary calculation logic`
+- Last completed task: `C-09`
+- Active blocker: `Git commit is currently blocked in this sandbox because git cannot create .git/index.lock, so D-01 closeout cannot be finalized even after code-level verification passes.`
+- Notes: `D-01 summary utility/hook implementation is now in the repo (`src/lib/records/summary-utils.ts`, `src/lib/records/use-summary.ts`, `src/lib/utils/grades.ts`) and repo-side verification passed with `npm run lint`, `npm run typecheck`, a seeded summary-calculation smoke test via emitted JS, and `npx next build --webpack`. Keep the task in progress until the required git commit can be created truthfully.`
 
 ## 8. Completion rule
 

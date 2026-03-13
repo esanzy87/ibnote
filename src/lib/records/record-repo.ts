@@ -102,6 +102,17 @@ export async function updateUserRecord(
   await updateDoc(getUserRecordDocument(uid, recordId), updates);
 }
 
+export async function saveUserRecord(record: WorksheetRecord): Promise<WorksheetRecord> {
+  const persistedRecord: WorksheetRecord = {
+    ...record,
+    updatedAt: Date.now(),
+  };
+
+  await updateUserRecord(record.uid, record.id, persistedRecord);
+
+  return persistedRecord;
+}
+
 export async function deleteAllUserRecords(uid: string): Promise<void> {
   const snapshot = await getDocs(getUserRecordsCollection(uid));
 
