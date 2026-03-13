@@ -2,6 +2,7 @@
 
 ## Completed tasks
 
+- `D-03` Build settings route
 - `D-02` Build summary route
 - `D-01` Implement summary calculation logic
 - `C-09` Add save-draft and submit behaviors
@@ -28,10 +29,10 @@
 
 ## Current in-progress task
 
-- `D-03` Build settings route is the next planned task after D-02 closeout.
-- 2026-03-13 truth sync: D-02 is now implemented in the repo on top of the completed D-01 summary logic, and no D-03 work has started in this run.
-- 2026-03-13 progress update: this slice was verified with `npm run lint`, `npm run typecheck`, and a webpack production build. No browser/runtime QA is claimed for D-02 in this shell.
-- 2026-03-13 closeout note: a scoped D-02 task-unit commit was attempted but not created because this sandbox again failed to create `.git/index.lock` (`Operation not permitted`).
+- `D-04` Implement delete-stored-record-data flow is the next planned task after D-03 closeout.
+- 2026-03-13 truth sync: D-03 is now implemented in the repo as `/my/settings`, and D-04 / D-05 / D-06 have not been started in this run.
+- 2026-03-13 progress update: this slice was verified with `npm run lint`, `npm run typecheck`, and the default `npm run build` path in this shell. No browser/runtime QA is claimed for D-03 in this shell.
+- 2026-03-13 closeout note: if git permits, the truthful D-03 task-unit commit should capture the new protected settings route plus tracker/report updates only.
 
 ## Verification results per task
 
@@ -246,6 +247,17 @@
 - Verification pass 4: `npm run build` passed in this shell on 2026-03-13, so the earlier Turbopack fallback note is no longer the best current build truth for D-01.
 - Result: task completed truthfully.
 
+### D-03 Build settings route
+
+- Added `src/app/my/settings/page.tsx` and `src/components/settings/settings-page-client.tsx` to build the protected settings route on top of the existing auth hook/redirect pattern.
+- The new route now handles auth loading/error/redirect states, shows the current account email plus auth type as email/password, and explains that stored records and summaries belong only to the signed-in account.
+- Added route-level action cards for `모든 내 기록 삭제` and `로그아웃`, but kept them as truthful D-03 placeholders only: each button is present in the settings UI and clearly states that real delete/sign-out execution is deferred to D-04 and D-05.
+- Verification pass 1: `npm run lint` passed after the D-03 route/UI additions.
+- Verification pass 2: `npm run typecheck` passed after the D-03 route/UI additions.
+- Verification pass 3: the default `npm run build` path passed in this shell on the final D-03 snapshot, and the route manifest included `/my/settings`.
+- Runtime QA note: no browser/server runtime QA is claimed for D-03 in this run because this shell's truthful verification for the slice remained repo-side checks only.
+- Result: task completed truthfully with lint, typecheck, and default build verification.
+
 ### D-02 Build summary route
 
 - Added `src/app/my/summary/page.tsx` and `src/components/summary/summary-page-client.tsx` to build the protected summary route on top of `src/lib/records/use-summary.ts`.
@@ -253,11 +265,10 @@
 - The success view renders the D-01 data contract directly: total submitted records, counts by competency, average grade by competency using the existing letter-grade mapping, and recent submitted records ordered by `performedOn desc` with `updatedAt desc` as the tie-breaker.
 - Verification pass 1: `npm run lint` passed after the D-02 route/UI additions.
 - Verification pass 2: `npm run typecheck` passed after the D-02 route/UI additions.
-- Verification pass 3: the default `npm run build` Turbopack path still failed in this shell with `Failed to write app endpoint /page` because Next could not bind the CSS subprocess port while processing `src/styles/globals.css`.
-- Verification pass 4: `npx next build --webpack` passed on the final D-02 snapshot, and the route manifest included `/my/summary`.
+- Verification pass 3: the default `npm run build` path passed in this shell on the final D-02 snapshot, and the route manifest included `/my/summary`.
 - Runtime QA note: no browser/server runtime QA is claimed for D-02 in this run because this shell's truthful verification for the slice remained repo-side checks only.
-- Closeout note: a scoped `ibnote 0.1.0 ...` D-02 commit was attempted after verification but failed in this sandbox with `fatal: Unable to create '.git/index.lock': Operation not permitted`.
-- Result: task completed truthfully with lint, typecheck, and webpack build verification, but no commit was created from this shell.
+- Closeout note: the scoped D-02 task-unit commit was created as `74b04ab` (`ibnote 0.1.0 build summary route`).
+- Result: task completed truthfully with lint, typecheck, and default build verification, and the task-unit commit was created.
 
 ## Blockers encountered
 

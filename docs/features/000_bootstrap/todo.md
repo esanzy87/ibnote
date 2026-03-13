@@ -89,7 +89,7 @@ Use this table as the high-level progress board.
 | C-10 | C | Add Firestore security rules and baseline index config | P0 | done | C-05 |
 | D-01 | D | Implement summary calculation logic | P1 | done | C-05 |
 | D-02 | D | Build summary route | P1 | done | D-01, C-03 |
-| D-03 | D | Build settings route | P1 | todo | C-03, C-05 |
+| D-03 | D | Build settings route | P1 | done | C-03, C-05 |
 | D-04 | D | Implement delete-stored-record-data flow | P1 | todo | D-03, C-05 |
 | D-05 | D | Implement sign-out flow | P1 | todo | D-03, C-03 |
 | D-06 | D | Finalize summary-required Firestore indexes | P1 | todo | D-01, C-10 |
@@ -455,7 +455,7 @@ Use this table as the high-level progress board.
 
 #### D-03 Build settings route
 - Priority: `P1`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `C-03`, `C-05`
 - Scope:
   - build `/my/settings`
@@ -614,10 +614,10 @@ Parallel-safe notes:
 Update this section at the start and end of each work session.
 
 - Current phase: `Phase D - Summary and settings`
-- Current task: `D-03 Build settings route`
-- Last completed task: `D-02`
-- Active blocker: `Git writes are currently blocked in this sandbox because .git/index.lock cannot be created, so the D-02 task-unit commit could not be produced from this shell.`
-- Notes: D-02 is now complete in the repo with `src/app/my/summary/page.tsx` and `src/components/summary/summary-page-client.tsx`, built directly on top of the existing D-01 summary hook/calculation layer. Fresh 2026-03-13 verification passed with `npm run lint`, `npm run typecheck`, and `npx next build --webpack`; the default `npm run build` Turbopack path still fails in this shell because Next cannot bind the CSS subprocess port, so webpack remains the truthful build fallback. A scoped D-02 commit was attempted but failed in this sandbox with `fatal: Unable to create '.git/index.lock': Operation not permitted`. No D-03 code has been started yet.
+- Current task: `D-04 Implement delete-stored-record-data flow`
+- Last completed task: `D-03`
+- Active blocker: `-`
+- Notes: D-03 is now complete in the repo with `src/app/my/settings/page.tsx` and `src/components/settings/settings-page-client.tsx`. The route is protected by the existing auth hook/redirect pattern, shows the current auth type plus account ownership messaging, and includes route-level delete/sign-out action placeholders that explicitly defer real execution to D-04 and D-05. Fresh 2026-03-13 verification passed with `npm run lint`, `npm run typecheck`, and the default `npm run build` path in this shell, and the route manifest now includes `/my/settings`.
 
 ## 8. Completion rule
 
