@@ -1,0 +1,44 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - link "IBNote" [ref=e6] [cursor=pointer]:
+            - /url: /
+          - paragraph [ref=e7]: Parent-friendly worksheet and record MVP.
+        - navigation "Primary" [ref=e8]:
+          - link "Home" [ref=e9] [cursor=pointer]:
+            - /url: /
+          - link "Login" [ref=e10] [cursor=pointer]:
+            - /url: /login
+          - link "Templates" [ref=e11] [cursor=pointer]:
+            - /url: /templates
+          - generic [ref=e12]: My pages soon
+    - main [ref=e13]:
+      - main [ref=e65]:
+        - generic [ref=e66]:
+          - generic [ref=e67]:
+            - paragraph [ref=e68]: Account access
+            - heading "로그인 후 템플릿과 기록 기능을 사용할 수 있습니다." [level=1] [ref=e69]
+            - paragraph [ref=e70]: 이메일 계정으로 로그인하거나 새 계정을 만들어 서비스로 들어갑니다.
+            - generic [ref=e71]: "로그인 후 이동 예정 경로: /my/settings"
+            - generic [ref=e72]: "현재 상태: 로그인 또는 계정 생성을 기다리는 중"
+          - generic [ref=e74]:
+            - generic [ref=e75]:
+              - button "로그인" [ref=e76]
+              - button "계정 만들기" [ref=e77]
+            - paragraph [ref=e78]: 기존 계정으로 로그인합니다.
+            - generic [ref=e79]:
+              - generic [ref=e80]:
+                - text: 이메일
+                - textbox "이메일" [ref=e81]:
+                  - /placeholder: name@example.com
+              - generic [ref=e82]:
+                - text: 비밀번호
+                - textbox "비밀번호" [ref=e83]:
+                  - /placeholder: 비밀번호 입력
+              - generic [ref=e84]: 오류가 있으면 여기에 표시됩니다.
+              - button "로그인" [ref=e85]
+  - button "Open Next.js Dev Tools" [ref=e28] [cursor=pointer]:
+    - img [ref=e29]
+  - alert [ref=e32]

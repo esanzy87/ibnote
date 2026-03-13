@@ -2,6 +2,14 @@
 
 ## Completed tasks
 
+- `D-05` Implement sign-out flow
+- `D-06` Finalize summary-required Firestore indexes
+- `E-05` Run desktop, mobile web, and print QA
+- `E-06` Run scope audit against exclusions list
+- `E-01` Add required loading states across routes
+- `E-02` Add required empty states across routes
+- `E-03` Add required error states across routes
+- `E-04` Add privacy warning copy in record flow
 - `D-04` Implement delete-stored-record-data flow
 - `D-03` Build settings route
 - `D-02` Build summary route
@@ -30,12 +38,14 @@
 
 ## Current in-progress task
 
-- Canonical current truth as of 2026-03-13: `D-04` is complete, and `D-05` Implement sign-out flow is the next planned task.
-- Phase status: Phase A, B, and C are closed; in Phase D, `D-01` / `D-02` / `D-03` / `D-04` are done, and `D-05` / `D-06` are not started.
-- Current repo truth: `/my/settings` now includes the real delete-stored-record-data action path for the signed-in current user.
-- Current verification truth: in this shell, the latest repo-side verification for the D-04 snapshot passed with `npm run lint`, `npm run typecheck`, and the default `npm run build` path. No browser/runtime QA is claimed for D-04 in this shell.
+- Canonical current truth as of 2026-03-14: `000_bootstrap` is now complete. `D-06`, `E-05`, and `E-06` closed after fresh runtime revalidation in this run.
+- Phase status: Phase A, B, C, D, and E are all closed in the tracker with no active launchability-critical blocker reproduced.
+- Bootstrap closeout framing: keep the existing task ledger order and IDs, keep only launchability-critical unresolved in-scope work in the bootstrap blocker path, and route non-critical or out-of-scope findings to handoff/next-feature buckets.
+- Current repo truth: `/my/settings` now includes both the real delete-stored-record-data action path and the real sign-out action path for the signed-in current user.
+- Current verification truth: in this shell, the latest verification passed with `npm run lint`, `npm run typecheck`, and the default `npm run build` path after D-05 redirect-race and D-06 index-config updates.
+- Runtime QA truth in this run: browser automation confirmed the prior D-06 missing-index runtime failure is no longer reproducible in the active runtime after external index setup. `/my/summary` now reaches populated state on desktop/mobile without summary error, and empty-state verification still passes after delete-all-data flow.
 - Build-truth note: older report sections may mention previous Turbopack-related `npm run build` issues during earlier slices, but the latest canonical build truth for the current repo snapshot is that the default `npm run build` path passed in this shell on 2026-03-13.
-- Closeout note: if git permits, the truthful D-04 task-unit commit should capture the delete-flow implementation plus tracker/report updates only.
+- Closeout note: this revalidation run closed D-06 and E-05, then completed E-06 scope-audit evidence routing with no exclusions drift found. Future work should proceed via next-feature planning instead of re-opening bootstrap by default.
 
 ## Verification results per task
 
@@ -250,6 +260,44 @@
 - Verification pass 4: `npm run build` passed in this shell on 2026-03-13, so the earlier Turbopack fallback note is no longer the best current build truth for D-01.
 - Result: task completed truthfully.
 
+### D-05 Implement sign-out flow
+
+- Updated `src/components/settings/settings-page-client.tsx` to wire the live sign-out path (`signOut(getFirebaseAuth())`) and replaced the D-03 placeholder text with real D-05 behavior copy and confirmation.
+- Fixed a runtime redirect race in the settings auth-guard effect by introducing `isSigningOut` gating so successful sign-out lands on `/` instead of being overridden by `/login?next=/my/settings`.
+- Verification pass 1: browser runtime QA (Playwright automation) confirmed clicking `로그아웃` signs out the account, immediate post-logout URL is `/`, and opening `/my/settings` after logout redirects to `/login?next=%2Fmy%2Fsettings`.
+- Verification pass 2: `npm run lint` and `npm run typecheck` passed after the race fix.
+- Verification pass 3: default `npm run build` passed after the D-05 code updates.
+- Result: task completed truthfully with runtime and repo-side verification.
+
+### D-06 Finalize summary-required Firestore indexes
+
+- Revalidated the same summary runtime path after external index rollout by driving the real app flow (create/sign in -> start record -> submit -> open `/my/summary`).
+- Runtime result no longer showed the previous summary error; populated summary state loaded on both desktop and mobile viewports, which confirms the active project index is now serving the production query shape.
+- Existing index config remains aligned with the runtime-proven requirement in `firestore.indexes.json` (`status ASC`, `performedOn DESC`, `updatedAt DESC`).
+- Result: task completed truthfully (`done`) with fresh runtime evidence after external setup.
+
+### E-05 Run desktop, mobile web, and print QA
+
+- Re-ran desktop/mobile/print QA with Playwright after D-06 runtime revalidation.
+- Desktop pass: authenticated template detail -> print action triggers `window.print()`; print media hides `.print-hidden` action row (`display: none`); start-record submit flow succeeds; `/my/summary` populated state loads without summary error.
+- Mobile pass: `/my/summary` populated state loads at mobile viewport with no summary error reproduced.
+- Empty-state pass: after delete-all-data flow, `/my/summary` empty-state heading is visible and consistent with the 14-day window copy.
+- Result: task completed truthfully (`done`).
+
+### E-06 Run scope audit against exclusions list
+
+- Ran exclusions audit against `spec.md` out-of-scope list and current source surface.
+- Audit result: no product-scope drift into uploads, AI, payments, admin tooling, or broader auth scope was found.
+- Note: `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` appears only as standard Firebase web-config wiring in `src/lib/firebase/client.ts`, not as a Storage feature implementation.
+- Result: task completed truthfully (`done`).
+
+### E-01 through E-04 Closeout audit and minimal patch
+
+- Audited route-level state coverage across templates, records, summary, and settings using direct code inspection plus explore-agent route-state mapping.
+- Confirmed loading, empty, and error states already existed on the in-scope routes (`template-library-client`, `protected-template-detail`, `records-list-client`, `create-record-transition`, `record-editor`, `summary-page-client`, `settings-page-client`) and required privacy note already existed in record flow (`RECORD_PRIVACY_NOTE` in `record-editor`).
+- No additional product-code changes were required for E-01 through E-04 in this run beyond truthful tracker/report sync.
+- Result: E-01 through E-04 are closed as audit-complete with minimal-scope truth sync.
+
 ### D-04 Implement delete-stored-record-data flow
 
 - Replaced the D-03 delete-action placeholder in `src/components/settings/settings-page-client.tsx` with a real current-user delete flow: confirmation prompt, working state, in-place success/error messaging, and stay-on-settings behavior after completion.
@@ -296,6 +344,7 @@
 - Secondary verification limitation in this sandbox: the default `npm run build` Turbopack path panics with `Failed to write app endpoint /page` while processing `src/styles/globals.css` because Turbopack cannot create its CSS subprocess here. `npx next build --webpack` did pass, so the app still has a successful production build path for this run.
 - Former D-01 closeout blocker resolved in current shell: git is no longer failing to create `.git/index.lock`, so the old commit-blocked claim should not be reused.
 - New D-02 closeout blocker in this shell: the scoped task-unit commit could not be created because git again failed to create `.git/index.lock` with `Operation not permitted`.
+- Prior D-06 external-index rollout blocker is now resolved by fresh runtime evidence in this run.
 
 ## Assumptions made
 
@@ -310,12 +359,9 @@
 
 ## Next recommended steps
 
-- Start `D-03` and build the settings route without pulling `D-04`, `D-05`, or `D-06` forward prematurely.
-- If a future resume claims an already-running local app process is available, re-check that exact endpoint from the current shell before relying on it; the 2026-03-13 resume hint for `127.0.0.1:3002` was not reproducible here.
-- Keep D-03+ work out of this D-02 task-unit closeout unless a new instruction explicitly expands scope.
-- If commit creation matters for the next handoff, re-check whether git can write `.git/index.lock` from the current shell before attempting the D-02 task-unit commit again.
-- Keep treating Firebase permissions as resolved unless a fresh runtime failure reintroduces that blocker.
+- Keep non-critical findings and out-of-scope improvements in handoff/next-feature buckets; do not reopen bootstrap blocker status unless a fresh launchability-critical runtime failure is reproduced.
+- For next-feature selection, prioritize post-bootstrap items already listed in `docs/BLACKBOARD.md` (account lifecycle expansion and content-quality follow-up).
 
 ## Night summary
 
-Phase A through Phase C remain closed, and Phase D now has both D-01 and D-02 closed. This run added the `/my/summary` route as a protected client page built on the existing D-01 summary hook/calculation layer, including auth/loading/error handling, the required empty 14-day state, summary stat blocks, and the recent submitted-record list. Fresh verification held with `npm run lint`, `npm run typecheck`, and `npx next build --webpack`; the default `npm run build` Turbopack path is still not the best truth in this shell because Next cannot bind the CSS subprocess port. No browser/runtime QA was claimed for D-02 in this run, and the attempted D-02 task-unit commit was blocked by `.git/index.lock` permission failure in this sandbox. The next untouched slice is D-03.
+Bootstrap closeout revalidation is now synchronized with `D-06`, `E-05`, and `E-06` complete in tracker truth. Fresh runtime evidence confirms `/my/summary` populated and empty paths work after external index setup, desktop/mobile summary checks are green, and print behavior remains compliant. Scope-audit checks found no excluded-feature drift, so the prior summary-index blocker is closed and no new launchability-critical blocker was reproduced in this run.

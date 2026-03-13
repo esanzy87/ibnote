@@ -1,6 +1,6 @@
 # IBNote Bootstrap Risk Analysis
 
-Status: Open items and implementation risks
+Status: Open risks and closeout classification notes
 Source of truth: `docs/features/000_bootstrap/prd.md`
 
 ## 1. Purpose
@@ -14,6 +14,14 @@ Each item is here because at least one of the following is true:
 - the work may fail in production if a human does not review it
 
 Resolved implementation defaults belong in `docs/features/000_bootstrap/adr.md`, not here.
+
+## 1.1 Closeout classification rule
+
+During bootstrap closeout:
+- keep only launchability-critical in-scope unresolved work in the bootstrap blocker path
+- keep non-critical findings as closeout notes unless a fresh failure proves launchability risk
+- route out-of-scope or nice-to-have items to next-feature candidates or handoff notes
+- do not pull routed items back into bootstrap scope without an explicit scope decision
 
 ## 2. Open risks and unresolved items
 

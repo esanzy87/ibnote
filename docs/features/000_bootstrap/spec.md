@@ -1,6 +1,6 @@
 # IBNote Bootstrap Spec
 
-Status: Draft for implementation
+Status: Active bootstrap closeout spec (Phase D/E open; D-04 complete, D-05 next)
 Source of truth: `docs/features/000_bootstrap/prd.md`
 Companion docs:
 - `docs/features/000_bootstrap/adr.md`
@@ -21,6 +21,17 @@ The agent must be able to start implementation without guessing:
 If any statement in this file conflicts with `prd.md`, follow `prd.md` and update this file.
 
 ## 2. How to use this document
+
+### 2.1 Bootstrap closeout mode framing
+
+Bootstrap is still open and is now tracked in closeout mode.
+
+Closeout framing rules:
+- keep the existing task ledger ID structure and execution order unchanged
+- treat launchability-critical unresolved in-scope work as bootstrap blockers
+- keep non-critical findings and out-of-scope ideas out of bootstrap blocker status
+- route non-critical findings to handoff notes and next-feature candidates
+- keep claims truthful to current repo and runtime verification evidence
 
 Implementation order is fixed:
 1. Foundation

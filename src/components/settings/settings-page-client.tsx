@@ -1,12 +1,14 @@
 'use client';
 
 import type { User } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
 import { buildLoginHref } from '@/lib/auth/ensure-auth';
 import { useAuthUser } from '@/lib/auth/use-auth-user';
+import { getFirebaseAuth } from '@/lib/firebase/auth';
 import { deleteUserStoredData } from '@/lib/records/record-repo';
 
 function PageFrame({ children }: { children: React.ReactNode }) {
@@ -191,12 +193,15 @@ export function SettingsPageClient() {
   const { error: authError, retry: retryAuth, status: authStatus, user } = useAuthUser();
   const [deleteStatus, setDeleteStatus] = useState<'idle' | 'working' | 'success' | 'error'>('idle');
   const [deleteMessage, setDeleteMessage] = useState<string | null>(null);
+  const [signOutStatus, setSignOutStatus] = useState<'idle' | 'working' | 'error'>('idle');
+  const [signOutMessage, setSignOutMessage] = useState<string | null>(null);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   useEffect(() => {
-    if (authStatus === 'unauthenticated') {
+    if (authStatus === 'unauthenticated' && !isSigningOut) {
       router.replace(buildLoginHref('/my/settings'));
     }
-  }, [authStatus, router]);
+  }, [authStatus, isSigningOut, router]);
 
   async function handleDeleteStoredData() {
     if (!user) {
@@ -214,6 +219,25 @@ export function SettingsPageClient() {
     } catch {
       setDeleteStatus('error');
       setDeleteMessage('기록 데이터를 삭제하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    }
+  }
+
+  async function handleSignOut() {
+    if (!user) {
+      return;
+    }
+
+    setSignOutStatus('working');
+    setSignOutMessage(null);
+    setIsSigningOut(true);
+
+    try {
+      await signOut(getFirebaseAuth());
+      router.replace('/');
+    } catch {
+      setIsSigningOut(false);
+      setSignOutStatus('error');
+      setSignOutMessage('로그아웃하지 못했습니다. 잠시 후 다시 시도해 주세요.');
     }
   }
 
@@ -264,12 +288,14 @@ export function SettingsPageClient() {
 
         <SettingsActionCard
           title="로그아웃"
-          body="현재 세션을 종료하고 공개 첫 화면으로 돌아가는 자리입니다. 실제 로그아웃 실행과 리다이렉트는 다음 작업에서 연결되며, 이 단계에서는 버튼 위치와 계정 안내만 제공합니다."
+          body="현재 세션을 종료하고 공개 첫 화면으로 돌아갑니다. 로그아웃 중에는 기록 데이터가 삭제되지 않으며, 다음 로그인 시 같은 계정 기록을 다시 확인할 수 있습니다."
           buttonLabel="로그아웃"
-          helper="D-03 범위: 로그아웃 버튼 위치와 안내만 제공했습니다. 실제 로그아웃 실행은 D-05에서 연결됩니다."
-          message={null}
-          disabled
-          onClick={() => {}}
+          confirmationMessage="현재 계정에서 로그아웃할까요? 저장된 기록 데이터는 삭제되지 않습니다."
+          helper="로그아웃 후에는 보호 경로 접속 시 다시 로그인 화면으로 이동해야 합니다."
+          isWorking={signOutStatus === 'working'}
+          message={signOutMessage}
+          messageTone={signOutStatus === 'error' ? 'error' : 'default'}
+          onClick={handleSignOut}
         />
       </section>
 

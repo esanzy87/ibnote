@@ -1,6 +1,6 @@
 # IBNote Bootstrap Todo
 
-Status: Ready for execution tracking
+Status: Active closeout execution tracking
 Source of truth: `docs/features/000_bootstrap/spec.md`
 Companion docs:
 - `docs/features/000_bootstrap/prd.md`
@@ -19,6 +19,8 @@ Rules for the coding agent:
 - if implementation decisions conflict with this file, `spec.md` wins and this file must be updated immediately
 - cross-phase prerequisites are allowed only when they are explicitly listed in a task's `Blocked by` field or in the `Cross-phase exceptions` section below
 - if a human reports an external fix for a blocker, do not keep the task as if it were freshly `blocked` without a new smoke verification; temporarily move it to `pending_revalidation` until current runtime truth is rechecked
+- keep task IDs, task ordering, and dependency links stable during closeout document sync
+- do not promote non-critical findings to bootstrap blockers; route them to handoff or next-feature buckets unless launchability is materially at risk
 
 Allowed status values:
 - `todo`
@@ -91,14 +93,14 @@ Use this table as the high-level progress board.
 | D-02 | D | Build summary route | P1 | done | D-01, C-03 |
 | D-03 | D | Build settings route | P1 | done | C-03, C-05 |
 | D-04 | D | Implement delete-stored-record-data flow | P1 | done | D-03, C-05 |
-| D-05 | D | Implement sign-out flow | P1 | todo | D-03, C-03 |
-| D-06 | D | Finalize summary-required Firestore indexes | P1 | todo | D-01, C-10 |
-| E-01 | E | Add required loading states across routes | P2 | todo | B-04, B-05, C-07, C-08, D-02, D-03 |
-| E-02 | E | Add required empty states across routes | P2 | todo | B-04, C-08, D-02 |
-| E-03 | E | Add required error states across routes | P2 | todo | B-04, B-05, C-03, C-07, C-08, D-02, D-03 |
-| E-04 | E | Add privacy warning copy in record flow | P2 | todo | C-07 |
-| E-05 | E | Run desktop, mobile web, and print QA | P1 | todo | E-01, E-02, E-03, E-04 |
-| E-06 | E | Run scope audit against exclusions list | P1 | todo | E-05 |
+| D-05 | D | Implement sign-out flow | P1 | done | D-03, C-03 |
+| D-06 | D | Finalize summary-required Firestore indexes | P1 | done | D-01, C-10 |
+| E-01 | E | Add required loading states across routes | P2 | done | B-04, B-05, C-07, C-08, D-02, D-03 |
+| E-02 | E | Add required empty states across routes | P2 | done | B-04, C-08, D-02 |
+| E-03 | E | Add required error states across routes | P2 | done | B-04, B-05, C-03, C-07, C-08, D-02, D-03 |
+| E-04 | E | Add privacy warning copy in record flow | P2 | done | C-07 |
+| E-05 | E | Run desktop, mobile web, and print QA | P1 | done | E-01, E-02, E-03, E-04 |
+| E-06 | E | Run scope audit against exclusions list | P1 | done | E-05 |
 
 ## 5. Detailed tasks
 
@@ -481,7 +483,7 @@ Use this table as the high-level progress board.
 
 #### D-05 Implement sign-out flow
 - Priority: `P1`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `D-03`, `C-03`
 - Scope:
   - sign out the current user
@@ -494,7 +496,7 @@ Use this table as the high-level progress board.
 
 #### D-06 Finalize summary-required Firestore indexes
 - Priority: `P1`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `D-01`, `C-10`
 - Scope:
   - run summary queries against Firebase
@@ -505,7 +507,7 @@ Use this table as the high-level progress board.
   - summary route no longer fails due to missing indexes
 
 #### Phase D QA Gate
-- Status: `todo`
+- Status: `done`
 - Pass when:
   - `D-01` through `D-06` are `done`
   - summary works on real user data
@@ -516,7 +518,7 @@ Use this table as the high-level progress board.
 
 #### E-01 Add required loading states across routes
 - Priority: `P2`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `B-04`, `B-05`, `C-07`, `C-08`, `D-02`, `D-03`
 - Scope:
   - add loading states where `spec.md` requires them
@@ -527,7 +529,7 @@ Use this table as the high-level progress board.
 
 #### E-02 Add required empty states across routes
 - Priority: `P2`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `B-04`, `C-08`, `D-02`
 - Scope:
   - add empty states for library, records, and summary where applicable
@@ -538,7 +540,7 @@ Use this table as the high-level progress board.
 
 #### E-03 Add required error states across routes
 - Priority: `P2`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `B-04`, `B-05`, `C-03`, `C-07`, `C-08`, `D-02`, `D-03`
 - Scope:
   - add recoverable error states
@@ -550,7 +552,7 @@ Use this table as the high-level progress board.
 
 #### E-04 Add privacy warning copy in record flow
 - Priority: `P2`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `C-07`
 - Scope:
   - add the required privacy note anywhere records are created or edited
@@ -561,7 +563,7 @@ Use this table as the high-level progress board.
 
 #### E-05 Run desktop, mobile web, and print QA
 - Priority: `P1`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `E-01`, `E-02`, `E-03`, `E-04`
 - Scope:
   - run full functional and device QA from `spec.md`
@@ -573,7 +575,7 @@ Use this table as the high-level progress board.
 
 #### E-06 Run scope audit against exclusions list
 - Priority: `P1`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `E-05`
 - Scope:
   - compare implementation against the excluded-features list
@@ -584,7 +586,7 @@ Use this table as the high-level progress board.
   - all exclusions remain excluded
 
 #### Phase E QA Gate
-- Status: `todo`
+- Status: `done`
 - Pass when:
   - `E-01` through `E-06` are `done`
   - all route states exist
@@ -613,11 +615,11 @@ Parallel-safe notes:
 
 Update this section at the start and end of each work session.
 
-- Current phase: `Phase D - Summary and settings`
-- Current task: `D-05 Implement sign-out flow`
-- Last completed task: `D-04`
+- Current phase: `Bootstrap complete`
+- Current task: `-`
+- Last completed task: `E-06`
 - Active blocker: `-`
-- Notes: D-04 is now complete in the repo. `src/components/settings/settings-page-client.tsx` now runs a confirmed delete-all-records flow with confirmation, in-place success/error messaging, and stay-on-page behavior, while `src/lib/records/record-repo.ts` now exposes `deleteUserStoredData(uid)` to delete the current user's record documents and optional `/profile/main` document. Fresh 2026-03-13 repo-side verification passed with `npm run lint`, `npm run typecheck`, and the default `npm run build` path in this shell. No browser/runtime QA is claimed yet for delete-flow behavior in this shell, so D-05 remains the next untouched task.
+- Notes: 000_bootstrap is now closed. Runtime revalidation after external Firebase index rollout is green, and all tracked bootstrap tasks plus Phase D/E QA gates are done. Fresh Playwright QA confirmed `/my/summary` populated state on desktop/mobile (no summary error), summary empty state after delete-all flow, and print behavior (`window.print()` path plus print-hidden action row). Scope-audit checks found no in-scope drift into uploads/AI/payments/admin features. Future improvements should go through next-feature planning rather than re-opening bootstrap by default.
 
 ## 8. Completion rule
 
