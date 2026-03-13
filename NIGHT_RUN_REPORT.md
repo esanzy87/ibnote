@@ -2,6 +2,8 @@
 
 ## Completed tasks
 
+- `D-02` Build summary route
+- `D-01` Implement summary calculation logic
 - `C-09` Add save-draft and submit behaviors
 - `A-01` Scaffold Next.js App Router project
 - `A-02` Install Tailwind and Firebase SDK
@@ -26,9 +28,10 @@
 
 ## Current in-progress task
 
-- `D-01` Implement summary calculation logic is the next planned task after Phase C closeout.
-- 2026-03-13 truth sync: repo-side verification still held with `npm run lint`, `npm run typecheck`, and `npx next build --webpack`, and human manual runtime QA closed the remaining C-09 gap.
-- 2026-03-13 progress update: the D-01 summary calculation code is now implemented and repo-verified, but the task is still in progress because this sandbox currently blocks the required closeout commit with `fatal: Unable to create '.git/index.lock': Operation not permitted`.
+- `D-03` Build settings route is the next planned task after D-02 closeout.
+- 2026-03-13 truth sync: D-02 is now implemented in the repo on top of the completed D-01 summary logic, and no D-03 work has started in this run.
+- 2026-03-13 progress update: this slice was verified with `npm run lint`, `npm run typecheck`, and a webpack production build. No browser/runtime QA is claimed for D-02 in this shell.
+- 2026-03-13 closeout note: a scoped D-02 task-unit commit was attempted but not created because this sandbox again failed to create `.git/index.lock` (`Operation not permitted`).
 
 ## Verification results per task
 
@@ -240,8 +243,21 @@
 - Verification pass 1: `npm run lint` passed after the D-01 code changes.
 - Verification pass 2: `npm run typecheck` passed after the D-01 code changes.
 - Verification pass 3: emitted the summary modules to `/tmp/ibnote-summary-check` with `npx tsc ... --outDir /tmp/ibnote-summary-check` and executed a seeded smoke check under Node. The result confirmed the summary includes only `submitted` records in the `2026-02-28` to `2026-03-13` window, preserves the `performedOn desc` / `updatedAt desc` recent-record ordering, counts each competency once per rated submitted record, and maps average values back to nearest letter grades.
-- Verification pass 4: `npx next build --webpack` passed after the D-01 additions.
-- Current truth: implementation and repo-side verification are in place, but the task is not yet marked done because the repo protocol requires a closeout git commit and this sandbox currently blocks commit creation (`fatal: Unable to create '.git/index.lock': Operation not permitted`).
+- Verification pass 4: `npm run build` passed in this shell on 2026-03-13, so the earlier Turbopack fallback note is no longer the best current build truth for D-01.
+- Result: task completed truthfully.
+
+### D-02 Build summary route
+
+- Added `src/app/my/summary/page.tsx` and `src/components/summary/summary-page-client.tsx` to build the protected summary route on top of `src/lib/records/use-summary.ts`.
+- The new route now handles auth loading/error/redirect states, summary loading/error states, the required empty 14-day window state, and a success view with summary stat blocks plus the recent 5 submitted records list.
+- The success view renders the D-01 data contract directly: total submitted records, counts by competency, average grade by competency using the existing letter-grade mapping, and recent submitted records ordered by `performedOn desc` with `updatedAt desc` as the tie-breaker.
+- Verification pass 1: `npm run lint` passed after the D-02 route/UI additions.
+- Verification pass 2: `npm run typecheck` passed after the D-02 route/UI additions.
+- Verification pass 3: the default `npm run build` Turbopack path still failed in this shell with `Failed to write app endpoint /page` because Next could not bind the CSS subprocess port while processing `src/styles/globals.css`.
+- Verification pass 4: `npx next build --webpack` passed on the final D-02 snapshot, and the route manifest included `/my/summary`.
+- Runtime QA note: no browser/server runtime QA is claimed for D-02 in this run because this shell's truthful verification for the slice remained repo-side checks only.
+- Closeout note: a scoped `ibnote 0.1.0 ...` D-02 commit was attempted after verification but failed in this sandbox with `fatal: Unable to create '.git/index.lock': Operation not permitted`.
+- Result: task completed truthfully with lint, typecheck, and webpack build verification, but no commit was created from this shell.
 
 ## Blockers encountered
 
@@ -253,7 +269,8 @@
 - Process blocker discovered: stale blocker text survived an external change because no mandatory smoke revalidation step ran immediately after the human update. The protocol/docs were updated so future external fixes move blocker state to `pending revalidation` until a fresh smoke check confirms `resolved` or `blocked` again.
 - Sandbox limitation note for C-09: local runtime verification was blocked in this environment because the shell could not bind a local port and could not reach the hinted `127.0.0.1:3002` dev server. That limitation no longer blocks task truth because human manual runtime QA completed the required owner-flow verification outside the sandbox on 2026-03-13.
 - Secondary verification limitation in this sandbox: the default `npm run build` Turbopack path panics with `Failed to write app endpoint /page` while processing `src/styles/globals.css` because Turbopack cannot create its CSS subprocess here. `npx next build --webpack` did pass, so the app still has a successful production build path for this run.
-- Current closeout blocker: git commit creation is blocked in this sandbox because `.git/index.lock` cannot be created. That prevents the required scoped commit for the finished C-09 truth sync and for the D-01 task closeout, so D-01 remains in progress even though its code-level verification passed.
+- Former D-01 closeout blocker resolved in current shell: git is no longer failing to create `.git/index.lock`, so the old commit-blocked claim should not be reused.
+- New D-02 closeout blocker in this shell: the scoped task-unit commit could not be created because git again failed to create `.git/index.lock` with `Operation not permitted`.
 
 ## Assumptions made
 
@@ -268,11 +285,12 @@
 
 ## Next recommended steps
 
-- Start `D-01` and implement the 14-day submitted-record summary calculation logic against the current record model and ordering rules in `spec.md`.
+- Start `D-03` and build the settings route without pulling `D-04`, `D-05`, or `D-06` forward prematurely.
 - If a future resume claims an already-running local app process is available, re-check that exact endpoint from the current shell before relying on it; the 2026-03-13 resume hint for `127.0.0.1:3002` was not reproducible here.
-- Once git writes are available again, create the scoped `ibnote 0.1.0 ...` commit for the finished C-09 closeout truth sync and then close D-01 with its own scoped commit if no new regressions appear.
+- Keep D-03+ work out of this D-02 task-unit closeout unless a new instruction explicitly expands scope.
+- If commit creation matters for the next handoff, re-check whether git can write `.git/index.lock` from the current shell before attempting the D-02 task-unit commit again.
 - Keep treating Firebase permissions as resolved unless a fresh runtime failure reintroduces that blocker.
 
 ## Night summary
 
-Phase A through Phase C are now closed. The earlier Firestore `PERMISSION_DENIED` blocker should still not be treated as the current runtime truth. This run also implemented the D-01 summary calculation layer with a pure summary utility, grade-mapping helper, and summary hook that query/filter submitted records in the 14-day `performedOn` window and aggregate counts, averages, and recent records according to spec. Repo-side verification held with `npm run lint`, `npm run typecheck`, a seeded emitted-JS summary smoke test, and `npx next build --webpack`. The remaining blocker is operational rather than product logic: this sandbox cannot create `.git/index.lock`, so the required scoped commits cannot be created and D-01 remains in progress until git writes are possible again.
+Phase A through Phase C remain closed, and Phase D now has both D-01 and D-02 closed. This run added the `/my/summary` route as a protected client page built on the existing D-01 summary hook/calculation layer, including auth/loading/error handling, the required empty 14-day state, summary stat blocks, and the recent submitted-record list. Fresh verification held with `npm run lint`, `npm run typecheck`, and `npx next build --webpack`; the default `npm run build` Turbopack path is still not the best truth in this shell because Next cannot bind the CSS subprocess port. No browser/runtime QA was claimed for D-02 in this run, and the attempted D-02 task-unit commit was blocked by `.git/index.lock` permission failure in this sandbox. The next untouched slice is D-03.
