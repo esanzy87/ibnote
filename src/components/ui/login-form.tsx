@@ -1,15 +1,18 @@
 'use client';
 
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { buildPasswordResetHref } from '@/lib/auth/ensure-auth';
 import { getFirebaseAuth } from '@/lib/firebase/auth';
 
 type AuthMode = 'sign_in' | 'create_account';
 
 interface LoginFormProps {
   nextTarget: string;
+  requestedNextTarget: string | null;
 }
 
 function getSubmitLabel(mode: AuthMode, isSubmitting: boolean): string {
@@ -65,13 +68,14 @@ function resolveAuthErrorMessage(submissionError: unknown): string {
   return '로그인 또는 계정 생성 중 문제가 생겼습니다. 잠시 후 다시 시도해 주세요.';
 }
 
-export function LoginForm({ nextTarget }: LoginFormProps) {
+export function LoginForm({ nextTarget, requestedNextTarget }: LoginFormProps) {
   const router = useRouter();
   const [mode, setMode] = useState<AuthMode>('sign_in');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const passwordResetHref = buildPasswordResetHref(requestedNextTarget);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
@@ -114,7 +118,8 @@ export function LoginForm({ nextTarget }: LoginFormProps) {
             로그인하고 아이와 한 활동 기록을 바로 이어 보세요.
           </h1>
           <p className="mt-4 text-base leading-7 text-slate-600">
-            이메일과 비밀번호로 로그인하거나 계정을 만든 뒤, 요청한 화면으로 바로 돌아갑니다.
+            이메일과 비밀번호로 로그인하거나 계정을 만든 뒤 요청한 화면으로 돌아갑니다.
+            비밀번호가 기억나지 않을 때는 별도 재설정 화면에서 안내 메일을 요청할 수 있습니다.
           </p>
 
           <p className="mt-5 text-sm leading-6 text-slate-500">
@@ -181,6 +186,18 @@ export function LoginForm({ nextTarget }: LoginFormProps) {
                   className="rounded-2xl border border-stone-300 bg-stone-50 px-4 py-3 text-base text-slate-700 outline-none"
                 />
               </label>
+
+              <div className="flex flex-wrap items-center justify-between gap-2 text-sm leading-6">
+                <p className="text-slate-500">
+                  비밀번호가 생각나지 않으면 메일로 재설정 안내를 받을 수 있어요.
+                </p>
+                <Link
+                  href={passwordResetHref}
+                  className="font-medium text-slate-700 underline decoration-stone-400 underline-offset-4 transition hover:text-slate-900"
+                >
+                  비밀번호 재설정
+                </Link>
+              </div>
 
               <div className="rounded-2xl border border-dashed border-stone-300 bg-stone-50 px-4 py-3 text-sm text-slate-500">
                 {formError ?? '이메일과 비밀번호를 입력하면 여기에서 진행 상태나 오류 안내를 확인할 수 있습니다.'}

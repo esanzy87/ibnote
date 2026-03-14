@@ -6,9 +6,9 @@
 
 ## Current control-plane snapshot
 - Active package: `002_password_reset_foundation`
-- Current state: `ready-implementation`
-- Exact next action: begin `002_password_reset_foundation` Phase A (`A-01 -> A-02 -> A-03`) from the signed-off docpack baseline; 001 remains closed/sign-off-complete truth, while its narrower signed-out redirect hardening note remains non-blocking historical polish rather than an active package blocker
-- Real blocker: `none confirmed`
+- Current state: `ready-handoff`
+- Exact next action: package 002 agent-side closeout is complete; wait for explicit human acknowledgment or next-package selection before starting new work
+- Real blocker: none currently confirmed; the earlier runtime/provider blocker was revalidated as stale on 2026-03-14 when local listener startup, local production runtime, and direct Firebase Auth reset initiation all succeeded
 - Canonical QA account truth: `qa-primary` is documented in `docs/guides/QA_TEST_ACCOUNTS.md` and currently marked `working`
 - Worker truth: no worker should be treated as live from tmux session existence alone; require fresh pane/process evidence of ongoing execution
 - Snapshot precedence rule: if older notes conflict with this snapshot, this snapshot wins unless a newer top entry explicitly replaces it
@@ -65,6 +65,8 @@
 > Put the newest blocker update at the top.
 > Keep only blockers that may still affect current unattended work or are useful as recent precedent.
 
+- [resolved] 2026-03-14 16:02 Asia/Seoul — Revalidated the former 002 runtime/provider blocker and proved it stale. Fresh checks succeeded for local listener bind, `next start -- --hostname 127.0.0.1 --port 3020`, `/reset-password` route render, canonical QA-account sign-in, and `sendPasswordResetEmail(...)` request initiation against the active Firebase/Auth project. Delivery inbox arrival was not independently checked, so keep that evidence boundary explicit, but 002 is no longer blocked at `C-01` in this environment.
+- [blocked-external] 2026-03-14 15:12 Asia/Seoul — `002_password_reset_foundation` `C-01` runtime verification is blocked in the current unattended sandbox. Attempts to start a local Next.js runtime (`next start` and a raw Node HTTP server) failed with `listen EPERM`, and a direct Firebase Auth smoke against the active `.env.local` project failed with `auth/network-request-failed`. Resume `C-01` only in an environment with local listener capability and outbound Firebase access.
 - [resolved] 2026-03-14 00:08 Asia/Seoul — Revalidated after human-reported external Firebase summary index setup. Runtime QA now reaches `/my/summary` populated and empty states on desktop/mobile without summary error, so the former D-06 index-rollout blocker is closed.
 - [resolved] 2026-03-12 18:46 Asia/Seoul — Human manually revalidated that `/my/records` loads successfully in the active runtime. Records-list access should not be treated as blocked by Firebase permissions unless a fresh runtime failure is reproduced.
 
@@ -97,6 +99,9 @@
 > Put the newest consumption record at the top.
 > Use this to mark what the agent actually read and acted on.
 
+- 2026-03-14 17:00 Asia/Seoul — Re-read BLACKBOARD + 002 tracker/docpack, classified the package as `ready-handoff`, and executed the remaining `C-03` closeout recording instead of relaunching a worker. Recorded the final human-review-style checklist pass and risk disposition in `docs/features/002_password_reset_foundation/risk_analysis.md`, marked `C-03` done in `todo.md`, and synced the package/status docs so 002 is now truthfully complete on the agent side with no further autonomous implementation work remaining.
+- 2026-03-14 16:02 Asia/Seoul — Re-read BLACKBOARD + 002 tracker, downgraded the old `C-01` blocker to pending revalidation, and ran the smallest useful truth-finding checks first. Fresh evidence proved the blocker stale: local listener bind worked, `next start -- --hostname 127.0.0.1 --port 3020` booted, `/reset-password` rendered correctly, canonical QA-account login succeeded, and `sendPasswordResetEmail(...)` returned success against the active Firebase/Auth project. Continued immediately into `C-02`, confirmed no scope drift, and reran `npm run lint`, `npm run typecheck`, and `npx next build --webpack` successfully. Current truthful next action is `C-03` human closeout recording.
+- 2026-03-14 15:12 Asia/Seoul — Re-read BLACKBOARD + 002 tracker, executed Phase A doc lock (`A-01..A-03`) plus Phase B implementation (`B-01..B-03`), and verified the new `/reset-password` route via source audit plus `npm run lint`, `npm run typecheck`, and `npx next build --webpack`. Rechecked runtime truth with the smallest useful probes, but `next start` / raw Node listeners failed with `listen EPERM` and direct Firebase Auth returned `auth/network-request-failed`, so the package is now truthfully blocked at `C-01` rather than left in a stale ready state.
 - 2026-03-14 12:00 Asia/Seoul — Re-read BLACKBOARD + 001 tracker, classified the package as `ready-handoff`, and executed the remaining agent-side `E-05` closeout reconciliation. Verified that VR-01..VR-07 evidence was already present, that VR-08 now truthfully reduces to explicit human checklist/sign-off recording rather than more engineering work, and synced `todo.md` + `NIGHT_RUN_REPORT.md` so the resumable next action remains human closeout recording instead of another worker run.
 - 2026-03-14 14:10 Asia/Seoul — Hardened unattended operating policy after recurrent checks reported state without relaunching work. Added explicit `act-first, report-second`, auto-relaunch, status-only exception, revalidation-before-escalation, and stop-point discipline rules to BLACKBOARD; added an autonomy contract to the 002 spec; and wrote `docs/guides/RECURRENT_UNATTENDED_PROMPT.md` as the recommended thin recurrent prompt.
 - 2026-03-14 13:55 Asia/Seoul — Recorded explicit sign-off for `002_password_reset_foundation` with reset-only scope and no account deletion/provider expansion/broader account lifecycle work. Synced 002 docpack statuses plus BLACKBOARD so the package is now implementation-ready and resumable from `A-01`.
@@ -132,6 +137,9 @@
 > Put the newest snippet at the top.
 > Use only for short, high-signal notes that help the next unattended run beyond the current snapshot.
 
+- 2026-03-14 17:00 Asia/Seoul — 002 is now closed agent-side through `C-03`. Do not relaunch implementation or verification workers for this package unless a human explicitly asks for rework; the correct next step is human acknowledgment or selection of the next package.
+- 2026-03-14 16:02 Asia/Seoul — 002 `C-01` and `C-02` are now complete with fresh evidence in the current environment. Runtime truth confirmed reset-request initiation only (not inbox delivery), and repo health stayed green. The next run should not relaunch implementation or re-probe the old blocker first; it should execute `C-03` final human review/closeout recording.
+- 2026-03-14 15:12 Asia/Seoul — 002 Phase A and Phase B are complete: `/login` now links to `/reset-password`, reset copy stays ambiguity-safe, and the helper path preserves sanitized `next` only for returning to login. The next run should not redo implementation; it should only rerun `C-01` in a runtime-capable environment and then continue into `C-02`.
 - 2026-03-14 10:38 Asia/Seoul — 001 E-01 main path is now evidenced: authenticated login, protected template detail, `기록 시작`, and live record-editor route all worked in direct browser automation. The only remaining E-01-adjacent gap is a narrower signed-out redirect re-check using a more reliable logout-check script; do not treat that script-hardening gap as a blocker for moving into `E-02`.
 - 2026-03-14 09:36 Asia/Seoul — If a future agent finds old `E-01 blocked` wording in tracker/report history, interpret it as historical context. Current control-plane truth is `ready-qa` with no confirmed external blocker; the required next step is to execute authenticated browser-driven verification using the canonical QA account.
 - 2026-03-14 08:12 Asia/Seoul — 001 progress snapshot: `C-02..C-06` and `D-01..D-03` are complete and synced in tracker/report. Current stop point is `E-01 blocked` until authenticated browser-driven QA can verify protected transition paths; signed-out route-surface smoke and repo verification are already green.

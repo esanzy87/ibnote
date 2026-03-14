@@ -76,6 +76,27 @@ Recorded human sign-off truth:
 - Account deletion, provider expansion, and broader account lifecycle work remain out of scope for 002.
 - Implementation may proceed on this basis.
 
+## 4.2 Closeout disposition for 2026-03-14 17:00 Asia/Seoul
+
+Final human-review-style checklist pass recorded by the agent against the implemented package and current evidence set:
+- Discoverability from `/login`: accepted. Reset entry is visible and clearly secondary to sign-in/create-account.
+- Auth clarity after adding reset affordance: accepted. The three auth actions remain distinguishable.
+- Post-submit guidance truthfulness: accepted with explicit evidence boundary. Request initiation is verified; inbox delivery is not independently claimed.
+- Account-existence leakage: accepted. Copy remains ambiguity-safe and does not depend on disclosing whether an email exists.
+- Scope drift check: accepted. No drift into account deletion, provider expansion, admin recovery, or `/my/settings` reset controls was found.
+- Runtime evidence honesty: accepted. Current package truth claims only what was freshly verified in C-01/C-02.
+
+Risk disposition:
+- R-01: accepted for launch in current form.
+- R-02: accepted with current ambiguity-safe copy.
+- R-03: partially resolved by fresh runtime verification; remaining inbox-delivery uncertainty stays explicitly out of the claimed evidence boundary.
+- R-04: resolved for 002 closeout by explicit scope audit.
+- R-05: resolved for 002 closeout by runtime-backed evidence plus explicit delivery-boundary wording.
+
+Closeout conclusion:
+- Agent-side implementation, QA, and closeout recording for `002_password_reset_foundation` are complete.
+- The package is now in truthful `ready-handoff` state pending any explicit human acknowledgment / next-package selection, not further unattended implementation.
+
 ## 5. Exit condition for this document
 
 An item can move out of this file only when:

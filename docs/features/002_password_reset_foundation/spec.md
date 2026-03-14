@@ -31,7 +31,7 @@ If this spec conflicts with the PRD, follow the PRD and update this file.
 ### 2.2 Route scope
 In-scope surfaces only:
 - `/login`
-- one dedicated minimal password-reset request route linked from `/login`
+- `/reset-password`
 
 Inherited-but-non-redesign surfaces to protect during regression:
 - `/`
@@ -42,6 +42,10 @@ Inherited-but-non-redesign surfaces to protect during regression:
 - `/my/records/[id]`
 - `/my/summary`
 - `/my/settings`
+
+Explicit non-goal inside inherited surfaces:
+- do not add reset controls to `/my/settings`
+- do not modify the existing delete-data/logout behavior as part of 002
 
 ### 2.3 Core workflow protection
 The package must not break or redefine:
@@ -109,8 +113,12 @@ Acceptance checks:
 ### 4.2 Reset request surface
 Purpose: let the user submit a password-reset request with clear expectation of what happens next.
 
+Route decision:
+- use `/reset-password` as the dedicated reset-request route for 002
+
 Default UX shape:
 - use one dedicated minimal reset-request route linked from `/login`
+- preserve a sanitized `next` query only so the user can return to the correct login context later
 - do not use a modal by default
 - do not overload the main `/login` form with inline reset states unless implementation truth shows a clearly smaller and equally understandable path
 
@@ -118,16 +126,20 @@ Required outcomes:
 - email entry is simple and obvious
 - success/help/error messaging is understandable
 - no unsupported promises are made about timing or delivery certainty
+- the user can return to `/login` without losing the intended protected-route context
 
 Rules:
 - use standard reset-email behavior from the current auth provider stack
 - do not create fake support guarantees
 - do not expose whether an email is registered
+- do not ask for a password on the reset-request route
+- do not add delete-account, provider, or settings-management actions to the reset route
 
 Acceptance checks:
 - the form can be completed with minimal ambiguity
 - the post-submit state gives the user a clear next step
 - copy remains consistent with 001 tone
+- back-to-login behavior preserves the sanitized `next` context when present
 
 ## 5. Verification matrix
 
@@ -140,6 +152,15 @@ Acceptance checks:
 | VR-05 | Runtime reset truth boundary explicit | Request initiation is verified, and delivery evidence level is stated truthfully | QA note with evidence boundary |
 | VR-06 | Repo health retained | lint/typecheck/build pass | Command outputs |
 | VR-07 | Governance complete | Human sign-off recorded and open risks dispositioned | Sign-off note |
+
+### 5.1 Closeout evidence defaults
+
+- Route choice evidence: `/login` links to `/reset-password`, and `/reset-password` stays limited to reset-request guidance plus a return path to login.
+- Runtime evidence minimum: verify request initiation against the active Firebase/Auth runtime with a known email/password QA account and confirm the product shows ambiguity-safe post-submit guidance.
+- Delivery evidence boundary: do not claim inbox delivery unless a separate inbox check confirms the email arrived. If only request initiation is verified, record that boundary explicitly.
+- Negative-case rule: invalid-email handling may be tested directly, but do not depend on a `user-not-found` style runtime branch for acceptance because 002 messaging must stay account-existence-safe regardless of provider behavior.
+- Repo-health commands: `npm run lint`, `npm run typecheck`, and `npm run build`.
+- Provider/env failure rule: if the reset request fails because of Firebase/Auth project configuration or delivery setup, record that as runtime/provider truth rather than as completed product truth.
 
 ## 6. Task plan
 

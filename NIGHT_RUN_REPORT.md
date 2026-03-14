@@ -2,6 +2,12 @@
 
 ## Completed tasks
 
+- `B-03` Align auth messaging so sign-in/create/reset remain clear (002)
+- `B-02` Implement reset request flow and copy states (002)
+- `B-01` Add reset discoverability to login surface (002)
+- `A-03` Define verification matrix and closeout evidence (002)
+- `A-02` Choose smallest valid reset UX shape (002)
+- `A-01` Freeze 002 scope and exclusions (002)
 - `D-03` Capture before/after evidence for each in-scope route (001)
 - `D-02` Run controlled vocabulary consistency audit across in-scope routes (001)
 - `D-01` Apply spacing/type/button/card consistency pass across in-scope routes (001)
@@ -47,12 +53,74 @@
 
 ## Current in-progress task
 
-- Canonical current truth as of 2026-03-14 13:46 Asia/Seoul: `001_brand_marketing_design_foundation` is now signed off and closed, and `002_password_reset_foundation` is the active next package in `ready-docs` state.
-- Current work is doc-only: 002 PRD/spec/todo/ADR/risk docs were drafted, while 001 closeout truth was locked across its docpack and control-plane references.
-- Current blocker truth: no implementation blocker is active because 002 has not started yet; the current gate is human review/sign-off of the 002 docpack.
-- Stop state for this run snapshot: repo is resumable at next-feature planning. The next concrete action is to review/approve 002 docs before any implementation run begins.
+- Canonical current truth as of 2026-03-14 17:00 Asia/Seoul: `002_password_reset_foundation` is complete through Phase C (`C-03`) and now closed agent-side in `ready-handoff` state.
+- Current work stop point: no further unattended implementation work remains for 002; the correct next action is explicit human acknowledgment or next-package selection.
+- Current blocker truth: no external blocker is currently confirmed. Fresh revalidation succeeded for local listener bind, local production runtime startup, canonical QA-account sign-in, and Firebase password-reset request initiation.
+- Evidence boundary for the current stop state: request initiation is verified against the active Firebase/Auth runtime, but inbox delivery was not independently checked in this run and should not be claimed as verified.
 
 ## Verification results per task
+
+### A-01 Freeze 002 scope and exclusions (002)
+
+- Synced `spec.md`, `adr.md`, and `todo.md` so 002 now explicitly freezes password-reset-only scope and excludes new reset controls on `/my/settings` plus any delete/provider/admin expansion.
+- Verification pass 1: reread the updated `docs/features/002_password_reset_foundation/spec.md` route-scope and guardrail sections to confirm the non-goals are explicit instead of implied.
+- Verification pass 2: reread the updated `docs/features/002_password_reset_foundation/adr.md` decisions to confirm scope-lock consequences are recorded, including no settings-surface reset expansion.
+- Result: task completed truthfully.
+
+### A-02 Choose smallest valid reset UX shape (002)
+
+- Fixed the 002 route shape to one dedicated minimal reset route: `/reset-password`, linked from `/login`, with sanitized `next` preserved only for return-to-login context.
+- Verification pass 1: reread the updated `docs/features/002_password_reset_foundation/spec.md` reset-surface section to confirm `/reset-password` is the chosen shape and modal/inline expansion remains out of scope.
+- Verification pass 2: reread `docs/features/002_password_reset_foundation/adr.md` ADR-003 to confirm the route decision is accepted and resumable for implementation.
+- Result: task completed truthfully.
+
+### A-03 Define verification matrix and closeout evidence (002)
+
+- Added explicit closeout defaults for route evidence, reset-request runtime evidence, delivery-boundary wording, negative-case handling, repo-health commands, and provider/env blocker reporting.
+- Verification pass 1: reread the updated `docs/features/002_password_reset_foundation/spec.md` verification matrix and `5.1 Closeout evidence defaults` to confirm request-initiation versus delivery truth is separated explicitly.
+- Verification pass 2: updated `docs/features/002_password_reset_foundation/todo.md` so the tracker no longer leaves Phase A as a passive `todo` despite the signed-off doc lock.
+- Result: task completed truthfully.
+
+### B-01 Add reset discoverability to login surface (002)
+
+- Updated [src/app/login/page.tsx](/Users/junwon/projects/esanzy87/ibnote/src/app/login/page.tsx) and [src/components/ui/login-form.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/ui/login-form.tsx) so `/login` now explains reset as a secondary path and exposes a dedicated `비밀번호 재설정` link without disturbing sign-in/create-account mode controls.
+- Verification pass 1: `npm run lint` passed.
+- Verification pass 2: `npm run typecheck` passed.
+- Verification pass 3: `npx next build --webpack` passed and included the auth surface changes in the production bundle.
+- Result: task completed truthfully.
+
+### B-02 Implement reset request flow and copy states (002)
+
+- Added [src/app/reset-password/page.tsx](/Users/junwon/projects/esanzy87/ibnote/src/app/reset-password/page.tsx) and [src/components/ui/password-reset-request-form.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/ui/password-reset-request-form.tsx) with email-only reset submission, ambiguity-safe success wording, and explicit invalid-email / rate-limit / network guidance.
+- Verification pass 1: `npm run lint` passed.
+- Verification pass 2: `npm run typecheck` passed.
+- Verification pass 3: `npx next build --webpack` passed and the route manifest now includes `/reset-password`.
+- Result: task completed truthfully.
+
+### B-03 Align auth messaging so sign-in/create/reset remain clear (002)
+
+- Added `buildPasswordResetHref(...)` in [src/lib/auth/ensure-auth.ts](/Users/junwon/projects/esanzy87/ibnote/src/lib/auth/ensure-auth.ts) so sanitized `next` is preserved only between `/login` and `/reset-password`, while login/reset copy now keeps the three auth actions distinct.
+- Verification pass 1: reread the updated auth copy and helper wiring in [src/components/ui/login-form.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/ui/login-form.tsx), [src/app/reset-password/page.tsx](/Users/junwon/projects/esanzy87/ibnote/src/app/reset-password/page.tsx), and [src/components/ui/password-reset-request-form.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/ui/password-reset-request-form.tsx) to confirm reset remains a separate, secondary flow.
+- Verification pass 2: `npm run lint` passed.
+- Verification pass 3: `npm run typecheck` plus `npx next build --webpack` both passed.
+- Result: task completed truthfully.
+
+### C-01 Run runtime QA for reset request plus auth regression smoke (002)
+
+- Revalidation was rerun before preserving the earlier blocker, and the old blocker proved stale.
+- Verification pass 1: raw local listener bind on `127.0.0.1:3033` succeeded, disproving the earlier `listen EPERM` assumption.
+- Verification pass 2: `npm run start -- --hostname 127.0.0.1 --port 3020` booted successfully, `/reset-password` rendered the expected reset-copy surface, and the runtime remained healthy on the current production build.
+- Verification pass 3: direct Firebase Auth revalidation against the active `.env.local` project succeeded for both canonical QA-account sign-in and `sendPasswordResetEmail(...)` request initiation; the JSON evidence was written to `tmp/qa-logs/002_c01_auth_probe.json`.
+- Verification boundary note: this run verified reset-request initiation against the active runtime/provider, but did not independently verify inbox delivery. Delivery must remain explicitly unclaimed.
+- Result: task completed truthfully.
+
+### C-02 Run scope audit and lint/typecheck/build (002)
+
+- Scope audit confirmed 002 remains constrained to `/login`, `/reset-password`, and the helper path that preserves only sanitized login-return context.
+- Verification pass 1: source audit confirmed no drift into account deletion, provider expansion, admin recovery, or `/my/settings` reset controls.
+- Verification pass 2: `npm run lint` passed.
+- Verification pass 3: `npm run typecheck` passed and `npx next build --webpack` passed, preserving repo health after the fresh runtime QA revalidation.
+- Result: task completed truthfully.
 
 ### A-01 Scaffold Next.js App Router project
 
@@ -492,13 +560,13 @@
 
 ## Next recommended steps
 
-- Treat `001_brand_marketing_design_foundation` as package-closeout ready; the next human-facing step is explicit checklist/sign-off recording, not further unattended implementation.
-- Keep scope fixed to 001 launch-surface rebrand boundaries (no capability/auth/backend/workflow expansion, no product rename from `IBNote`).
-- Keep the narrower signed-out redirect re-check as follow-up QA hardening only; do not let that dedicated script gap masquerade as the current package blocker unless a fresh direct repro shows an actual runtime regression.
+- Treat `002_password_reset_foundation` as package-closeout complete on the agent side; the next human-facing step is explicit acknowledgment or next-package selection, not further unattended implementation.
+- Keep 002 scope fixed to password reset only; do not reopen it into account deletion, provider expansion, admin recovery, or `/my/settings` reset controls unless a human explicitly broadens scope.
+- If a future run revisits 002, preserve the current evidence boundary: reset-request initiation is verified, inbox delivery is not independently confirmed.
 
 ## Night summary
 
-001 implementation progressed through Phase E with sequential task execution and verification-backed evidence. Login/templates/template-detail/summary/settings launch-surface copy and hierarchy refinements were applied, cross-route vocabulary/consistency pass was completed, authenticated workflow QA plus exclusion audit plus repo-health checks remained green (`npm run lint`, `npm run typecheck`, `npm run build`), and final agent-side closeout reconciliation was synced. Work is now truthfully at `ready-handoff`: package execution is complete on the agent side, with explicit human checklist/sign-off recording remaining as the closeout artifact.
+002 password-reset work is now closed agent-side. Phase A scope lock, Phase B implementation, and Phase C verification/closeout all completed with synced tracker/control-plane/report truth. Fresh runtime evidence confirmed local runtime startup, canonical QA-account sign-in, and Firebase password-reset request initiation, while keeping the delivery boundary honest (inbox arrival not independently verified). The final checklist/risk disposition was recorded, so the package now sits truthfully at `ready-handoff` with no further unattended implementation work remaining.
 
 - Notification: `openclaw system event --text "Reminder: IBNote 001 unattended coding worker reached a stop point; check NIGHT_RUN_REPORT.md" --mode now` executed successfully.
 

@@ -2,7 +2,7 @@
 
 IBNote is a web-based worksheet template and growth-record tool for parents of elementary students.
 
-Current implementation status: bootstrap is still open and tracked in closeout mode (`D-04` complete, `D-05` next).
+Current implementation status: `000_bootstrap` is complete and closed.
 
 ## Bootstrap docs map
 
@@ -13,6 +13,14 @@ Current implementation status: bootstrap is still open and tracked in closeout m
 - Risks and closeout classification: `docs/features/000_bootstrap/risk_analysis.md`
 - Human intervention and handoff control plane: `docs/BLACKBOARD.md`
 - Run outcomes and verification notes: `NIGHT_RUN_REPORT.md`
+
+## Next feature docs map
+
+- Launch-facing brand/marketing/design foundation package: `docs/features/001_brand_marketing_design_foundation/prd.md`
+- Implementation specification: `docs/features/001_brand_marketing_design_foundation/spec.md`
+- Execution tracker: `docs/features/001_brand_marketing_design_foundation/todo.md`
+- Decisions/defaults: `docs/features/001_brand_marketing_design_foundation/adr.md`
+- Risk and review notes: `docs/features/001_brand_marketing_design_foundation/risk_analysis.md`
 
 ## Closeout scope rule
 

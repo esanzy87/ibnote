@@ -25,11 +25,11 @@ This document records fixed decisions for the 002 package so planning and implem
   - 002 stays small and launch-relevant
   - deletion can be designed separately with the right safeguards later
 
-## ADR-003. Prefer a dedicated minimal reset-request route as the default UX shape
+## ADR-003. Prefer `/reset-password` as the dedicated minimal reset-request route
 
 - Status: accepted
 - Context: reset can be made discoverable in multiple valid ways, but unattended implementation becomes safer when the UX shape is fixed up front.
-- Decision: use a dedicated minimal reset-request route as the default implementation shape, linked from `/login`, unless implementation truth reveals a smaller route-equivalent shape with the same clarity and lower risk.
+- Decision: use `/reset-password` as the dedicated minimal reset-request route for 002, linked from `/login`. Preserve a sanitized `next` query only for the return-to-login context rather than expanding the reset route into a broader auth surface.
 - Consequences:
   - `/login` stays simpler and less crowded
   - reset flow QA becomes easier to isolate
@@ -52,3 +52,12 @@ This document records fixed decisions for the 002 package so planning and implem
 - Consequences:
   - safer auth messaging
   - clearer privacy posture
+
+## ADR-006. Treat existing settings account actions as regression-only during 002
+
+- Status: accepted
+- Context: `/my/settings` already contains account-adjacent actions from the baseline product, but 002 is only meant to add password-reset discovery and request initiation.
+- Decision: do not add reset controls to `/my/settings`, and do not modify the existing delete-data/logout behaviors as part of 002.
+- Consequences:
+  - 002 stays narrowly focused on reset recovery
+  - regression scope stays clear without reopening broader lifecycle design

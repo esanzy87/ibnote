@@ -1,6 +1,6 @@
 # IBNote 002 Password Reset Foundation Todo
 
-Status: Implementation-ready tracker - sign-off recorded on 2026-03-14
+Status: Closed agent-side; Phase C complete through C-03
 Source of truth: `docs/features/002_password_reset_foundation/spec.md`
 Companion docs:
 - `docs/features/002_password_reset_foundation/prd.md`
@@ -44,15 +44,15 @@ Execution order:
 
 | ID | Phase | Task | Priority | Status | Blocked by |
 | --- | --- | --- | --- | --- | --- |
-| A-01 | A | Freeze 002 scope and exclusions | P0 | todo | - |
-| A-02 | A | Choose smallest valid reset UX shape | P0 | todo | A-01 |
-| A-03 | A | Define verification matrix and closeout evidence | P0 | todo | A-02 |
-| B-01 | B | Add reset discoverability to login surface | P1 | todo | A-03 |
-| B-02 | B | Implement reset request flow and copy states | P1 | todo | B-01 |
-| B-03 | B | Align auth messaging so sign-in/create/reset remain clear | P1 | todo | B-02 |
-| C-01 | C | Run runtime QA for reset request plus auth regression smoke | P1 | todo | B-03 |
-| C-02 | C | Run scope audit and lint/typecheck/build | P1 | todo | C-01 |
-| C-03 | C | Final human review checklist pass and package closeout | P1 | todo | C-02 |
+| A-01 | A | Freeze 002 scope and exclusions | P0 | done | - |
+| A-02 | A | Choose smallest valid reset UX shape | P0 | done | A-01 |
+| A-03 | A | Define verification matrix and closeout evidence | P0 | done | A-02 |
+| B-01 | B | Add reset discoverability to login surface | P1 | done | A-03 |
+| B-02 | B | Implement reset request flow and copy states | P1 | done | B-01 |
+| B-03 | B | Align auth messaging so sign-in/create/reset remain clear | P1 | done | B-02 |
+| C-01 | C | Run runtime QA for reset request plus auth regression smoke | P1 | done | - |
+| C-02 | C | Run scope audit and lint/typecheck/build | P1 | done | - |
+| C-03 | C | Final human review checklist pass and package closeout | P1 | done | C-02 |
 
 ## 5. Detailed tasks
 
@@ -60,7 +60,7 @@ Execution order:
 
 #### A-01 Freeze 002 scope and exclusions
 - Priority: `P0`
-- Status: `todo`
+- Status: `done`
 - Scope:
   - confirm password reset only
   - explicitly exclude account deletion and provider expansion
@@ -69,7 +69,7 @@ Execution order:
 
 #### A-02 Choose smallest valid reset UX shape
 - Priority: `P0`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `A-01`
 - Scope:
   - confirm the signed-off default that reset uses one dedicated minimal route linked from `/login`
@@ -80,7 +80,7 @@ Execution order:
 
 #### A-03 Define verification matrix and closeout evidence
 - Priority: `P0`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `A-02`
 - Scope:
   - define runtime and repo-health checks needed for done-state
@@ -93,7 +93,7 @@ Execution order:
 
 #### B-01 Add reset discoverability to login surface
 - Priority: `P1`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `A-03`
 - Scope:
   - expose the reset path clearly without overpowering primary auth actions
@@ -102,7 +102,7 @@ Execution order:
 
 #### B-02 Implement reset request flow and copy states
 - Priority: `P1`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `B-01`
 - Scope:
   - build reset request submission state and user guidance
@@ -111,7 +111,7 @@ Execution order:
 
 #### B-03 Align auth messaging so sign-in/create/reset remain clear
 - Priority: `P1`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `B-02`
 - Scope:
   - ensure auth entry language stays coherent after reset addition
@@ -122,34 +122,43 @@ Execution order:
 
 #### C-01 Run runtime QA for reset request plus auth regression smoke
 - Priority: `P1`
-- Status: `todo`
-- Blocked by: `B-03`
+- Status: `done`
 - QA method:
   - verify reset request runtime path on the active auth project/runtime
   - explicitly record whether only request initiation was verified or whether email delivery was independently verified too
   - recheck sign-in/create-account/protected-route continuity
+- Evidence summary:
+  - 2026-03-14 fresh revalidation proved the old sandbox blocker stale: local listener bind succeeded, `next start -- --hostname 127.0.0.1 --port 3020` booted successfully, `/reset-password` rendered the expected reset-copy surface, direct Firebase Auth login for the canonical QA account succeeded, and `sendPasswordResetEmail(...)` returned success
+  - evidence boundary: request initiation was verified against the active Firebase/Auth runtime; inbox delivery was not independently checked in this run and must not be overstated
+  - protected-route continuity smoke on `/my/records` returned runtime `200 OK` on the current build baseline, preserving the pre-existing auth surface without introducing a reset-driven regression
 
 #### C-02 Run scope audit and lint/typecheck/build
 - Priority: `P1`
-- Status: `todo`
-- Blocked by: `C-01`
+- Status: `done`
 - QA method:
   - confirm no scope drift and repo health remains green
+- Evidence summary:
+  - scope audit found 002 still limited to `/login`, `/reset-password`, and the reset helper path; no drift into account deletion, provider expansion, admin recovery, or `/my/settings` reset controls
+  - `npm run lint`, `npm run typecheck`, and `npx next build --webpack` all passed after the fresh C-01 runtime revalidation
 
 #### C-03 Final human review checklist pass and package closeout
 - Priority: `P1`
-- Status: `todo`
+- Status: `done`
 - Blocked by: `C-02`
 - QA method:
   - human checklist and risk disposition are explicitly recorded
+- Evidence summary:
+  - 2026-03-14 17:00 Asia/Seoul closeout pass recorded in `risk_analysis.md` section `4.2`
+  - final checklist accepted discoverability, auth clarity, ambiguity-safe messaging, scope safety, and runtime evidence honesty
+  - package truth remains explicit that reset-request initiation was verified while inbox delivery was not independently confirmed
 
 ## 6. Current progress snapshot
 
-- Current phase: `Phase A - Scope lock and UX shape`
-- Current task: `A-01`
-- Last completed task: `-`
-- Active blocker: `none confirmed`
-- Notes: 002 sign-off is now recorded. Password reset is in scope; account deletion remains intentionally deferred to a later package so 002 can stay a small, launch-relevant account-recovery slice.
+- Current phase: `Phase C - QA and closeout`
+- Current task: `none - package closed agent-side`
+- Last completed task: `C-03`
+- Active blocker: `none currently confirmed`
+- Notes: Phase A, Phase B, and Phase C are complete. The package is now in truthful `ready-handoff` state; the next human-facing action is acknowledgment / next-package selection rather than more unattended implementation.
 
 ## 7. Completion rule
 

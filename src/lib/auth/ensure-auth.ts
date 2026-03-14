@@ -24,6 +24,16 @@ export function buildLoginHref(nextPath: string | null | undefined): string {
   return `/login?next=${encodeURIComponent(safeNextPath)}`;
 }
 
+export function buildPasswordResetHref(nextPath: string | null | undefined): string {
+  const safeNextPath = normalizeNextPath(nextPath);
+
+  if (!safeNextPath) {
+    return '/reset-password';
+  }
+
+  return `/reset-password?next=${encodeURIComponent(safeNextPath)}`;
+}
+
 export function getPostLoginPath(nextPath: string | null | undefined): string {
   return normalizeNextPath(nextPath) ?? DEFAULT_POST_LOGIN_PATH;
 }

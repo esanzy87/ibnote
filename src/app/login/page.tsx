@@ -1,4 +1,4 @@
-import { getPostLoginPath } from '@/lib/auth/ensure-auth';
+import { getPostLoginPath, normalizeNextPath } from '@/lib/auth/ensure-auth';
 import { LoginForm } from '@/components/ui/login-form';
 
 type LoginPageProps = {
@@ -21,7 +21,8 @@ function getNextValue(nextValue: string | string[] | undefined): string | null {
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const resolvedSearchParams: LoginSearchParams = searchParams ? await searchParams : {};
-  const nextTarget = getPostLoginPath(getNextValue(resolvedSearchParams.next));
+  const requestedNextTarget = normalizeNextPath(getNextValue(resolvedSearchParams.next));
+  const nextTarget = getPostLoginPath(requestedNextTarget);
 
-  return <LoginForm nextTarget={nextTarget} />;
+  return <LoginForm nextTarget={nextTarget} requestedNextTarget={requestedNextTarget} />;
 }
