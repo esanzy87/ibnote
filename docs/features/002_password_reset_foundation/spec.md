@@ -158,3 +158,19 @@ Acceptance checks:
 3. Prefer standard provider behavior over custom recovery logic.
 4. If reset UX can be done more simply, choose the simpler valid option.
 5. Do not let 002 silently absorb account deletion work.
+
+## 8. Autonomous execution contract
+
+Use this section when the package is resumed by a recurrent check or unattended restart.
+
+Rules:
+- If the current package is incomplete, the next tracker task is documented, and no true external blocker is active, start or resume that task without waiting for fresh human confirmation.
+- If a prior worker stopped unexpectedly but the documented next action is unchanged and still safe, auto-relaunch implementation from that next action.
+- Prefer acting first and reporting second; do not stop at a status-only update when in-scope work still remains.
+- Only escalate instead of continuing when one of the following is true:
+  - a human product/scope decision is required
+  - destructive ambiguity exists
+  - repeated provider/env/runtime failure prevents truthful progress
+  - the package has reached a truthful handoff/sign-off stop point
+- If provider/env truth may have changed, mark the old blocker `pending-revalidation`, run the smallest useful recheck, and continue if the blocker no longer reproduces.
+- Before stopping, sync `todo.md`, `docs/BLACKBOARD.md`, and `NIGHT_RUN_REPORT.md` so the next unattended agent can resume from exact current truth.
