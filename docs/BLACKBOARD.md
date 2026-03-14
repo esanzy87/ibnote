@@ -5,9 +5,9 @@
 > Non-goal: this is **not** the main task tracker. `docs/features/000_bootstrap/todo.md` remains the official execution tracker.
 
 ## Current control-plane snapshot
-- Active package: `002_password_reset_foundation`
-- Current state: `ready-handoff`
-- Exact next action: package 002 agent-side closeout is complete; wait for explicit human acknowledgment or next-package selection before starting new work
+- Active package: `003_learning_experience_foundation`
+- Current state: `ready-implementation`
+- Exact next action: begin `003_learning_experience_foundation` Phase A (`A-01 -> A-02 -> A-03`) from the signed-off docpack baseline; 002 remains closed agent-side and future human sign-off can be batched rather than forcing a stop after each package
 - Real blocker: none currently confirmed; the earlier runtime/provider blocker was revalidated as stale on 2026-03-14 when local listener startup, local production runtime, and direct Firebase Auth reset initiation all succeeded
 - Canonical QA account truth: `qa-primary` is documented in `docs/guides/QA_TEST_ACCOUNTS.md` and currently marked `working`
 - Worker truth: no worker should be treated as live from tmux session existence alone; require fresh pane/process evidence of ongoing execution
@@ -99,6 +99,8 @@
 > Put the newest consumption record at the top.
 > Use this to mark what the agent actually read and acted on.
 
+- 2026-03-14 17:31 Asia/Seoul — Recorded explicit sign-off for `003_learning_experience_foundation`, synced the hardening updates into implementation-ready status fields, and moved BLACKBOARD to `ready-implementation` with `A-01 -> A-03` as the resumable next action. 003 stays anchored to Flow A/B/C only, while account lifecycle, AI/recommendation, and platform expansion remain out of scope.
+- 2026-03-14 17:25 Asia/Seoul — Created the initial `003_learning_experience_foundation` docpack (`prd/spec/todo/adr/risk_analysis`) and promoted it to the active next-package candidate in `ready-docs` state. 003 is intentionally framed as a substantial learning-experience package spanning template discovery, record writing, and revisit/summary continuity, while 002 remains agent-side closed and future human sign-off may be batched instead of forcing per-package interruption.
 - 2026-03-14 17:00 Asia/Seoul — Re-read BLACKBOARD + 002 tracker/docpack, classified the package as `ready-handoff`, and executed the remaining `C-03` closeout recording instead of relaunching a worker. Recorded the final human-review-style checklist pass and risk disposition in `docs/features/002_password_reset_foundation/risk_analysis.md`, marked `C-03` done in `todo.md`, and synced the package/status docs so 002 is now truthfully complete on the agent side with no further autonomous implementation work remaining.
 - 2026-03-14 16:02 Asia/Seoul — Re-read BLACKBOARD + 002 tracker, downgraded the old `C-01` blocker to pending revalidation, and ran the smallest useful truth-finding checks first. Fresh evidence proved the blocker stale: local listener bind worked, `next start -- --hostname 127.0.0.1 --port 3020` booted, `/reset-password` rendered correctly, canonical QA-account login succeeded, and `sendPasswordResetEmail(...)` returned success against the active Firebase/Auth project. Continued immediately into `C-02`, confirmed no scope drift, and reran `npm run lint`, `npm run typecheck`, and `npx next build --webpack` successfully. Current truthful next action is `C-03` human closeout recording.
 - 2026-03-14 15:12 Asia/Seoul — Re-read BLACKBOARD + 002 tracker, executed Phase A doc lock (`A-01..A-03`) plus Phase B implementation (`B-01..B-03`), and verified the new `/reset-password` route via source audit plus `npm run lint`, `npm run typecheck`, and `npx next build --webpack`. Rechecked runtime truth with the smallest useful probes, but `next start` / raw Node listeners failed with `listen EPERM` and direct Firebase Auth returned `auth/network-request-failed`, so the package is now truthfully blocked at `C-01` rather than left in a stale ready state.
