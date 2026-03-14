@@ -1,6 +1,6 @@
 # IBNote 002 Password Reset Foundation ADR
 
-Status: Active defaults for 002 package planning
+Status: Signed-off defaults for 002 implementation
 Source of truth: `docs/features/002_password_reset_foundation/prd.md`
 
 ## 1. Purpose

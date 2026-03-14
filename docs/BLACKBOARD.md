@@ -6,8 +6,8 @@
 
 ## Current control-plane snapshot
 - Active package: `002_password_reset_foundation`
-- Current state: `ready-docs`
-- Exact next action: review and sign off the new 002 docpack (`prd/spec/todo/adr/risk_analysis`) so implementation can begin; 001 is now treated as closed/sign-off-complete truth, while its narrower signed-out redirect hardening note remains non-blocking historical polish rather than an active package blocker
+- Current state: `ready-implementation`
+- Exact next action: begin `002_password_reset_foundation` Phase A (`A-01 -> A-02 -> A-03`) from the signed-off docpack baseline; 001 remains closed/sign-off-complete truth, while its narrower signed-out redirect hardening note remains non-blocking historical polish rather than an active package blocker
 - Real blocker: `none confirmed`
 - Canonical QA account truth: `qa-primary` is documented in `docs/guides/QA_TEST_ACCOUNTS.md` and currently marked `working`
 - Worker truth: no worker should be treated as live from tmux session existence alone; require fresh pane/process evidence of ongoing execution
@@ -91,6 +91,7 @@
 > Use this to mark what the agent actually read and acted on.
 
 - 2026-03-14 12:00 Asia/Seoul — Re-read BLACKBOARD + 001 tracker, classified the package as `ready-handoff`, and executed the remaining agent-side `E-05` closeout reconciliation. Verified that VR-01..VR-07 evidence was already present, that VR-08 now truthfully reduces to explicit human checklist/sign-off recording rather than more engineering work, and synced `todo.md` + `NIGHT_RUN_REPORT.md` so the resumable next action remains human closeout recording instead of another worker run.
+- 2026-03-14 13:55 Asia/Seoul — Recorded explicit sign-off for `002_password_reset_foundation` with reset-only scope and no account deletion/provider expansion/broader account lifecycle work. Synced 002 docpack statuses plus BLACKBOARD so the package is now implementation-ready and resumable from `A-01`.
 - 2026-03-14 13:46 Asia/Seoul — Locked 001 as signed-off closeout truth across its docpack (`prd/spec/todo/adr/risk_analysis`), selected `002_password_reset_foundation` as the next package, and created the initial 002 docpack (`prd/spec/todo/adr/risk_analysis`). Current resumable next action is human review/sign-off of 002 docs before any implementation starts.
 - 2026-03-14 13:09 Asia/Seoul — Re-read the 001 closeout docs and executed `E-05` final human-review-style checklist pass. Recorded checklist disposition plus explicit risk acceptance/defer/resolution notes in `risk_analysis.md`, then synced `todo.md` and BLACKBOARD so 001 is now in truthful `ready-handoff` state awaiting human sign-off / next-feature selection rather than further agent-side implementation.
 - 2026-03-14 11:24 Asia/Seoul — Re-read BLACKBOARD + 001 tracker, classified the package as non-blocked Phase E closeout, and executed `E-03 -> E-04` sequentially. Scope audit against the 001 exclusion list found no drift into password reset/account deletion, new auth providers, AI, CMS/admin/analytics, uploads, payments/subscriptions, or notifications. Repo-health verification also passed with `npm run lint`, `npm run typecheck`, and `npm run build`, so the resumable next action is now `E-05` final human review checklist pass and package closeout.

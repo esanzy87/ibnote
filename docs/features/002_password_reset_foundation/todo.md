@@ -1,6 +1,6 @@
 # IBNote 002 Password Reset Foundation Todo
 
-Status: Draft tracker - awaiting sign-off before implementation
+Status: Implementation-ready tracker - sign-off recorded on 2026-03-14
 Source of truth: `docs/features/002_password_reset_foundation/spec.md`
 Companion docs:
 - `docs/features/002_password_reset_foundation/prd.md`
@@ -16,7 +16,7 @@ Rules for the coding agent:
 - do not start a task before its blockers are done
 - if this file conflicts with `spec.md`, `spec.md` wins and this file is updated immediately
 - do not convert password reset work into broader account-lifecycle expansion
-- do not start implementation until the 002 docpack is reviewed and sign-off truth is recorded
+- implementation may start from Phase A because sign-off truth is now recorded; keep scope locked to password reset only
 
 Allowed status values:
 - `todo`
@@ -36,9 +36,8 @@ Execution order:
 
 | ID | Blocker | Affects | Clear when |
 | --- | --- | --- | --- |
-| GB-01 | 002 sign-off missing | All phases | PRD/spec/todo/risk docs are approved |
-| GB-02 | Scope drift risk | Phases B-C | delete/provider/admin boundaries are explicit |
-| GB-03 | Reset runtime truth unknown | Phase C | active runtime reset path is verified |
+| GB-01 | Scope drift risk | Phases B-C | delete/provider/admin boundaries are explicit |
+| GB-02 | Reset runtime truth unknown | Phase C | active runtime reset path is verified |
 
 ## 4. Task ledger
 
@@ -142,10 +141,10 @@ Execution order:
 ## 6. Current progress snapshot
 
 - Current phase: `Phase A - Scope lock and UX shape`
-- Current task: `awaiting sign-off`
+- Current task: `A-01`
 - Last completed task: `-`
-- Active blocker: `GB-01 002 sign-off missing`
-- Notes: 002 is intentionally narrow. Password reset is in scope; account deletion is intentionally deferred to a later package so 002 can remain a small, launch-relevant account-recovery slice.
+- Active blocker: `none confirmed`
+- Notes: 002 sign-off is now recorded. Password reset is in scope; account deletion remains intentionally deferred to a later package so 002 can stay a small, launch-relevant account-recovery slice.
 
 ## 7. Completion rule
 

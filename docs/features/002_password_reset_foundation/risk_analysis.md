@@ -1,6 +1,6 @@
 # IBNote 002 Password Reset Foundation Risk Analysis
 
-Status: Open risks and review-sensitive items
+Status: Signed off for implementation start; open risks remain tracked here
 Source of truth: `docs/features/002_password_reset_foundation/prd.md`
 
 ## 1. Purpose
@@ -67,6 +67,14 @@ Before package closeout, a human should review:
 4. no account-existence leakage in messaging
 5. no scope drift into deletion/provider/admin flows
 6. runtime evidence quality and honesty
+
+## 4.1 Sign-off record for 2026-03-14
+
+Recorded human sign-off truth:
+- `002_password_reset_foundation sign-off ok.`
+- This package includes email/password self-serve password reset only.
+- Account deletion, provider expansion, and broader account lifecycle work remain out of scope for 002.
+- Implementation may proceed on this basis.
 
 ## 5. Exit condition for this document
 

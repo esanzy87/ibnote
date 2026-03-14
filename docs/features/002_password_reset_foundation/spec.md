@@ -1,6 +1,6 @@
 # IBNote 002 Password Reset Foundation Spec
 
-Status: Draft for sign-off
+Status: Signed off - implementation-ready baseline
 Source of truth: `docs/features/002_password_reset_foundation/prd.md`
 Companion docs:
 - `docs/features/002_password_reset_foundation/todo.md`
