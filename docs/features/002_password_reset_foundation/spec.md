@@ -174,3 +174,4 @@ Rules:
   - the package has reached a truthful handoff/sign-off stop point
 - If provider/env truth may have changed, mark the old blocker `pending-revalidation`, run the smallest useful recheck, and continue if the blocker no longer reproduces.
 - Before stopping, sync `todo.md`, `docs/BLACKBOARD.md`, and `NIGHT_RUN_REPORT.md` so the next unattended agent can resume from exact current truth.
+- For recurrent/resume operator wording, use the recommended thin prompt documented in `docs/guides/RECURRENT_UNATTENDED_PROMPT.md` unless a newer repo-level instruction overrides it.
