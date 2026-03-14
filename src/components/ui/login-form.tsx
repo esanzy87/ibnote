@@ -22,8 +22,47 @@ function getSubmitLabel(mode: AuthMode, isSubmitting: boolean): string {
 
 function getModeDescription(mode: AuthMode): string {
   return mode === 'sign_in'
-    ? '기존 계정으로 로그인합니다.'
-    : '새 계정을 만들고 바로 서비스로 들어갑니다.';
+    ? '기존 계정으로 로그인하면 저장해 둔 기록과 최근 흐름을 바로 확인할 수 있습니다.'
+    : '처음이라면 계정을 만든 뒤 바로 템플릿을 고르고 기록을 시작할 수 있습니다.';
+}
+
+function getAuthStateMessage(mode: AuthMode, isSubmitting: boolean, formError: string | null): string {
+  if (isSubmitting) {
+    return mode === 'sign_in' ? '로그인을 처리하고 있습니다.' : '계정을 만들고 있습니다.';
+  }
+
+  if (formError) {
+    return '입력 정보를 확인한 뒤 다시 시도해 주세요.';
+  }
+
+  return mode === 'sign_in'
+    ? '현재 상태: 기존 계정으로 로그인 대기 중'
+    : '현재 상태: 새 계정 생성 대기 중';
+}
+
+function resolveAuthErrorMessage(submissionError: unknown): string {
+  const errorCode =
+    typeof submissionError === 'object' && submissionError !== null && 'code' in submissionError
+      ? String(submissionError.code)
+      : null;
+
+  if (errorCode === 'auth/invalid-email') {
+    return '이메일 형식을 확인해 주세요.';
+  }
+
+  if (errorCode === 'auth/user-not-found' || errorCode === 'auth/wrong-password') {
+    return '이메일 또는 비밀번호가 맞지 않습니다. 다시 확인해 주세요.';
+  }
+
+  if (errorCode === 'auth/email-already-in-use') {
+    return '이미 사용 중인 이메일입니다. 로그인으로 전환하거나 다른 이메일을 입력해 주세요.';
+  }
+
+  if (errorCode === 'auth/weak-password') {
+    return '비밀번호는 6자 이상으로 입력해 주세요.';
+  }
+
+  return '로그인 또는 계정 생성 중 문제가 생겼습니다. 잠시 후 다시 시도해 주세요.';
 }
 
 export function LoginForm({ nextTarget }: LoginFormProps) {
@@ -58,12 +97,7 @@ export function LoginForm({ nextTarget }: LoginFormProps) {
 
       router.replace(nextTarget);
     } catch (submissionError) {
-      const resolvedError =
-        submissionError instanceof Error
-          ? submissionError.message
-          : '인증 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
-
-      setFormError(resolvedError);
+      setFormError(resolveAuthErrorMessage(submissionError));
     } finally {
       setIsSubmitting(false);
     }
@@ -74,21 +108,21 @@ export function LoginForm({ nextTarget }: LoginFormProps) {
       <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <section className="rounded-[2rem] border border-stone-200 bg-white p-8 shadow-sm sm:p-10">
           <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">
-            Account access
+            로그인
           </p>
           <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-900">
-            로그인 후 템플릿과 기록 기능을 사용할 수 있습니다.
+            로그인하고 아이와 한 활동 기록을 바로 이어 보세요.
           </h1>
           <p className="mt-4 text-base leading-7 text-slate-600">
-            이메일 계정으로 로그인하거나 새 계정을 만들어 서비스로 들어갑니다.
+            이메일과 비밀번호로 로그인하거나 계정을 만든 뒤, 요청한 화면으로 바로 돌아갑니다.
           </p>
 
-          <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
-            로그인 후 이동 예정 경로: <span className="font-medium">{nextTarget}</span>
-          </div>
+          <p className="mt-5 text-sm leading-6 text-slate-500">
+            로그인 후 이동 경로: <span className="font-medium text-slate-700">{nextTarget}</span>
+          </p>
 
-          <div className="mt-6 rounded-2xl border border-dashed border-stone-300 bg-stone-50 px-4 py-3 text-sm text-slate-500">
-            현재 상태: 로그인 또는 계정 생성을 기다리는 중
+          <div className="mt-5 rounded-2xl border border-dashed border-stone-300 bg-stone-50 px-4 py-3 text-sm text-slate-500">
+            {getAuthStateMessage(mode, isSubmitting, formError)}
           </div>
         </section>
 
@@ -149,7 +183,7 @@ export function LoginForm({ nextTarget }: LoginFormProps) {
               </label>
 
               <div className="rounded-2xl border border-dashed border-stone-300 bg-stone-50 px-4 py-3 text-sm text-slate-500">
-                {formError ?? '오류가 있으면 여기에 표시됩니다.'}
+                {formError ?? '이메일과 비밀번호를 입력하면 여기에서 진행 상태나 오류 안내를 확인할 수 있습니다.'}
               </div>
 
               <button

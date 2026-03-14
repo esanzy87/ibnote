@@ -52,14 +52,14 @@ export function TemplateLibraryFilters({
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">
-            Template library
+            Templates
           </p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-            오늘 바로 열어볼 활동 템플릿을 찾아보세요.
+            지금 우리 아이에게 맞는 활동 템플릿을 찾아보세요.
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-            로그인한 부모 계정에서만 열 수 있는 템플릿 모음입니다. 제목, 학년, 역량,
-            PYP 주제로 빠르게 좁혀볼 수 있습니다.
+            로그인한 계정에서만 열 수 있는 템플릿 모음입니다. 제목, 학년, 역량, PYP 주제로
+            범위를 좁혀서 바로 기록 시작 화면으로 이동할 수 있어요.
           </p>
         </div>
 
@@ -79,7 +79,7 @@ export function TemplateLibraryFilters({
             type="search"
             value={filters.search}
             onChange={(event) => onChange({ ...filters, search: event.target.value })}
-            placeholder="예: opinion, nature"
+            placeholder="예: 의견, 자연"
             className="rounded-2xl border border-stone-300 bg-stone-50 px-4 py-3 text-base text-slate-700 outline-none"
           />
         </label>

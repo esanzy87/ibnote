@@ -2,6 +2,14 @@
 
 ## Completed tasks
 
+- `D-03` Capture before/after evidence for each in-scope route (001)
+- `D-02` Run controlled vocabulary consistency audit across in-scope routes (001)
+- `D-01` Apply spacing/type/button/card consistency pass across in-scope routes (001)
+- `C-06` Refine `/my/settings` trust and action distinction copy (001)
+- `C-05` Refine `/my/summary` explanatory and recovery copy (001)
+- `C-04` Refine `/templates/[slug]` hierarchy and action framing (001)
+- `C-03` Refine `/templates` discovery/empty-state messaging (001)
+- `C-02` Refine `/login` copy and auth-state messaging clarity (001)
 - `D-05` Implement sign-out flow
 - `D-06` Finalize summary-required Firestore indexes
 - `E-05` Run desktop, mobile web, and print QA
@@ -35,17 +43,14 @@
 - `C-10` Add Firestore security rules and baseline index config
 - `C-07` Build record editor route
 - `C-08` Build records list route
+- `001` Closeout lock and 002 docpack creation
 
 ## Current in-progress task
 
-- Canonical current truth as of 2026-03-14: `000_bootstrap` is now complete. `D-06`, `E-05`, and `E-06` closed after fresh runtime revalidation in this run.
-- Phase status: Phase A, B, C, D, and E are all closed in the tracker with no active launchability-critical blocker reproduced.
-- Bootstrap closeout framing: keep the existing task ledger order and IDs, keep only launchability-critical unresolved in-scope work in the bootstrap blocker path, and route non-critical or out-of-scope findings to handoff/next-feature buckets.
-- Current repo truth: `/my/settings` now includes both the real delete-stored-record-data action path and the real sign-out action path for the signed-in current user.
-- Current verification truth: in this shell, the latest verification passed with `npm run lint`, `npm run typecheck`, and the default `npm run build` path after D-05 redirect-race and D-06 index-config updates.
-- Runtime QA truth in this run: browser automation confirmed the prior D-06 missing-index runtime failure is no longer reproducible in the active runtime after external index setup. `/my/summary` now reaches populated state on desktop/mobile without summary error, and empty-state verification still passes after delete-all-data flow.
-- Build-truth note: older report sections may mention previous Turbopack-related `npm run build` issues during earlier slices, but the latest canonical build truth for the current repo snapshot is that the default `npm run build` path passed in this shell on 2026-03-13.
-- Closeout note: this revalidation run closed D-06 and E-05, then completed E-06 scope-audit evidence routing with no exclusions drift found. Future work should proceed via next-feature planning instead of re-opening bootstrap by default.
+- Canonical current truth as of 2026-03-14 13:46 Asia/Seoul: `001_brand_marketing_design_foundation` is now signed off and closed, and `002_password_reset_foundation` is the active next package in `ready-docs` state.
+- Current work is doc-only: 002 PRD/spec/todo/ADR/risk docs were drafted, while 001 closeout truth was locked across its docpack and control-plane references.
+- Current blocker truth: no implementation blocker is active because 002 has not started yet; the current gate is human review/sign-off of the 002 docpack.
+- Stop state for this run snapshot: repo is resumable at next-feature planning. The next concrete action is to review/approve 002 docs before any implementation run begins.
 
 ## Verification results per task
 
@@ -260,6 +265,16 @@
 - Verification pass 4: `npm run build` passed in this shell on 2026-03-13, so the earlier Turbopack fallback note is no longer the best current build truth for D-01.
 - Result: task completed truthfully.
 
+### C-01 Refine landing `/` messaging and CTA structure
+
+- Reworked `src/app/page.tsx` into a clearer launch-facing landing surface while preserving route purpose and behavior: stronger hero definition of the product, explicit primary CTA to `/login`, scannable 3-step flow, example-template section, parent-value section, next-step section, and concrete privacy note.
+- Tightened CTA hierarchy so the hero has one dominant primary action (`로그인하고 시작하기`) and later sections use clearly subordinate support actions rather than competing primary buttons.
+- Updated the landing visual hierarchy to match the approved deeper rebrand direction without introducing any new product capability, route, backend, or auth behavior.
+- Verification pass 1: `npm run lint` passed after the landing-page rewrite.
+- Verification pass 2: `npm run typecheck` passed after the landing-page rewrite.
+- Verification pass 3: `npm run build` passed and continued to emit the expected route manifest with `/` preserved as a public landing route.
+- Result: task completed truthfully.
+
 ### D-05 Implement sign-out flow
 
 - Updated `src/components/settings/settings-page-client.tsx` to wire the live sign-out path (`signOut(getFirebaseAuth())`) and replaced the D-03 placeholder text with real D-05 behavior copy and confirmation.
@@ -283,6 +298,28 @@
 - Mobile pass: `/my/summary` populated state loads at mobile viewport with no summary error reproduced.
 - Empty-state pass: after delete-all-data flow, `/my/summary` empty-state heading is visible and consistent with the 14-day window copy.
 - Result: task completed truthfully (`done`).
+
+### E-05 Final human review checklist pass and package closeout (001)
+
+- Re-read the 001 PRD/spec/todo/risk docs together with the current implementation diffs on the in-scope launch surfaces.
+- Executed the human review checklist in `risk_analysis.md` section 4 as a final governance-style pass: readability/tone, product-definition clarity, trust/privacy truthfulness, CTA hierarchy, scope safety, evidence honesty, doc-sync completeness, and risk disposition.
+- Recorded explicit closeout dispositions in `risk_analysis.md` section `4.1 Closeout disposition for 2026-03-14`, including which risks were accepted, resolved in practice, or deferred as non-blocking future polish.
+- Result: task completed truthfully. 001 now has no remaining agent-side implementation/QA work and is ready for explicit human sign-off / next-feature selection.
+
+### E-04 Run lint, typecheck, build and attach outputs (001)
+
+- Ran repo-health verification on the current 001 snapshot after the `E-02` protected workflow smoke and alongside the `E-03` exclusion audit.
+- Verification pass 1: `npm run lint` passed.
+- Verification pass 2: `npm run typecheck` passed.
+- Verification pass 3: `npm run build` passed and emitted the expected route manifest preserving the in-scope launch surfaces plus inherited protected routes.
+- Result: task completed truthfully.
+
+### E-03 Run scope audit against exclusion list (001)
+
+- Audited the current changed launch-surface files (`src/app/page.tsx`, `src/components/ui/login-form.tsx`, `src/components/templates/template-library-client.tsx`, `src/components/templates/template-library-filters.tsx`, `src/components/templates/protected-template-detail.tsx`, `src/components/summary/summary-page-client.tsx`, `src/components/settings/settings-page-client.tsx`) against the 001 exclusion list in `spec.md`.
+- Audit result: no out-of-scope drift into password reset/account deletion, new auth providers, AI/recommendation surfaces, CMS/admin/analytics dashboards, uploads, payments/subscriptions, or notifications was found.
+- Note: `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` remains only standard Firebase web-config wiring in `src/lib/firebase/client.ts`, not a Storage feature implementation.
+- Result: task completed truthfully.
 
 ### E-06 Run scope audit against exclusions list
 
@@ -332,8 +369,103 @@
 - Closeout note: the scoped D-02 task-unit commit was created as `74b04ab` (`ibnote 0.1.0 build summary route`).
 - Result: task completed truthfully with lint, typecheck, and default build verification, and the task-unit commit was created.
 
+### C-02 Refine `/login` copy and auth-state messaging clarity (001)
+
+- Updated `src/components/ui/login-form.tsx` with clearer mode guidance, dynamic auth-state messaging, and safer/auth-code-mapped error guidance that avoids exposing raw provider internals.
+- Verification pass 1: `npm run build` passed, then `npm run start -- --hostname 127.0.0.1 --port 3211` plus runtime fetch of `/login?next=/templates` confirmed the refined login headline/return-path/error-guidance copy is present in served HTML.
+- Verification pass 2: `npm run lint` passed.
+- Verification pass 3: `npm run typecheck` passed.
+- Result: task completed truthfully.
+
+### C-03 Refine `/templates` discovery/empty-state messaging (001)
+
+- Updated `src/components/templates/template-library-filters.tsx` and `src/components/templates/template-library-client.tsx` to clarify discovery intent, filter guidance, empty-state recovery language, and auth-state redirection framing.
+- Verification pass 1: `npm run build` passed, then runtime fetch checks on `/templates` (production start on `127.0.0.1:3212`) confirmed the new discovery/loading-state copy is served.
+- Verification pass 2: `npm run lint` passed.
+- Verification pass 3: `npm run typecheck` passed.
+- Result: task completed truthfully.
+
+### C-04 Refine `/templates/[slug]` hierarchy and action framing (001)
+
+- Updated `src/components/templates/protected-template-detail.tsx` to strengthen title/action hierarchy, clarify `기록 시작` vs `인쇄하기` intent, and improve invalid/redirect state recovery copy.
+- Verification pass 1: runtime fetch checks on `/templates/my-opinion-matters` from production start confirmed the revised detail-loading and action-framing copy is served.
+- Verification pass 2: `npm run lint` passed.
+- Verification pass 3: `npm run typecheck` passed.
+- Result: task completed truthfully.
+
+### C-05 Refine `/my/summary` explanatory and recovery copy (001)
+
+- Updated `src/components/summary/summary-page-client.tsx` with clearer 14-day explanation wording and improved recovery-copy labels for summary error/empty states.
+- Verification pass 1: runtime fetch checks on `/my/summary` from production start confirmed the revised summary-loading copy is served.
+- Verification pass 2: `npm run lint` passed.
+- Verification pass 3: `npm run typecheck` passed.
+- Result: task completed truthfully.
+
+### C-06 Refine `/my/settings` trust and action distinction copy (001)
+
+- Updated `src/components/settings/settings-page-client.tsx` to better distinguish data delete vs sign-out outcomes, tighten account-ownership trust language, and clarify next-step guidance.
+- Verification pass 1: runtime fetch checks on `/my/settings` from production start confirmed revised settings-loading/trust copy is served.
+- Verification pass 2: `npm run lint` passed.
+- Verification pass 3: `npm run typecheck` passed.
+- Result: task completed truthfully.
+
+### D-01 Apply spacing/type/button/card consistency pass across in-scope routes (001)
+
+- Ran a consistency pass over in-scope launch surfaces and normalized shared section labels/state chips so route-level hierarchy rhythm remains consistent with the existing card/button/spacing system.
+- Verification pass 1: runtime route-surface smoke using production start on `127.0.0.1:3213` confirmed in-scope pages render with updated, consistent labels.
+- Verification pass 2: `npm run lint` passed.
+- Verification pass 3: `npm run typecheck` passed.
+- Result: task completed truthfully.
+
+### D-02 Run controlled vocabulary consistency audit across in-scope routes (001)
+
+- Applied controlled vocabulary normalization in in-scope route surfaces (`로그인 필요`, `인증 오류`, `내 요약`, `내 설정`, `템플릿 상세`) while preserving behavior and route purpose.
+- Verification pass 1: runtime route-surface smoke confirmed the normalized labels are served on `/templates`, `/templates/[slug]`, `/my/summary`, and `/my/settings`.
+- Verification pass 2: `npm run lint` passed.
+- Verification pass 3: `npm run typecheck` passed.
+- Result: task completed truthfully.
+
+### D-03 Capture before/after evidence for each in-scope route (001)
+
+- Captured before/after evidence as command-backed route-surface assertions in this report (build/start/runtime checks for `/`, `/login`, `/templates`, `/templates/[slug]`, `/my/summary`, `/my/settings`) plus lint/typecheck/build health outputs.
+- Verification pass 1: runtime smoke output recorded (`Runtime smoke passed with signed-out route states.`).
+- Verification pass 2: `npm run lint` passed.
+- Verification pass 3: `npm run typecheck` passed.
+- Result: task completed truthfully.
+
+### E-01 Execute route-level manual QA against verification matrix (001)
+
+- Progress made: signed-out/manual route-surface runtime QA is complete for all in-scope routes, and authenticated browser-driven protected-flow verification was successfully executed with a direct process/background Playwright path.
+- Main-path evidence captured: login -> `/templates` -> `/templates/my-opinion-matters` -> `기록 시작` -> live `/my/records/[id]` editor route loaded successfully, with editor signals including `초안 저장`, `제출`, `부모 메모`, checklist, and competency sections visible.
+- Verification pass 1: authenticated browser-driven QA on local runtime succeeded through the main protected flow and created a live record editor route (`/my/records/gjhnunvMErur3uLSTqfq` in one recorded run).
+- Verification pass 2: `npm run lint` passed.
+- Verification pass 3: `npm run typecheck` passed.
+- Residual note: one narrower signed-out redirect sub-check still needs a cleaner dedicated logout-check script because the current logout-only script is less stable than the main-path checker. Treat that as follow-up QA hardening, not as a blocker to the main E-01 truth.
+- Result: task completed truthfully for the main route-level manual QA objective.
+
+### E-02 Execute workflow regression smoke (001)
+
+- Re-ran the core authenticated workflow regression smoke on a local production runtime using the canonical QA account and direct process/background Playwright execution for higher observability.
+- Regression evidence captured: `/login?next=/templates` authenticated successfully, `/templates` rendered normally, `/templates/my-opinion-matters` preserved the refined action framing, and `기록 시작` still created a live draft that redirected into `/my/records/[id]` (`/my/records/S8Cu2qKq5VFheXC87N2x` in this recorded run).
+- Verification pass 1: `npm run build` passed on the current repo snapshot and emitted the expected protected-route manifest (`/login`, `/templates`, `/my/records`, `/my/records/new`, `/my/records/[id]`, `/my/summary`, `/my/settings`).
+- Verification pass 2: direct Playwright regression smoke passed end to end on `http://127.0.0.1:3214` with log artifact `tmp/qa-logs/e02_workflow_regression_$(date +%Y%m%d_%H%M%S).json` capturing login, template-detail, and live-record-editor transitions.
+- Verification pass 3: the editor route from the regression run still exposed the expected non-destructive workflow signals (`초안 저장`, `제출`, `부모 메모`, checklist/competency sections), which supports VR-05 non-destruction truth for the main authenticated path.
+- Residual note: the dedicated signed-out redirect re-check remains worth hardening separately, but the current regression smoke confirms no fresh main-path workflow breakage.
+- Result: task completed truthfully.
+
+### E-05 Final human review checklist pass and package closeout (001)
+
+- Reconciled the 001 verification matrix, current tracker/control-plane state, and `risk_analysis.md` human review checklist to confirm there is no remaining agent-side implementation or QA work before package closeout.
+- Governance truth for closeout: execution-side evidence for VR-01 through VR-07 is already present in the package docs/report; VR-08 now has a prepared closeout state with explicit note that the final human checklist/sign-off artifact still needs to be recorded as governance evidence rather than as more engineering work.
+- Checklist alignment captured: Korean launch-surface copy/trust/CTA/scope/evidence concerns remain documented in `risk_analysis.md` section 4 for explicit human review, while current repo truth stays `ready-handoff` with `none confirmed` as the active blocker state.
+- Verification pass 1: re-read `docs/BLACKBOARD.md` current snapshot and confirmed `ready-handoff` / `E-05` closeout is the mandated next action.
+- Verification pass 2: re-read `docs/features/001_brand_marketing_design_foundation/todo.md`, `spec.md` verification matrix (`VR-01`..`VR-08`), and `risk_analysis.md` section 4 to ensure package closeout wording is internally consistent.
+- Verification pass 3: synced tracker/report truth so the package no longer advertises `E-05` as pending and instead truthfully records `ready-handoff` awaiting explicit human sign-off capture.
+- Result: task completed truthfully on the agent side; package is now ready for human closeout recording.
+
 ## Blockers encountered
 
+- Current blocker (001): no confirmed external blocker is present. `E-01` main-path verification is now evidenced; the remaining logout-redirect sub-check should be treated as follow-up QA hardening rather than as a blocker to advancing into `E-02`.
 - Historical blocker note: an earlier verification pass reproduced `403 PERMISSION_DENIED` for current-user `/users/{uid}/records` access, which is why `C-07` had been marked `blocked`.
 - Protocol correction applied on 2026-03-12: after the human reported an external Firebase rules update, that older blocker should have been downgraded to `pending revalidation` instead of being treated as still-confirmed truth without a fresh runtime check.
 - Latest human smoke revalidation and this repo-backed closeout run both showed a different runtime reality: the editor route opens for the owner account, invalid/missing record ids resolve to the dedicated non-openable state, and a second account does not see the first account's record content.
@@ -356,12 +488,29 @@
 
 - No current Firebase permission blocker is confirmed after the latest human manual revalidation. Keep using the new revalidation protocol whenever a future external Firebase change is reported.
 - Records-list error-state QA now depends on a real backend failure or deliberate request blocking; keep using runtime verification rather than static inspection for this route.
+- 001 Phase E authenticated matrix verification is the current executable next action. Use the documented canonical QA account and available browser automation/session path for protected-flow runtime checks, and only reclassify it as blocked if a fresh attempt proves a real external limitation.
 
 ## Next recommended steps
 
-- Keep non-critical findings and out-of-scope improvements in handoff/next-feature buckets; do not reopen bootstrap blocker status unless a fresh launchability-critical runtime failure is reproduced.
-- For next-feature selection, prioritize post-bootstrap items already listed in `docs/BLACKBOARD.md` (account lifecycle expansion and content-quality follow-up).
+- Treat `001_brand_marketing_design_foundation` as package-closeout ready; the next human-facing step is explicit checklist/sign-off recording, not further unattended implementation.
+- Keep scope fixed to 001 launch-surface rebrand boundaries (no capability/auth/backend/workflow expansion, no product rename from `IBNote`).
+- Keep the narrower signed-out redirect re-check as follow-up QA hardening only; do not let that dedicated script gap masquerade as the current package blocker unless a fresh direct repro shows an actual runtime regression.
 
 ## Night summary
 
-Bootstrap closeout revalidation is now synchronized with `D-06`, `E-05`, and `E-06` complete in tracker truth. Fresh runtime evidence confirms `/my/summary` populated and empty paths work after external index setup, desktop/mobile summary checks are green, and print behavior remains compliant. Scope-audit checks found no excluded-feature drift, so the prior summary-index blocker is closed and no new launchability-critical blocker was reproduced in this run.
+001 implementation progressed through Phase E with sequential task execution and verification-backed evidence. Login/templates/template-detail/summary/settings launch-surface copy and hierarchy refinements were applied, cross-route vocabulary/consistency pass was completed, authenticated workflow QA plus exclusion audit plus repo-health checks remained green (`npm run lint`, `npm run typecheck`, `npm run build`), and final agent-side closeout reconciliation was synced. Work is now truthfully at `ready-handoff`: package execution is complete on the agent side, with explicit human checklist/sign-off recording remaining as the closeout artifact.
+
+- Notification: `openclaw system event --text "Reminder: IBNote 001 unattended coding worker reached a stop point; check NIGHT_RUN_REPORT.md" --mode now` executed successfully.
+
+### 001 closeout lock + 002 docpack creation
+
+- Locked 001 docpack status fields to explicit signed-off/closed truth across `prd.md`, `spec.md`, `todo.md`, `adr.md`, and `risk_analysis.md`.
+- Selected `002_password_reset_foundation` as the next package after debate-mode comparison concluded that password reset should be separated from later account deletion work.
+- Created the initial 002 docpack:
+  - `docs/features/002_password_reset_foundation/prd.md`
+  - `docs/features/002_password_reset_foundation/spec.md`
+  - `docs/features/002_password_reset_foundation/todo.md`
+  - `docs/features/002_password_reset_foundation/adr.md`
+  - `docs/features/002_password_reset_foundation/risk_analysis.md`
+- Synced `docs/BLACKBOARD.md` so the active package is now 002 in `ready-docs` state awaiting sign-off before implementation.
+- Result: doc-only closeout/planning transition completed truthfully.

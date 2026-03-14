@@ -19,15 +19,15 @@ function AuthLoadingState() {
     <section className="rounded-[1.9rem] border border-stone-200 bg-white p-8 shadow-sm sm:p-10">
       <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Templates</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        계정 상태를 확인하는 중입니다.
+        템플릿 라이브러리를 준비하고 있습니다.
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        보호된 템플릿 라이브러리를 열기 전에 로그인 상태를 먼저 확인하고 있습니다.
+        보호된 화면이라 먼저 로그인 상태를 확인합니다. 확인이 끝나면 바로 템플릿 목록을 보여 드릴게요.
       </p>
       <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {Array.from({ length: 6 }, (_, index) => (
+        {Array.from({ length: 6 }, (_, index) => `auth-loading-card-${index}` ).map((placeholderId) => (
           <div
-            key={index}
+            key={placeholderId}
             className="h-72 animate-pulse rounded-[1.75rem] border border-stone-200 bg-stone-50"
           />
         ))}
@@ -39,9 +39,9 @@ function AuthLoadingState() {
 function AuthErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <section className="rounded-[1.9rem] border border-rose-200 bg-rose-50 p-8 shadow-sm sm:p-10">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">Auth error</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">인증 오류</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-rose-950 sm:text-4xl">
-        템플릿 라이브러리를 여는 중 문제가 생겼습니다.
+        템플릿 라이브러리를 여는 데 실패했습니다.
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-rose-900 sm:text-base">{message}</p>
       <button
@@ -58,13 +58,13 @@ function AuthErrorState({ message, onRetry }: { message: string; onRetry: () => 
 function RedirectingState() {
   return (
     <section className="rounded-[1.9rem] border border-stone-200 bg-white p-8 shadow-sm sm:p-10">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Redirecting</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">로그인 필요</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
         로그인 화면으로 이동하고 있습니다.
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        템플릿 라이브러리는 로그인한 계정에서만 사용할 수 있어요. 잠시 후 로그인 화면으로
-        이동합니다.
+        템플릿 라이브러리는 로그인한 계정에서만 사용할 수 있습니다. 로그인 후에는 이 화면으로
+        다시 돌아옵니다.
       </p>
     </section>
   );
@@ -75,12 +75,12 @@ function EmptyState({ hasFilters, onReset }: { hasFilters: boolean; onReset: () 
     <section className="rounded-[1.9rem] border border-dashed border-stone-300 bg-stone-50 p-8 text-center sm:p-10">
       <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">No matches</p>
       <h2 className="mt-4 text-2xl font-semibold tracking-tight text-slate-900">
-        {hasFilters ? '조건에 맞는 템플릿이 아직 없습니다.' : '게시된 템플릿이 아직 없습니다.'}
+        {hasFilters ? '조건에 맞는 템플릿을 찾지 못했어요.' : '아직 게시된 템플릿이 없습니다.'}
       </h2>
       <p className="mt-3 text-sm leading-6 text-slate-600 sm:text-base">
         {hasFilters
-          ? '검색어나 필터를 조금 넓혀서 다시 찾아보세요.'
-          : '템플릿이 게시되면 이곳에서 바로 둘러볼 수 있습니다.'}
+          ? '검색어를 지우거나 필터를 완화하면 더 많은 템플릿을 볼 수 있어요.'
+          : '템플릿이 준비되면 이곳에서 바로 확인할 수 있습니다.'}
       </p>
       {hasFilters ? (
         <button
@@ -138,13 +138,14 @@ export function TemplateLibraryClient({ templates }: TemplateLibraryClientProps)
             <section className="grid gap-4 rounded-[1.9rem] border border-stone-200 bg-gradient-to-br from-white to-stone-50 p-6 shadow-sm sm:p-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
               <div>
                 <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">
-                  Current view
+                  현재 보기
                 </p>
                 <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
-                  {filteredTemplates.length}개의 템플릿이 준비되어 있어요.
+                  {filteredTemplates.length}개의 템플릿을 바로 확인할 수 있어요.
                 </h2>
                 <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-                  지금은 저장된 정적 템플릿만 보여주며, 필터는 페이지 이동 없이 바로 반영됩니다.
+                  필터를 바꾸면 목록이 즉시 갱신됩니다. 마음에 드는 템플릿에서 `열어보기`를 누르면
+                  상세 화면으로 이동합니다.
                 </p>
               </div>
 
@@ -152,7 +153,7 @@ export function TemplateLibraryClient({ templates }: TemplateLibraryClientProps)
                 <p className="font-medium text-slate-900">빠른 확인</p>
                 <p>검색: 제목 기준 부분 일치</p>
                 <p>학년/역량/PYP 주제: 클라이언트 즉시 필터</p>
-                <p>보호 경로: 비로그인 상태면 `/login?next=/templates`로 이동</p>
+                <p>비로그인 상태: `/login?next=/templates`로 이동 후 복귀</p>
               </div>
             </section>
 

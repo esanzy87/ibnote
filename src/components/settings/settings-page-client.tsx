@@ -31,12 +31,12 @@ function Surface({ children, tone = 'default' }: { children: React.ReactNode; to
 function AuthLoadingState() {
   return (
     <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">My settings</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">내 설정</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        설정 화면을 준비하는 중입니다.
+        설정 화면을 준비하고 있습니다.
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        로그인 상태를 확인한 뒤, 이 계정에 연결된 데이터 안내와 다음 단계 버튼을 보여 드릴게요.
+        로그인 상태를 확인한 뒤 이 계정에 연결된 데이터 안내와 계정 작업 버튼을 보여 드립니다.
       </p>
       <div className="mt-8 grid gap-4 lg:grid-cols-2">
         <div className="h-40 animate-pulse rounded-[1.75rem] border border-stone-200 bg-stone-50" />
@@ -49,7 +49,7 @@ function AuthLoadingState() {
 function RedirectingState() {
   return (
     <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Redirecting</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">로그인 필요</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
         로그인 화면으로 이동하고 있습니다.
       </h1>
@@ -63,7 +63,7 @@ function RedirectingState() {
 function AuthErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <Surface tone="error">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">Auth error</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">인증 오류</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-rose-950 sm:text-4xl">
         로그인 상태를 확인하지 못했습니다.
       </h1>
@@ -95,13 +95,13 @@ function AccountOwnershipCard({ user }: { user: User }) {
 
   return (
     <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Account</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">계정 정보</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
         현재 로그인한 계정 정보
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        IBNote 부트스트랩 MVP에서는 이메일/비밀번호 로그인만 지원합니다. 아래 계정에 연결된 기록만 이 설정에서
-        안내하고 관리합니다.
+        IBNote는 이메일/비밀번호 로그인만 지원합니다. 아래 계정에 연결된 기록만 이 설정에서
+        확인하고 관리할 수 있습니다.
       </p>
 
       <dl className="mt-8 grid gap-4 sm:grid-cols-2">
@@ -119,8 +119,8 @@ function AccountOwnershipCard({ user }: { user: User }) {
       <div className="mt-6 rounded-[1.5rem] border border-sky-200 bg-sky-50 p-5 text-sm leading-6 text-sky-950">
         <p className="font-medium">데이터 소유 안내</p>
         <p className="mt-2">
-          현재 저장되는 기록과 요약 데이터는 이 로그인 계정에만 연결됩니다. 다른 계정으로 로그인하면 이 계정의
-          기록은 보이지 않으며, 반대로 다른 계정의 기록도 현재 계정에서 열 수 없습니다.
+          저장된 기록과 요약 데이터는 현재 로그인한 계정에만 연결됩니다. 다른 계정으로 로그인하면 이 계정의
+          기록은 보이지 않고, 다른 계정의 기록도 현재 계정에서 열 수 없습니다.
         </p>
       </div>
     </Surface>
@@ -275,10 +275,10 @@ export function SettingsPageClient() {
       <section className="grid gap-4 lg:grid-cols-2">
         <SettingsActionCard
           title="모든 내 기록 삭제"
-          body="현재 로그인한 계정 아래에 저장된 모든 기록을 삭제합니다. 프로필 문서가 존재하면 함께 정리할 수 있으며, 삭제 후에도 설정 화면에는 그대로 머무릅니다."
+          body="현재 로그인한 계정에 저장된 기록 데이터를 삭제합니다. 이 작업은 데이터 삭제만 수행하며 계정 로그인 상태는 유지됩니다."
           buttonLabel="모든 내 기록 삭제"
           confirmationMessage="현재 계정에 저장된 모든 기록을 삭제할까요? 이 작업은 되돌릴 수 없습니다."
-          helper="삭제 후에는 내 기록과 최근 요약 화면이 빈 상태로 보여야 합니다."
+          helper="삭제 후 내 기록/최근 요약은 빈 상태로 보일 수 있으며, 언제든 새 기록을 다시 만들 수 있습니다."
           isWorking={deleteStatus === 'working'}
           message={deleteMessage}
           messageTone={deleteStatus === 'error' ? 'error' : deleteStatus === 'success' ? 'success' : 'default'}
@@ -288,10 +288,10 @@ export function SettingsPageClient() {
 
         <SettingsActionCard
           title="로그아웃"
-          body="현재 세션을 종료하고 공개 첫 화면으로 돌아갑니다. 로그아웃 중에는 기록 데이터가 삭제되지 않으며, 다음 로그인 시 같은 계정 기록을 다시 확인할 수 있습니다."
+          body="현재 세션만 종료하고 공개 첫 화면으로 돌아갑니다. 로그아웃은 데이터 삭제를 수행하지 않으며, 다시 로그인하면 기존 기록을 확인할 수 있습니다."
           buttonLabel="로그아웃"
           confirmationMessage="현재 계정에서 로그아웃할까요? 저장된 기록 데이터는 삭제되지 않습니다."
-          helper="로그아웃 후에는 보호 경로 접속 시 다시 로그인 화면으로 이동해야 합니다."
+          helper="로그아웃 후 보호 화면에 접근하면 로그인 화면으로 이동합니다."
           isWorking={signOutStatus === 'working'}
           message={signOutMessage}
           messageTone={signOutStatus === 'error' ? 'error' : 'default'}
@@ -300,13 +300,13 @@ export function SettingsPageClient() {
       </section>
 
       <Surface>
-        <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Next steps</p>
+        <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">다음 이동</p>
         <h2 className="mt-4 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
-          설정에서 바로 이어서 확인할 수 있는 화면
+          설정 이후 바로 확인할 수 있는 화면
         </h2>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-          기록과 요약 화면은 모두 현재 로그인한 계정 기준으로만 동작합니다. 설정 확인 뒤 아래 화면으로 바로 이동해도
-          같은 계정 범위 안에서만 내용을 보게 됩니다.
+          기록과 요약 화면은 현재 로그인한 계정 기준으로만 동작합니다. 아래 화면으로 이동해도
+          같은 계정 범위 안에서만 내용을 확인합니다.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link

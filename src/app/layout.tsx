@@ -6,13 +6,13 @@ import '@/styles/print.css';
 
 export const metadata: Metadata = {
   title: 'IBNote',
-  description: 'IBNote bootstrap MVP',
+  description: '집에서 아이와 한 활동을 짧게 기록하고 다시 이어 보는 부모용 기록 서비스',
 };
 
 const NAV_ITEMS = [
-  { href: '/', label: 'Home' },
-  { href: '/login', label: 'Login' },
-  { href: '/templates', label: 'Templates' },
+  { href: '/', label: '홈' },
+  { href: '/login', label: '로그인' },
+  { href: '/templates', label: '템플릿' },
 ] as const;
 
 export default function RootLayout({
@@ -34,7 +34,7 @@ export default function RootLayout({
                   IBNote
                 </Link>
                 <p className="mt-1 text-sm text-slate-600">
-                  Parent-friendly worksheet and record MVP.
+                  부모가 활동 기록을 쉽게 남기고 다시 볼 수 있는 서비스
                 </p>
               </div>
 
@@ -52,7 +52,7 @@ export default function RootLayout({
                   </Link>
                 ))}
                 <span className="rounded-full border border-dashed border-stone-300 px-3 py-1.5 text-slate-500">
-                  My pages soon
+                  내 기록 · 요약
                 </span>
               </nav>
             </div>

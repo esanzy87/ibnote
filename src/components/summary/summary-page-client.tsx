@@ -82,17 +82,17 @@ function getRecordPreview(record: WorksheetRecord): string {
 function AuthLoadingState() {
   return (
     <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">My summary</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">내 요약</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        요약 화면을 준비하는 중입니다.
+        최근 기록 요약 화면을 준비하고 있습니다.
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        로그인 상태를 확인한 뒤 최근 14일의 제출 기록만 모아서 보여 드릴게요.
+        로그인 상태를 확인한 뒤 최근 14일 안에 제출한 기록만 모아 보여 드립니다.
       </p>
       <div className="mt-8 grid gap-4 lg:grid-cols-3">
-        {Array.from({ length: 3 }, (_, index) => (
+        {Array.from({ length: 3 }, (_, index) => `summary-loading-card-${index}`).map((placeholderId) => (
           <div
-            key={index}
+            key={placeholderId}
             className="h-36 animate-pulse rounded-[1.75rem] border border-stone-200 bg-stone-50"
           />
         ))}
@@ -104,12 +104,12 @@ function AuthLoadingState() {
 function SummaryLoadingState() {
   return (
     <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Summary data</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">요약 데이터</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        최근 제출 기록을 계산하고 있습니다.
+        요약 데이터를 계산하고 있습니다.
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        활동 날짜와 역량 평가를 정리해 간단한 14일 요약으로 바꾸는 중입니다.
+        활동 날짜와 역량 평가를 정리해 이해하기 쉬운 14일 요약으로 변환하고 있습니다.
       </p>
       <div className="mt-8 grid gap-4 lg:grid-cols-2">
         <div className="h-72 animate-pulse rounded-[1.75rem] border border-stone-200 bg-stone-50" />
@@ -122,7 +122,7 @@ function SummaryLoadingState() {
 function RedirectingState() {
   return (
     <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Redirecting</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">로그인 필요</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
         로그인 화면으로 이동하고 있습니다.
       </h1>
@@ -136,7 +136,7 @@ function RedirectingState() {
 function AuthErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <Surface tone="error">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">Auth error</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">인증 오류</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-rose-950 sm:text-4xl">
         로그인 상태를 확인하지 못했습니다.
       </h1>
@@ -155,7 +155,7 @@ function AuthErrorState({ message, onRetry }: { message: string; onRetry: () => 
 function SummaryErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <Surface tone="error">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">Summary error</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">요약 오류</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-rose-950 sm:text-4xl">
         최근 14일 요약을 불러오지 못했습니다.
       </h1>
@@ -172,7 +172,7 @@ function SummaryErrorState({ message, onRetry }: { message: string; onRetry: () 
           href="/my/records"
           className="inline-flex items-center justify-center rounded-full border border-rose-200 bg-white px-5 py-3 text-sm font-medium text-rose-900 transition hover:border-rose-300"
         >
-          내 기록 보기
+          내 기록으로 이동
         </Link>
       </div>
     </Surface>
@@ -182,13 +182,13 @@ function SummaryErrorState({ message, onRetry }: { message: string; onRetry: () 
 function EmptyState({ startDate, endDate }: { startDate: string; endDate: string }) {
   return (
     <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Empty summary</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">빈 요약</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
         최근 14일에 제출한 기록이 아직 없습니다.
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
         현재 요약 기간은 {formatDateRange(startDate, endDate)}입니다. 이 기간 안에 제출 완료한 기록이
-        생기면 이곳에 역량별 횟수와 평균 등급이 바로 정리됩니다.
+        생기면 이곳에 역량별 횟수와 평균 등급이 자동으로 정리됩니다.
       </p>
       <div className="mt-6 flex flex-wrap gap-3">
         <Link
@@ -222,13 +222,13 @@ function SummaryOverview({
   return (
     <section className="grid gap-4 rounded-[1.9rem] border border-stone-200 bg-gradient-to-br from-white via-stone-50 to-amber-50 p-6 shadow-sm sm:p-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
       <div>
-        <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">My summary</p>
+         <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">내 요약</p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
           최근 14일의 제출 기록을 간단히 돌아보세요.
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
           오늘을 포함한 {formatDateRange(startDate, endDate)} 기간 안에서 제출 완료한 기록만 집계합니다.
-          활동 수와 역량별 평가 흐름을 한 화면에서 빠르게 확인할 수 있어요.
+          활동 수와 역량별 평가 흐름을 한 화면에서 확인하고, 필요하면 개별 기록으로 바로 이동할 수 있어요.
         </p>
       </div>
 
@@ -524,7 +524,7 @@ export function SummaryPageClient() {
       <Surface>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Recent 5</p>
+            <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">최근 제출 5개</p>
             <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
               가장 최근에 제출한 기록을 다시 볼 수 있습니다.
             </h2>

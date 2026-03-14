@@ -40,12 +40,12 @@ interface ProtectedTemplateDetailProps {
 function DetailLoadingState() {
   return (
     <section className="rounded-[1.9rem] border border-stone-200 bg-white p-8 shadow-sm sm:p-10">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Template detail</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">템플릿 상세</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        템플릿 내용을 불러오는 중입니다.
+        템플릿 상세를 준비하고 있습니다.
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        로그인 상태를 확인한 뒤 선택한 템플릿의 활동 내용을 준비하고 있습니다.
+        로그인 상태를 확인한 뒤 선택한 템플릿의 활동 순서와 기록 시작 버튼을 보여 드립니다.
       </p>
       <div className="mt-8 space-y-4">
         <div className="h-14 animate-pulse rounded-3xl border border-stone-200 bg-stone-50" />
@@ -59,7 +59,7 @@ function DetailLoadingState() {
 function DetailErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <section className="rounded-[1.9rem] border border-rose-200 bg-rose-50 p-8 shadow-sm sm:p-10">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">Auth error</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">인증 오류</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-rose-950 sm:text-4xl">
         템플릿 상세 화면을 열지 못했습니다.
       </h1>
@@ -78,12 +78,12 @@ function DetailErrorState({ message, onRetry }: { message: string; onRetry: () =
 function DetailRedirectingState() {
   return (
     <section className="rounded-[1.9rem] border border-stone-200 bg-white p-8 shadow-sm sm:p-10">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Redirecting</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">로그인 필요</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
         로그인 화면으로 이동하고 있습니다.
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        선택한 템플릿을 보려면 먼저 로그인해야 합니다. 잠시 후 로그인 화면으로 이동합니다.
+        선택한 템플릿은 로그인 후에만 확인할 수 있습니다. 로그인 후 이 상세 화면으로 돌아옵니다.
       </p>
     </section>
   );
@@ -92,12 +92,12 @@ function DetailRedirectingState() {
 function InvalidTemplateState({ slug }: { slug: string }) {
   return (
     <section className="rounded-[1.9rem] border border-dashed border-stone-300 bg-stone-50 p-8 text-center shadow-sm sm:p-10">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Template not found</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">템플릿 없음</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        이 템플릿을 찾을 수 없습니다.
+        요청한 템플릿을 찾을 수 없습니다.
       </h1>
       <p className="mt-3 text-sm leading-6 text-slate-600 sm:text-base">
-        `{slug}` 슬러그에 해당하는 게시 템플릿이 없거나 더 이상 공개되지 않았습니다.
+        `{slug}`에 해당하는 게시 템플릿이 없거나 현재 비공개 상태입니다.
       </p>
       <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
         <Link
@@ -132,11 +132,14 @@ function TemplateDetailContent({ template }: { template: WorksheetTemplate }) {
       <section className="template-print-card rounded-[1.9rem] border border-stone-200 bg-white p-8 shadow-sm sm:p-10">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
           <div className="max-w-3xl">
-            <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Template detail</p>
+            <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">템플릿 상세</p>
             <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
               {template.title}
             </h1>
             <p className="mt-4 text-base leading-7 text-slate-600">{template.summary}</p>
+            <p className="mt-4 text-sm leading-6 text-slate-500">
+              아래 활동 안내를 읽고 `기록 시작`으로 바로 우리 아이 기록을 생성할 수 있어요.
+            </p>
           </div>
 
           <div className="template-print-card grid gap-3 rounded-[1.75rem] border border-stone-200 bg-stone-50 p-4 text-sm text-slate-700 sm:min-w-72">
@@ -167,6 +170,9 @@ function TemplateDetailContent({ template }: { template: WorksheetTemplate }) {
             기록 시작
           </Link>
           <PrintButton className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900" />
+          <p className="w-full text-sm leading-6 text-slate-500">
+            `기록 시작`은 새 기록 작성 화면으로 이동하고, `인쇄하기`는 현재 템플릿만 출력합니다.
+          </p>
         </div>
       </section>
 
