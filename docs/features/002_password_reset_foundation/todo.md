@@ -37,7 +37,8 @@ Execution order:
 | ID | Blocker | Affects | Clear when |
 | --- | --- | --- | --- |
 | GB-01 | Scope drift risk | Phases B-C | delete/provider/admin boundaries are explicit |
-| GB-02 | Reset runtime truth unknown | Phase C | active runtime reset path is verified |
+| GB-02 | Reset runtime truth unknown | Phase C | active runtime reset path is verified and evidence boundary is stated explicitly |
+| GB-03 | Provider/env delivery dependency unclear | Phase C | provider/env-side caveats are separated from product-code truth |
 
 ## 4. Task ledger
 
@@ -71,10 +72,11 @@ Execution order:
 - Status: `todo`
 - Blocked by: `A-01`
 - Scope:
-  - decide whether reset lives inline or on a dedicated minimal route
-  - prefer smallest understandable flow
+  - confirm the signed-off default that reset uses one dedicated minimal route linked from `/login`
+  - only deviate if implementation truth proves a clearly smaller path with equal clarity and lower risk
 - QA:
   - chosen shape keeps login surface understandable
+  - no modal/inline complexity is introduced without explicit justification
 
 #### A-03 Define verification matrix and closeout evidence
 - Priority: `P0`
@@ -82,6 +84,8 @@ Execution order:
 - Blocked by: `A-02`
 - Scope:
   - define runtime and repo-health checks needed for done-state
+  - define the exact evidence boundary between request-initiation verification and independent delivery verification
+  - define how provider/env blockers are reported separately from product-code truth
 - QA:
   - completion evidence is explicit, not implied
 
@@ -121,7 +125,8 @@ Execution order:
 - Status: `todo`
 - Blocked by: `B-03`
 - QA method:
-  - verify reset request runtime path
+  - verify reset request runtime path on the active auth project/runtime
+  - explicitly record whether only request initiation was verified or whether email delivery was independently verified too
   - recheck sign-in/create-account/protected-route continuity
 
 #### C-02 Run scope audit and lint/typecheck/build

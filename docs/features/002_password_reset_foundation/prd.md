@@ -88,6 +88,7 @@ If a proposal requires broader account lifecycle, reauthentication policy, data 
 - reset entry point from auth surface
 - password reset request flow for email/password accounts
 - success/error/help copy for reset initiation
+- one dedicated minimal reset-request route as the default UX shape
 - minimal route/copy additions required to keep the flow understandable
 - regression verification that normal login/create-account still works
 
@@ -158,7 +159,7 @@ This package is done only when all are true:
 
 Implementation acceptance should include:
 - route-level/copy review of the reset entry and request state
-- runtime verification for reset request initiation
+- runtime verification for reset request initiation on the active project/runtime
 - regression checks for standard login/create-account behavior
 - scope-audit result showing no drift into delete/provider/admin flows
 - verification logs for lint, typecheck, build
@@ -168,6 +169,12 @@ Evidence must distinguish between:
 - verified from runtime/implementation evidence
 - approved by human review
 - still open and therefore not claimable as done
+
+Runtime evidence rule:
+- minimum pass evidence is that the reset request path executes successfully against the active runtime/auth project and the user-facing success/help state is shown truthfully
+- stronger optional evidence is that a QA inbox independently confirms delivery of the reset email
+- if request initiation is verified but delivery cannot be independently confirmed, do not overclaim full delivery truth; record the exact evidence boundary explicitly
+- if provider-side or env-side delivery setup is the blocker, report it as external runtime/provider truth rather than silently converting it into product completion
 
 ---
 

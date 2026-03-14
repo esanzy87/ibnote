@@ -25,14 +25,15 @@ This document records fixed decisions for the 002 package so planning and implem
   - 002 stays small and launch-relevant
   - deletion can be designed separately with the right safeguards later
 
-## ADR-003. Prefer the smallest understandable reset UX shape
+## ADR-003. Prefer a dedicated minimal reset-request route as the default UX shape
 
 - Status: accepted
-- Context: reset can be made discoverable in multiple valid ways, but complexity should stay low.
-- Decision: choose the smallest valid user flow that keeps sign-in/create-account and reset clearly distinguishable.
+- Context: reset can be made discoverable in multiple valid ways, but unattended implementation becomes safer when the UX shape is fixed up front.
+- Decision: use a dedicated minimal reset-request route as the default implementation shape, linked from `/login`, unless implementation truth reveals a smaller route-equivalent shape with the same clarity and lower risk.
 - Consequences:
-  - auth surface complexity stays controlled
-  - implementation remains easier to verify
+  - `/login` stays simpler and less crowded
+  - reset flow QA becomes easier to isolate
+  - unattended implementation has less room to invent modal/inline complexity
 
 ## ADR-004. Use existing auth infrastructure instead of custom recovery logic
 

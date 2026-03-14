@@ -13,7 +13,7 @@ This document tracks risks that are unsafe to leave implicit during 002 planning
 
 - Issue: adding reset affordance may make `/login` feel crowded or less clear.
 - Impact: sign-in/create-account conversion drops.
-- Default handling: keep reset affordance visible but clearly secondary.
+- Default handling: keep reset affordance visible but clearly secondary, and default to a dedicated minimal reset-request route rather than modal/inline complexity.
 - Human decision needed: none unless auth surface becomes too dense in review.
 
 ### R-02. Messaging can leak account existence implicitly
@@ -27,7 +27,7 @@ This document tracks risks that are unsafe to leave implicit during 002 planning
 
 - Issue: password reset delivery can fail if active auth configuration is incomplete or mismatched.
 - Impact: false sense of readiness or blocked QA.
-- Default handling: runtime verification is required before closeout; if env/provider truth blocks delivery, report it explicitly as env/runtime truth rather than product completion.
+- Default handling: runtime verification is required before closeout; separate request-initiation verification from independent delivery verification, and if env/provider truth blocks delivery, report it explicitly as env/runtime truth rather than product completion.
 - Human decision needed: possibly, if provider-side setup is incomplete.
 
 ### R-04. Reset scope can drift into broader lifecycle work
@@ -39,9 +39,9 @@ This document tracks risks that are unsafe to leave implicit during 002 planning
 
 ### R-05. Done-state can be overstated from code-only evidence
 
-- Issue: reset UI may exist even if the real runtime path was not verified.
+- Issue: reset UI may exist even if the real runtime path was not verified, or request initiation may be verified while delivery truth remains unknown.
 - Impact: package is called done without real recovery truth.
-- Default handling: require runtime QA in addition to lint/typecheck/build.
+- Default handling: require runtime QA in addition to lint/typecheck/build, and require the exact evidence boundary to be stated explicitly.
 - Human decision needed: none.
 
 ## 3. Threats and failure modes to test explicitly

@@ -31,7 +31,7 @@ If this spec conflicts with the PRD, follow the PRD and update this file.
 ### 2.2 Route scope
 In-scope surfaces only:
 - `/login`
-- minimal password-reset request surface, only if required for a clear execution path
+- one dedicated minimal password-reset request route linked from `/login`
 
 Inherited-but-non-redesign surfaces to protect during regression:
 - `/`
@@ -64,6 +64,14 @@ Stop and request human direction if any planned change requires:
 - Keep messaging calm and direct.
 - Avoid revealing whether a given email definitely exists.
 - Make the next step obvious after submission.
+- Prefer generic success/help wording over account-existence confirmation.
+
+Safe copy example:
+- `입력한 이메일로 안내를 보낼 수 있는 경우, 곧 메일을 받게 됩니다. 메일함과 스팸함을 함께 확인해 주세요.`
+
+Avoid drift examples:
+- `등록되지 않은 이메일입니다.`
+- `해당 계정을 찾지 못했습니다.`
 
 ### 3.2 UX rules
 - Keep reset discovery obvious but visually secondary to the main auth actions.
@@ -101,6 +109,11 @@ Acceptance checks:
 ### 4.2 Reset request surface
 Purpose: let the user submit a password-reset request with clear expectation of what happens next.
 
+Default UX shape:
+- use one dedicated minimal reset-request route linked from `/login`
+- do not use a modal by default
+- do not overload the main `/login` form with inline reset states unless implementation truth shows a clearly smaller and equally understandable path
+
 Required outcomes:
 - email entry is simple and obvious
 - success/help/error messaging is understandable
@@ -124,8 +137,9 @@ Acceptance checks:
 | VR-02 | Reset flow clarity | Request flow and next-step messaging are understandable | Route copy checklist |
 | VR-03 | Scope safety | No drift into delete/provider/admin flows | Scope audit checklist |
 | VR-04 | Auth regression safety | Sign-in/create-account and protected redirects still work | Runtime smoke QA |
-| VR-05 | Repo health retained | lint/typecheck/build pass | Command outputs |
-| VR-06 | Governance complete | Human sign-off recorded and open risks dispositioned | Sign-off note |
+| VR-05 | Runtime reset truth boundary explicit | Request initiation is verified, and delivery evidence level is stated truthfully | QA note with evidence boundary |
+| VR-06 | Repo health retained | lint/typecheck/build pass | Command outputs |
+| VR-07 | Governance complete | Human sign-off recorded and open risks dispositioned | Sign-off note |
 
 ## 6. Task plan
 
