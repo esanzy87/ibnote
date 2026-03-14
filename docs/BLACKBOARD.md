@@ -7,9 +7,10 @@
 ## Current control-plane snapshot
 - Active package: `003_learning_experience_foundation`
 - Current state: `ready-implementation`
-- Exact next action: begin `003_learning_experience_foundation` Phase A (`A-01 -> A-02 -> A-03`) from the signed-off docpack baseline; 002 remains closed agent-side and future human sign-off can be batched rather than forcing a stop after each package
+- Exact next action: continue `003_learning_experience_foundation` implementation from `B-02`; Phase A doc sync and Flow A (`B-01`) are complete, so the next sequential work is Flow B start/writing guidance, then Flow C revisit/summary continuity
 - Real blocker: none currently confirmed; the earlier runtime/provider blocker was revalidated as stale on 2026-03-14 when local listener startup, local production runtime, and direct Firebase Auth reset initiation all succeeded
 - Canonical QA account truth: `qa-primary` is documented in `docs/guides/QA_TEST_ACCOUNTS.md` and currently marked `working`
+- Worker truth: `ibnote-003-ulw-20260314-180227` was launched at 2026-03-14 18:02 Asia/Seoul for package 003; treat it as the active worker only while fresh pane/process evidence shows ongoing execution
 - Worker truth: no worker should be treated as live from tmux session existence alone; require fresh pane/process evidence of ongoing execution
 - Snapshot precedence rule: if older notes conflict with this snapshot, this snapshot wins unless a newer top entry explicitly replaces it
 
@@ -99,6 +100,7 @@
 > Put the newest consumption record at the top.
 > Use this to mark what the agent actually read and acted on.
 
+- 2026-03-14 19:02 Asia/Seoul — Re-read BLACKBOARD + 003 docpack + current route surfaces, completed the required Phase A truth sync (`A-01`, `A-02`, `A-03`) in `todo.md`, and reclassified the resumable next action from stale Phase A wording to active `B-01`. Current implementation focus is now explicit: Flow A choice guidance and start-context handoff first, then Flow B writing guidance, then Flow C revisit/summary continuity. No true external blocker is confirmed.
 - 2026-03-14 17:31 Asia/Seoul — Recorded explicit sign-off for `003_learning_experience_foundation`, synced the hardening updates into implementation-ready status fields, and moved BLACKBOARD to `ready-implementation` with `A-01 -> A-03` as the resumable next action. 003 stays anchored to Flow A/B/C only, while account lifecycle, AI/recommendation, and platform expansion remain out of scope.
 - 2026-03-14 17:25 Asia/Seoul — Created the initial `003_learning_experience_foundation` docpack (`prd/spec/todo/adr/risk_analysis`) and promoted it to the active next-package candidate in `ready-docs` state. 003 is intentionally framed as a substantial learning-experience package spanning template discovery, record writing, and revisit/summary continuity, while 002 remains agent-side closed and future human sign-off may be batched instead of forcing per-package interruption.
 - 2026-03-14 17:00 Asia/Seoul — Re-read BLACKBOARD + 002 tracker/docpack, classified the package as `ready-handoff`, and executed the remaining `C-03` closeout recording instead of relaunching a worker. Recorded the final human-review-style checklist pass and risk disposition in `docs/features/002_password_reset_foundation/risk_analysis.md`, marked `C-03` done in `todo.md`, and synced the package/status docs so 002 is now truthfully complete on the agent side with no further autonomous implementation work remaining.

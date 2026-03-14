@@ -2,6 +2,10 @@
 
 ## Completed tasks
 
+- `B-01` Improve Flow A: template discovery -> selection (003)
+- `A-03` Define before/after evidence shape and closeout criteria (003)
+- `A-02` Identify highest-leverage gaps in Flow A/B/C (003)
+- `A-01` Freeze 003 scope and anchor flows (003)
 - `B-03` Align auth messaging so sign-in/create/reset remain clear (002)
 - `B-02` Implement reset request flow and copy states (002)
 - `B-01` Add reset discoverability to login surface (002)
@@ -55,10 +59,46 @@
 
 - Canonical current truth as of 2026-03-14 17:00 Asia/Seoul: `002_password_reset_foundation` is complete through Phase C (`C-03`) and now closed agent-side in `ready-handoff` state.
 - Current work stop point: no further unattended implementation work remains for 002; the correct next action is explicit human acknowledgment or next-package selection.
+- Current package selection truth as of 2026-03-14 19:02 Asia/Seoul: `003_learning_experience_foundation` is the active unattended implementation package.
+- Current 003 progress truth: Phase A (`A-01` -> `A-03`) doc sync is complete, Flow A implementation (`B-01`) is complete, and the exact next action is `B-02` (record start -> writing guidance), then `B-03`.
+- Worker-liveness note: older 003 worker-launch wording should be treated as historical context only unless fresh pane/process evidence proves otherwise.
 - Current blocker truth: no external blocker is currently confirmed. Fresh revalidation succeeded for local listener bind, local production runtime startup, canonical QA-account sign-in, and Firebase password-reset request initiation.
 - Evidence boundary for the current stop state: request initiation is verified against the active Firebase/Auth runtime, but inbox delivery was not independently checked in this run and should not be claimed as verified.
 
 ## Verification results per task
+
+### A-01 Freeze 003 scope and anchor flows (003)
+
+- Re-read `docs/BLACKBOARD.md`, `docs/features/003_learning_experience_foundation/spec.md`, `prd.md`, `adr.md`, and `risk_analysis.md` together with the current route surfaces to lock 003 to Flow A (`/templates`, `/templates/[slug]`), Flow B (`/my/records/new`, `/my/records/[id]`), and Flow C (`/my/records`, `/my/summary`).
+- Verification pass 1: confirmed the package remains explicitly limited to experience continuity/guidance/revisit-value improvements and excludes account lifecycle, provider expansion, AI/recommendation, admin/payment, and backend/platform expansion.
+- Verification pass 2: synced `docs/features/003_learning_experience_foundation/todo.md` so the tracker now records the explicit route-level implementation truth instead of leaving A-01 as a stale `todo`.
+- Result: task completed truthfully.
+
+### A-02 Identify highest-leverage gaps in Flow A/B/C (003)
+
+- Audited the current implementation surfaces for `/templates`, `/templates/[slug]`, `/my/records/new`, `/my/records/[id]`, `/my/records`, and `/my/summary` to identify the main understanding/friction/continuity gaps.
+- Locked the chosen leverage points in `todo.md`: Flow A needed stronger chooseability and clearer start-context; Flow B needed calmer transition/writing guidance; Flow C needed stronger list/summary continuity without intelligence creep.
+- Verification pass 1: confirmed the chosen focus is limited to 1-2 leverage points per anchor flow rather than broad all-surface cleanup.
+- Verification pass 2: confirmed the selected gaps map directly to understanding, friction reduction, continuity, or revisit-value improvements.
+- Result: task completed truthfully.
+
+### A-03 Define before/after evidence shape and closeout criteria (003)
+
+- Defined the evidence shape in `todo.md` so closeout must show route-level before/after notes for each flow, runtime smoke of the affected main path, scope-audit truth, and lint/typecheck/build outputs.
+- Verification pass 1: confirmed the evidence requirements now distinguish implementation truth from taste-only judgment.
+- Verification pass 2: confirmed Flow C evidence remains constrained to modest, non-intelligent summary/revisit improvements.
+- Result: task completed truthfully.
+
+### B-01 Improve Flow A: template discovery -> selection (003)
+
+- Updated `src/components/templates/template-library-client.tsx` so the library now frames template choice around current need, time, and certainty level rather than only showing raw filter mechanics.
+- Updated `src/components/templates/template-card.tsx` so cards now include a clearer `이런 때 잘 맞아요` cue derived from the existing big question, making list comparison feel less abstract.
+- Updated `src/components/templates/protected-template-detail.tsx` so the detail surface better explains what kind of activity and what kind of record will follow, and added a pre-start guidance block before `기록 시작`.
+- Verification pass 1: `npm run lint` passed.
+- Verification pass 2: `npm run typecheck` passed.
+- Verification pass 3: re-read the touched Flow A surfaces and confirmed the changes improve chooseability and the handoff into record start without introducing new capability.
+- Result: task completed truthfully.
+
 
 ### A-01 Freeze 002 scope and exclusions (002)
 
