@@ -1,9 +1,9 @@
 # IBNote 011 Phase-2 Public Entry Adoption PRD
 
-Version: 0.1
+Version: 0.2
 Date: 2026-03-16
 Owner: unattended agent
-Status: Draft
+Status: Hardened - ready for implementation planning
 Depends on: `010_stitch_ui_adoption_foundation`
 
 ## 1. Purpose
@@ -34,14 +34,28 @@ This package should improve:
 
 This package must not turn IBNote into a marketing-heavy or lifestyle-brand landing experience.
 
-## 4. Scope
+## 4. Why this is leverage, not cosmetic-only polish
 
-### 4.1 In scope
+011 is not just a landing-page beautification task.
+It matters because public-entry routes set user expectations before the product loop begins.
+If those routes feel visually or conceptually disconnected from the protected product, the product feels less coherent and less trustworthy.
+
+The leverage of 011 is:
+- stronger first-touch trust
+- clearer explanation of the real product loop
+- smoother transition from landing -> login -> templates
+- tighter coherence with the 010 baseline already adopted on protected routes
+
+011 should be considered failed if it only produces nicer screenshots while introducing fake marketing/auth surface area or obscuring the real product flow.
+
+## 5. Scope
+
+### 5.1 In scope
 - `/`
 - `/login`
 - copy, hierarchy, layout, componentization, and visual treatment required to align those routes with the 010 baseline
 
-### 4.2 Out of scope
+### 5.2 Out of scope
 - social login
 - support center / community / resources surfaces
 - fake testimonials or social proof
@@ -49,7 +63,7 @@ This package must not turn IBNote into a marketing-heavy or lifestyle-brand land
 - new marketing claims unsupported by actual product truth
 - expansion into deferred revisit/settings surfaces
 
-## 5. User value
+## 6. User value
 
 ### Landing page
 The parent should quickly understand:
@@ -64,14 +78,14 @@ The parent should feel:
 - more confidence about what happens next after login
 - no confusion about unsupported auth paths
 
-## 6. Goals
+## 7. Goals
 
 1. Bring landing and login into visual alignment with the 010 baseline.
 2. Keep public-entry copy more practical than poetic.
 3. Preserve product truth and avoid fake surface expansion.
 4. Improve perceived quality without turning these routes into overbuilt marketing screens.
 
-## 7. Non-goals
+## 8. Non-goals
 
 1. No social login.
 2. No support/help-center/product-surface expansion.
@@ -79,7 +93,7 @@ The parent should feel:
 4. No hidden auth model change.
 5. No broad rewrite of global app chrome beyond what these routes require.
 
-## 8. Relationship to 010
+## 9. Relationship to 010
 
 011 should inherit the Stitch-derived visual primitives validated in 010 phase-1:
 - warm neutral palette
@@ -93,7 +107,21 @@ The parent should feel:
 - remove fake features rather than placeholdering them
 - prefer subtraction over invention when a design element implies unsupported scope
 
-## 9. Candidate route assessment
+## 10. Parent-value framing
+
+### `/`
+Desired parent gain:
+- immediately understand what this product is for
+- feel that starting is simple and low-pressure
+- trust that the product is practical, not school-like or overcomplicated
+
+### `/login`
+Desired parent gain:
+- enter the product without auth confusion
+- understand where they go after login
+- feel reassured without being sold extra product surface
+
+## 11. Candidate route assessment
 
 ### `/`
 Adoption mode hypothesis: `adopt_with_rewrite`
@@ -123,7 +151,22 @@ Must remove/rewrite:
 - fake usage counters / social proof
 - any auth implication beyond email/password truth
 
-## 10. Success criteria
+## 12. Positive adoption thesis
+
+011 should preserve these gains from the Stitch concepts:
+- a warmer and more premium first impression
+- clearer split between explanation and action
+- stronger CTA hierarchy
+- more reassuring auth entry structure
+- calmer visual continuity with phase-1 routes
+
+011 should tone down or remove:
+- over-editorial photography
+- lifestyle-brand language
+- fake credibility cues
+- unsupported navigation and footer clutter
+
+## 13. Success criteria
 
 011 is successful only if:
 1. `/` and `/login` feel visually coherent with 010 phase-1 routes
@@ -132,7 +175,7 @@ Must remove/rewrite:
 4. login route preserves the real auth model faithfully
 5. the public entry experience better matches the product the user actually sees after entering
 
-## 11. Recommended posture
+## 14. Recommended posture
 
 Recommended next move:
 - plan 011 as a focused phase-2 package

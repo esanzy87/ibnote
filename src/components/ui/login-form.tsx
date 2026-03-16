@@ -20,27 +20,7 @@ function getSubmitLabel(mode: AuthMode, isSubmitting: boolean): string {
     return mode === 'sign_in' ? '로그인 중...' : '계정 생성 중...';
   }
 
-  return mode === 'sign_in' ? '로그인' : '계정 만들기';
-}
-
-function getModeDescription(mode: AuthMode): string {
-  return mode === 'sign_in'
-    ? '기존 계정으로 로그인하면 저장해 둔 기록과 최근 흐름을 바로 확인할 수 있습니다.'
-    : '처음이라면 계정을 만든 뒤 바로 템플릿을 고르고 기록을 시작할 수 있습니다.';
-}
-
-function getAuthStateMessage(mode: AuthMode, isSubmitting: boolean, formError: string | null): string {
-  if (isSubmitting) {
-    return mode === 'sign_in' ? '로그인을 처리하고 있습니다.' : '계정을 만들고 있습니다.';
-  }
-
-  if (formError) {
-    return '입력 정보를 확인한 뒤 다시 시도해 주세요.';
-  }
-
-  return mode === 'sign_in'
-    ? '현재 상태: 기존 계정으로 로그인 대기 중'
-    : '현재 상태: 새 계정 생성 대기 중';
+  return mode === 'sign_in' ? '로그인하고 기록 보기' : '계정 만들고 시작하기';
 }
 
 function resolveAuthErrorMessage(submissionError: unknown): string {
@@ -73,6 +53,7 @@ export function LoginForm({ nextTarget, requestedNextTarget }: LoginFormProps) {
   const [mode, setMode] = useState<AuthMode>('sign_in');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const passwordResetHref = buildPasswordResetHref(requestedNextTarget);
@@ -108,112 +89,159 @@ export function LoginForm({ nextTarget, requestedNextTarget }: LoginFormProps) {
   }
 
   return (
-    <main className="bg-stone-100 px-6 py-12 text-slate-800 sm:py-16">
-      <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-        <section className="rounded-[2rem] border border-stone-200 bg-white p-8 shadow-sm sm:p-10">
-          <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">
-            로그인
-          </p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-900">
-            로그인하고 아이와 한 활동 기록을 바로 이어 보세요.
-          </h1>
-          <p className="mt-4 text-base leading-7 text-slate-600">
-            이메일과 비밀번호로 로그인하거나 계정을 만든 뒤 요청한 화면으로 돌아갑니다.
-            비밀번호가 기억나지 않을 때는 별도 재설정 화면에서 안내 메일을 요청할 수 있습니다.
-          </p>
+    <div className="flex min-h-screen items-center justify-center bg-background-light p-0 font-display text-slate-900 md:p-6 lg:p-12">
+      <main className="flex min-h-[85vh] w-full max-w-6xl flex-col overflow-hidden bg-white shadow-2xl md:flex-row md:rounded-xl">
+        {/* Left Panel: Informational */}
+        <div className="relative flex w-full flex-col justify-center overflow-hidden bg-primary/10 p-8 md:w-1/2 md:p-16 lg:p-24">
+          {/* Decorative soft shapes */}
+          <div className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
+          <div className="absolute -right-24 -bottom-24 h-96 w-96 rounded-full bg-primary/10 blur-3xl"></div>
 
-          <p className="mt-5 text-sm leading-6 text-slate-500">
-            로그인 후 이동 경로: <span className="font-medium text-slate-700">{nextTarget}</span>
-          </p>
+          <div className="relative z-10">
+            <Link href="/" className="mb-12 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white">
+                <span className="material-symbols-outlined">auto_stories</span>
+              </div>
+              <span className="text-2xl font-bold tracking-tight text-slate-800">IBNote</span>
+            </Link>
 
-          <div className="mt-5 rounded-2xl border border-dashed border-stone-300 bg-stone-50 px-4 py-3 text-sm text-slate-500">
-            {getAuthStateMessage(mode, isSubmitting, formError)}
+            <h1 className="mb-6 text-4xl font-bold leading-[1.15] text-slate-900 lg:text-5xl">
+              로그인하고 저장한 기록과 최근 흐름을 바로 확인해 보세요.
+            </h1>
+
+            <p className="mb-8 max-w-md text-lg leading-relaxed text-slate-600">
+              이메일과 비밀번호로 로그인하거나 계정을 만든 뒤, 요청한 화면으로 바로 이동합니다.
+              기록은 로그인한 계정 기준으로만 연결됩니다.
+            </p>
+
+            <div className="border-t border-primary/10 py-6">
+              <p className="text-sm font-medium text-slate-500">
+                로그인 후 이동: <span className="text-slate-700">{nextTarget}</span>
+              </p>
+            </div>
           </div>
-        </section>
+        </div>
 
-        <section className="rounded-[2rem] border border-stone-200 bg-white p-8 shadow-sm sm:p-10">
-          <div className="grid gap-5">
-            <div className="flex flex-wrap gap-3">
+        {/* Right Panel: Form */}
+        <div className="flex w-full flex-col items-center justify-center bg-white p-8 md:w-1/2 md:p-16 lg:p-20">
+          <div className="w-full max-w-sm">
+            {/* Toggle Switch */}
+            <div className="mb-10 flex rounded-xl bg-slate-100 p-1.5">
               <button
                 type="button"
-                onClick={() => setMode('sign_in')}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                onClick={() => {
+                  setMode('sign_in');
+                  setFormError(null);
+                }}
+                className={`flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all ${
                   mode === 'sign_in'
-                    ? 'bg-slate-900 text-white'
-                    : 'border border-stone-300 bg-white text-slate-700'
+                    ? 'bg-white text-slate-900 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
                 로그인
               </button>
               <button
                 type="button"
-                onClick={() => setMode('create_account')}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                onClick={() => {
+                  setMode('create_account');
+                  setFormError(null);
+                }}
+                className={`flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all ${
                   mode === 'create_account'
-                    ? 'bg-slate-900 text-white'
-                    : 'border border-stone-300 bg-white text-slate-700'
+                    ? 'bg-white text-slate-900 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
                 계정 만들기
               </button>
             </div>
 
-            <p className="text-sm leading-6 text-slate-600">{getModeDescription(mode)}</p>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700" htmlFor="email">
+                  이메일 주소
+                </label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                    <span className="material-symbols-outlined text-[20px]">mail</span>
+                  </span>
+                  <input
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="parent@example.com"
+                    disabled={isSubmitting}
+                    className="block w-full rounded-xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-4 text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:opacity-60"
+                  />
+                </div>
+              </div>
 
-            <form className="grid gap-5" onSubmit={handleSubmit}>
-              <label className="grid gap-2 text-sm font-medium text-slate-700">
-                이메일
-                <input
-                  type="email"
-                  name="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  placeholder="name@example.com"
-                  className="rounded-2xl border border-stone-300 bg-stone-50 px-4 py-3 text-base text-slate-700 outline-none"
-                />
-              </label>
+              <div>
+                <div className="mb-2 flex items-center justify-between">
+                  <label className="block text-sm font-semibold text-slate-700" htmlFor="password">
+                    비밀번호
+                  </label>
+                  <Link
+                    href={passwordResetHref}
+                    className="text-xs font-semibold text-primary transition-colors hover:text-primary/80"
+                  >
+                    비밀번호를 잊으셨나요?
+                  </Link>
+                </div>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                    <span className="material-symbols-outlined text-[20px]">lock</span>
+                  </span>
+                  <input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete={mode === 'sign_in' ? 'current-password' : 'new-password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    disabled={isSubmitting}
+                    className="block w-full rounded-xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-11 text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:opacity-60"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600"
+                  >
+                    <span className="material-symbols-outlined text-[20px]">
+                      {showPassword ? 'visibility_off' : 'visibility'}
+                    </span>
+                  </button>
+                </div>
+              </div>
 
-              <label className="grid gap-2 text-sm font-medium text-slate-700">
-                비밀번호
-                <input
-                  type="password"
-                  name="password"
-                  autoComplete={mode === 'sign_in' ? 'current-password' : 'new-password'}
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  placeholder="비밀번호 입력"
-                  className="rounded-2xl border border-stone-300 bg-stone-50 px-4 py-3 text-base text-slate-700 outline-none"
-                />
-              </label>
+              {formError && (
+                <div className="rounded-xl bg-red-50 p-4 text-sm text-red-600">
+                  {formError}
+                </div>
+              )}
 
-              <div className="flex flex-wrap items-center justify-between gap-2 text-sm leading-6">
-                <p className="text-slate-500">
-                  비밀번호가 생각나지 않으면 메일로 재설정 안내를 받을 수 있어요.
-                </p>
-                <Link
-                  href={passwordResetHref}
-                  className="font-medium text-slate-700 underline decoration-stone-400 underline-offset-4 transition hover:text-slate-900"
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full rounded-xl bg-primary py-4 font-bold text-white shadow-lg shadow-primary/20 transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  비밀번호 재설정
-                </Link>
+                  {getSubmitLabel(mode, isSubmitting)}
+                </button>
               </div>
-
-              <div className="rounded-2xl border border-dashed border-stone-300 bg-stone-50 px-4 py-3 text-sm text-slate-500">
-                {formError ?? '이메일과 비밀번호를 입력하면 여기에서 진행 상태나 오류 안내를 확인할 수 있습니다.'}
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="inline-flex justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {getSubmitLabel(mode, isSubmitting)}
-              </button>
             </form>
+
+            <div className="mt-10 text-center">
+              <Link href="/" className="text-sm font-medium text-slate-500 underline decoration-slate-300 underline-offset-4 hover:text-slate-700">
+                처음 화면으로 돌아가기
+              </Link>
+            </div>
           </div>
-        </section>
-      </div>
-    </main>
+        </div>
+      </main>
+    </div>
   );
 }
