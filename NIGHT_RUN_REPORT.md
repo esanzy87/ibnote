@@ -1,5 +1,14 @@
 # IBNote Night Run Report
 
+## Current truth header
+
+- Active package: `013_records_surface_stitch_polish`
+- Current state: `ready-implementation`
+- Exact next action: execute 013 Phase B by strengthening `/my/records` hierarchy/cards, strengthening `/my/records/[id]` section hierarchy, and applying only the smallest bounded non-landing app-shell/top-nav correction needed for coherence.
+- Last revalidated at: 2026-03-17 00:57 Asia/Seoul
+- Readiness note: unattended operator remains `yellow / conditional-go` until BLACKBOARD snapshot, active docpack, and dirty-tree interpretation stay aligned.
+
+
 ## Completed tasks
 
 - `B-01` Improve Flow A: template discovery -> selection (003)

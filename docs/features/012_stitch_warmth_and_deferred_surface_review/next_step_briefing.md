@@ -38,6 +38,8 @@ Recommended next-step focus:
 
 ### 4.1 `/my/records`
 Potential follow-up polish:
+- actual Stitch-style application still appears incomplete in real use and should not be treated as finished
+- strengthen the visible Stitch-style card/hierarchy treatment before only tuning copy density
 - reduce card/explanation density if the page feels too busy on mobile
 - keep summary-connection explanation concise
 - confirm that revisit overview helps rather than overwhelms

@@ -148,10 +148,10 @@ export function CreateRecordTransition({ templateSlug }: CreateRecordTransitionP
 
       async function runTransition() {
         try {
-          const draftId = await createDraftRecord(uid, currentTemplate);
+          const draftRecord = await createDraftRecord(uid, currentTemplate);
           // Small delay to let the transition feel intentional
           await new Promise((resolve) => setTimeout(resolve, 800));
-          router.replace(`/my/records/${draftId}`);
+          router.replace(`/my/records/${draftRecord.id}`);
         } catch (err) {
           console.error('Failed to create draft:', err);
           setCreationStatus('error');
