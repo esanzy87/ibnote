@@ -94,7 +94,7 @@ function TemplateDetailContent({ template }: { template: EnrichedWorksheetTempla
       <section className="mb-10">
         <div className="flex flex-col overflow-hidden rounded-xl border border-primary/5 bg-white shadow-sm">
           <div className="flex-1 p-6">
-            <h3 className="mb-2 text-lg font-bold text-slate-900">우리에게 맞는 활동인가요?</h3>
+            <h3 className="mb-2 text-lg font-bold text-slate-900">활동의 시작</h3>
             <p className="mb-4 text-sm leading-relaxed text-slate-600">
               {template.quickStart}
             </p>
@@ -106,7 +106,7 @@ function TemplateDetailContent({ template }: { template: EnrichedWorksheetTempla
       <section className="mb-10">
         <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
           <span className="material-symbols-outlined text-primary">shopping_basket</span>
-          준비물
+          간단한 준비물
         </h2>
         <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {template.materials.map((material, idx) => (
@@ -128,7 +128,7 @@ function TemplateDetailContent({ template }: { template: EnrichedWorksheetTempla
       <section className="mb-10">
         <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
           <span className="material-symbols-outlined text-primary">footprint</span>
-          진행 순서
+          함께하는 순서
         </h2>
         <div className="relative space-y-6 before:absolute before:bottom-2 before:left-[11px] before:top-2 before:w-[2px] before:bg-primary/10">
           {template.steps.map((step, idx) => (
@@ -148,7 +148,7 @@ function TemplateDetailContent({ template }: { template: EnrichedWorksheetTempla
       <section className="mb-10 rounded-xl border-l-4 border-primary bg-primary/5 p-6">
         <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
           <span className="material-symbols-outlined text-primary">visibility</span>
-          관찰 포인트
+          차분히 관찰해 보세요
         </h2>
         <div className="space-y-3">
           <ul className="space-y-2">
@@ -166,7 +166,7 @@ function TemplateDetailContent({ template }: { template: EnrichedWorksheetTempla
       <section className="mb-12">
         <h2 className="mb-3 flex items-center gap-2 text-xl font-bold text-slate-900">
           <span className="material-symbols-outlined text-primary">history_toggle_off</span>
-          나중에 다시 보면 좋은 이유
+          나중에 다시 읽어 보면 좋은 점
         </h2>
         <p className="text-sm leading-relaxed text-slate-600">
           {template.revisitReason}
@@ -181,7 +181,7 @@ function TemplateDetailContent({ template }: { template: EnrichedWorksheetTempla
             className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary py-4 font-bold text-white transition-transform active:scale-95 hover:bg-primary/90"
           >
             <span className="material-symbols-outlined">edit_note</span>
-            활동 기록하기
+            가볍게 기록하기
           </Link>
           <button 
             onClick={() => window.print()}

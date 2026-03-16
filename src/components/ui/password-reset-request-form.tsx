@@ -103,7 +103,7 @@ export function PasswordResetRequestForm({ returnToLoginHref }: PasswordResetReq
               <span className="material-symbols-outlined text-3xl">lock_reset</span>
             </div>
             <h1 className="mb-2 text-3xl font-black tracking-tight text-slate-900">비밀번호 재설정</h1>
-            <p className="text-slate-600">가입하신 이메일 주소를 입력하시면<br />비밀번호 재설정 링크를 보내드립니다.</p>
+            <p className="text-slate-600">가입하신 이메일 주소를 입력하시면<br />다시 로그인하실 수 있게 링크를 보내드립니다.</p>
           </div>
 
           <div className="rounded-2xl border border-slate-100 bg-white p-8 shadow-xl">

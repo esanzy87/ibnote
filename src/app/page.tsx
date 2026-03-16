@@ -3,17 +3,17 @@ import Link from 'next/link';
 const HOW_IT_WORKS_STEPS = [
   {
     title: '템플릿 고르기',
-    description: '지금 아이와 해보기 좋은 템플릿을 고르고 바로 기록을 시작합니다.',
+    description: '아이와 해보기 좋은 활동을 고르고 바로 기록을 시작합니다.',
     icon: 'filter_vintage',
   },
   {
     title: '함께 해보기',
-    description: '아이와 질문하고 관찰하며 짧고 즐거운 연결의 시간을 보냅니다.',
+    description: '질문하고 관찰하며 아이와 즐겁게 연결되는 시간을 보냅니다.',
     icon: 'favorite',
   },
   {
     title: '기록하고 확인하기',
-    description: '남겨둔 기록과 최근 요약을 보며 다음에 이어갈 활동 감각을 잡습니다.',
+    description: '남긴 기록을 보며 아이의 성장 흐름을 차분히 확인합니다.',
     icon: 'edit_note',
   },
 ] as const;
@@ -66,13 +66,13 @@ export default function HomePage() {
             <div className="z-10 flex flex-col gap-8">
               <div className="inline-flex items-center gap-2 self-start rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
                 <span className="material-symbols-outlined text-sm">colors_spark</span>
-                부모를 위한 활동 기록
+                부모를 위한 따뜻한 기록
               </div>
               <h1 className="text-5xl font-extrabold leading-[1.1] tracking-tight text-slate-900 md:text-7xl">
-                오늘 해 본 활동을 <span className="italic text-primary">짧게 남기고</span> 다시 이어 보기 쉽게 정리합니다.
+                아이와의 소중한 장면을 <span className="italic text-primary">가볍게 기록하고</span> 다시 이어 보세요.
               </h1>
               <p className="max-w-lg text-lg leading-relaxed text-slate-600 md:text-xl">
-                집에서 아이와 해본 활동을 짧게 남기고, 다음에 다시 꺼내 보기 쉽게 정리하는 부모용 기록 서비스입니다.
+                집에서 아이와 해본 활동을 짧게 남기고, 다음에 다시 꺼내 보기 쉽게 정리하는 부모용 기록 공간입니다.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row">
                 <Link
@@ -113,8 +113,8 @@ export default function HomePage() {
         {/* How it Works */}
         <section className="mx-auto max-w-6xl px-6 py-24">
           <div className="mb-16 space-y-4 text-center">
-            <h2 className="text-4xl font-extrabold tracking-tight">IBNote를 쓰는 기본 흐름</h2>
-            <p className="text-slate-600">무엇을 할지 고르고, 짧게 기록하고, 최근 흐름을 다시 확인합니다.</p>
+            <h2 className="text-4xl font-extrabold tracking-tight">기록이 이어지는 기본 흐름</h2>
+            <p className="text-slate-600">아이와 함께할 활동을 고르고, 짧게 기록하고, 최근 흐름을 다시 확인합니다.</p>
           </div>
           <div className="grid gap-12 md:grid-cols-3">
             {HOW_IT_WORKS_STEPS.map((step) => (
@@ -134,8 +134,8 @@ export default function HomePage() {
           <div className="mx-auto max-w-6xl px-6">
             <div className="mb-12 flex items-end justify-between">
               <div className="space-y-2">
-                <h2 className="text-3xl font-extrabold tracking-tight">준비된 활동 템플릿</h2>
-                <p className="text-slate-600">아이와 대화를 나누고 기록하기 좋은 간단한 질문들입니다.</p>
+                <h2 className="text-3xl font-extrabold tracking-tight">아이와 함께할 활동 템플릿</h2>
+                <p className="text-slate-600">대화를 나누고 기록하기 좋은 간단한 질문들입니다.</p>
               </div>
             </div>
             <div className="grid gap-8 md:grid-cols-3">
@@ -164,10 +164,10 @@ export default function HomePage() {
         {/* Value Prop & Privacy */}
         <section className="mx-auto max-w-4xl px-6 py-24 text-center space-y-12">
           <div className="space-y-6">
-            <h2 className="text-4xl font-extrabold tracking-tight md:text-5xl">기록은 안전하게 보관됩니다.</h2>
+            <h2 className="text-4xl font-extrabold tracking-tight md:text-5xl">우리의 기록은 안전합니다.</h2>
             <p className="text-xl leading-relaxed text-slate-600">
-              IBNote는 실제 이름이나 학교 같은 민감한 정보 없이도 아이의 배움을 기록할 수 있도록 설계되었습니다.
-              모든 기록은 로그인한 본인 계정으로만 연결됩니다.
+              IBNote는 실제 이름이나 학교 같은 민감한 정보 없이도 기록을 남길 수 있도록 설계되었습니다.
+              모든 기록은 로그인한 본인 계정으로만 소중하게 연결됩니다.
             </p>
           </div>
           <div className="inline-flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-100 p-6">
@@ -184,15 +184,15 @@ export default function HomePage() {
             <div className="relative overflow-hidden rounded-xl bg-primary p-12 text-center md:p-24">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white opacity-10 via-transparent to-transparent"></div>
               <div className="relative z-10 flex flex-col items-center gap-8">
-                <h2 className="text-4xl font-extrabold text-white tracking-tight md:text-6xl">로그인하고 오늘 맞는 템플릿부터 시작해 보세요.</h2>
+                <h2 className="text-4xl font-extrabold text-white tracking-tight md:text-6xl">로그인하고 오늘 맞는 활동부터 시작해 보세요.</h2>
                 <p className="max-w-xl text-lg text-white/80">
-                  템플릿을 고르고 기록을 남긴 뒤 최근 흐름을 다시 확인하는 현재 제품 흐름으로 바로 들어갈 수 있습니다.
+                  활동을 고르고 기록을 남긴 뒤 흐름을 다시 확인하는 IBNote의 루프로 바로 들어갈 수 있습니다.
                 </p>
                 <Link
                   href="/login"
                   className="rounded-xl bg-white px-10 py-5 text-xl font-black text-primary shadow-2xl transition-transform hover:scale-105"
                 >
-                  로그인하고 시작하기
+                  지금 로그인하고 시작하기
                 </Link>
               </div>
             </div>
@@ -208,7 +208,7 @@ export default function HomePage() {
             </div>
             <span className="font-extrabold tracking-tight">IBNote</span>
           </div>
-          <p className="text-sm text-slate-500">© 2026 IBNote. 집에서 한 활동을 기록하고 다시 이어 보는 부모용 서비스.</p>
+          <p className="text-sm text-slate-500">© 2026 IBNote. 아이와의 소중한 성장을 기록하고 이어 보는 부모용 서비스.</p>
         </div>
       </footer>
     </div>

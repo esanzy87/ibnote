@@ -84,8 +84,8 @@ export function TemplateLibraryClient({ templates }: TemplateLibraryClientProps)
       <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 md:py-12">
         {/* Hero Section */}
         <div className="mb-10">
-          <h1 className="mb-3 text-3xl font-black text-slate-900 md:text-4xl">오늘의 관찰을 시작해 보세요</h1>
-          <p className="max-w-2xl text-lg text-slate-600">오늘 해 본 활동을 하나 고르고 짧게 기록해 보세요. 꾸준한 기록이 모이면 아이의 성장을 더 뚜렷하게 볼 수 있습니다.</p>
+          <h1 className="mb-3 text-3xl font-black text-slate-900 md:text-4xl">아이와의 대화를 시작해 보세요</h1>
+          <p className="max-w-2xl text-lg text-slate-600">오늘 해 보기 좋은 활동을 하나 골라 가볍게 기록해 보세요. 차곡차곡 쌓인 기록이 아이의 성장을 더 따뜻하게 보여 줄 거예요.</p>
         </div>
 
         <TemplateLibraryFilters
@@ -96,10 +96,10 @@ export function TemplateLibraryClient({ templates }: TemplateLibraryClientProps)
 
         {/* Guidance Block */}
         <div className="mb-12 flex items-start gap-4 rounded-xl border border-primary/20 bg-primary/5 p-6">
-          <span className="material-symbols-outlined shrink-0 text-3xl text-primary">lightbulb</span>
+          <span className="material-symbols-outlined shrink-0 text-3xl text-primary">favorite</span>
           <div>
-            <p className="text-lg font-semibold text-slate-800">하나만 골라도 충분합니다.</p>
-            <p className="mt-1 text-slate-600">모든 활동을 다 하려고 애쓰지 마세요. 오늘 가장 마음이 가는 활동 하나에만 집중해 보는 것만으로도 충분합니다.</p>
+            <p className="text-lg font-semibold text-slate-800">지금 이 순간 하나면 충분합니다.</p>
+            <p className="mt-1 text-slate-600">모든 활동을 다 해야 한다는 부담은 내려놓으셔도 좋아요. 오늘 아이와 가장 나누고 싶은 대화 하나에만 집중해 보는 것만으로도 충분합니다.</p>
           </div>
         </div>
 

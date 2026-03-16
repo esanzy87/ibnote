@@ -45,7 +45,7 @@ function resolveAuthErrorMessage(submissionError: unknown): string {
     return '비밀번호는 6자 이상으로 입력해 주세요.';
   }
 
-  return '로그인 또는 계정 생성 중 문제가 생겼습니다. 잠시 후 다시 시도해 주세요.';
+  return '문제가 생겼습니다. 잠시 후 다시 시도해 주세요.';
 }
 
 export function LoginForm({ nextTarget, requestedNextTarget }: LoginFormProps) {
@@ -93,7 +93,6 @@ export function LoginForm({ nextTarget, requestedNextTarget }: LoginFormProps) {
       <main className="flex min-h-[85vh] w-full max-w-6xl flex-col overflow-hidden bg-white shadow-2xl md:flex-row md:rounded-xl">
         {/* Left Panel: Informational */}
         <div className="relative flex w-full flex-col justify-center overflow-hidden bg-primary/10 p-8 md:w-1/2 md:p-16 lg:p-24">
-          {/* Decorative soft shapes */}
           <div className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
           <div className="absolute -right-24 -bottom-24 h-96 w-96 rounded-full bg-primary/10 blur-3xl"></div>
 
@@ -106,12 +105,11 @@ export function LoginForm({ nextTarget, requestedNextTarget }: LoginFormProps) {
             </Link>
 
             <h1 className="mb-6 text-4xl font-bold leading-[1.15] text-slate-900 lg:text-5xl">
-              로그인하고 저장한 기록과 최근 흐름을 바로 확인해 보세요.
+              우리 아이의 기록을 위해 다시 오신 것을 환영합니다.
             </h1>
 
             <p className="mb-8 max-w-md text-lg leading-relaxed text-slate-600">
-              이메일과 비밀번호로 로그인하거나 계정을 만든 뒤, 요청한 화면으로 바로 이동합니다.
-              기록은 로그인한 계정 기준으로만 연결됩니다.
+              로그인하면 이전에 남긴 기록과 최근 요약을 바로 확인하고, 이어서 새로운 활동을 기록할 수 있습니다.
             </p>
 
             <div className="border-t border-primary/10 py-6">

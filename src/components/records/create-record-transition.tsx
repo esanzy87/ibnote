@@ -74,7 +74,7 @@ function StartGuidance() {
   return (
     <div className="mb-8 w-full rounded-xl border border-primary/5 bg-white p-6 shadow-sm">
       <p className="text-lg leading-relaxed text-slate-800">
-        "기록보다 오늘 있었던 장면에 집중해 보세요. 정답은 없습니다. 느낀 그대로를 짧게 남기는 것만으로도 충분합니다."
+        "기록보다 오늘 있었던 장면에 집중해 보세요. 느낀 그대로를 짧게 남기는 것만으로도 충분합니다."
       </p>
     </div>
   );
@@ -182,7 +182,7 @@ export function CreateRecordTransition({ templateSlug }: CreateRecordTransitionP
   }
 
   let title = '기록 공간을 준비하고 있습니다...';
-  let subtitle = '기록을 시작할 수 있게 공간을 준비합니다';
+  let subtitle = '아이와의 소중한 성장을 남길 공간을 준비합니다';
 
   if (status === 'loading') {
     title = '사용자 정보를 확인하고 있습니다...';

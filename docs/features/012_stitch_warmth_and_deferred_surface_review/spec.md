@@ -1,7 +1,10 @@
 # IBNote 012 Stitch Warmth and Deferred Surface Reintegration Spec
 
-Status: Hardened - broad implementation package
+Status: Hardened - ready for implementation planning
 Source of truth: `docs/features/012_stitch_warmth_and_deferred_surface_review/prd.md`
+Companions:
+- `docs/features/012_stitch_warmth_and_deferred_surface_review/reintegration_ledger.md`
+- `docs/features/012_stitch_warmth_and_deferred_surface_review/signoff_briefing.md`
 
 ## 1. Purpose
 

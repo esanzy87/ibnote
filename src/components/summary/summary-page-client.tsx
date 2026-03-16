@@ -127,7 +127,7 @@ function RedirectingState() {
         로그인 화면으로 이동하고 있습니다.
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        내 요약은 로그인한 계정에서만 볼 수 있어요. 잠시 후 로그인 화면으로 이동합니다.
+        내 요약은 로그인한 계정에서만 볼 수 있어요. 로그인 후에는 이 화면으로 다시 돌아옵니다.
       </p>
     </Surface>
   );
@@ -160,6 +160,9 @@ function SummaryErrorState({ message, onRetry }: { message: string; onRetry: () 
         최근 14일 요약을 불러오지 못했습니다.
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-rose-900 sm:text-base">{message}</p>
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-rose-900 sm:text-base">
+        잠깐 뒤 다시 시도하거나, 내 기록에서 이미 남겨 둔 기록을 먼저 확인할 수 있습니다.
+      </p>
       <div className="mt-6 flex flex-wrap gap-3">
         <button
           type="button"
@@ -172,7 +175,7 @@ function SummaryErrorState({ message, onRetry }: { message: string; onRetry: () 
           href="/my/records"
           className="inline-flex items-center justify-center rounded-full border border-rose-200 bg-white px-5 py-3 text-sm font-medium text-rose-900 transition hover:border-rose-300"
         >
-          내 기록으로 이동
+          내 기록 먼저 보기
         </Link>
       </div>
     </Surface>
@@ -190,18 +193,32 @@ function EmptyState({ startDate, endDate }: { startDate: string; endDate: string
         현재 요약 기간은 {formatDateRange(startDate, endDate)}입니다. 이 기간 안에 제출 완료한 기록이
         생기면 이곳에 역량별 횟수와 평균 등급이 자동으로 정리됩니다.
       </p>
+      <div className="mt-6 grid gap-3 rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4 text-left text-sm text-slate-700 sm:grid-cols-2">
+        <div className="rounded-[1.25rem] border border-white bg-white px-4 py-3">
+          <p className="font-medium text-slate-900">이미 초안이 있다면</p>
+          <p className="mt-2 leading-6 text-slate-600">
+            내 기록에서 이어서 제출해 주세요. 초안은 제출되기 전까지 요약에 포함되지 않습니다.
+          </p>
+        </div>
+        <div className="rounded-[1.25rem] border border-white bg-white px-4 py-3">
+          <p className="font-medium text-slate-900">처음이라면</p>
+          <p className="mt-2 leading-6 text-slate-600">
+            템플릿에서 활동을 하나 고르고 기록해 보세요. 제출하면 이 화면에 자동으로 반영됩니다.
+          </p>
+        </div>
+      </div>
       <div className="mt-6 flex flex-wrap gap-3">
         <Link
           href="/my/records"
           className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
         >
-          내 기록 보기
+          초안/기록 보러 가기
         </Link>
         <Link
           href="/templates"
           className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
         >
-          템플릿 보러 가기
+          템플릿에서 시작하기
         </Link>
       </div>
     </Surface>
@@ -248,14 +265,29 @@ function SummaryOverview({
         </div>
 
         <div className="rounded-[1.5rem] border border-stone-200 bg-white/90 p-4">
-          <p className="text-sm font-medium text-slate-500">최근 기록 목록</p>
+          <p className="text-sm font-medium text-slate-500">요약에 연결된 기록</p>
           <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">최대 5개</p>
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            활동 날짜 최신순, 같은 날짜면 마지막 수정이 더 최근인 기록이 먼저 보입니다.
+            활동 날짜 최신순으로 가장 최근 제출된 흐름을 보여 드립니다.
           </p>
         </div>
       </div>
     </section>
+  );
+}
+
+function SummaryBasisCard({
+  description,
+  title,
+}: {
+  description: string;
+  title: string;
+}) {
+  return (
+    <article className="rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4">
+      <p className="text-sm font-medium text-slate-900">{title}</p>
+      <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
+    </article>
   );
 }
 
@@ -332,7 +364,7 @@ function RecentRecordCard({ record }: { record: WorksheetRecord }) {
     <article className="rounded-[1.6rem] border border-stone-200 bg-white p-6 shadow-sm">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="max-w-2xl">
-          <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Submitted record</p>
+          <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">다시 볼 기록</p>
           <h3 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
             {record.templateTitleSnapshot}
           </h3>
@@ -345,7 +377,7 @@ function RecentRecordCard({ record }: { record: WorksheetRecord }) {
           href={`/my/records/${record.id}`}
           className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
         >
-          기록 보기
+          기록 다시 보기
         </Link>
       </div>
 
@@ -354,6 +386,9 @@ function RecentRecordCard({ record }: { record: WorksheetRecord }) {
       </p>
 
       <div className="mt-5 flex flex-wrap gap-2">
+        <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-950">
+          현재 요약에 반영됨
+        </span>
         {ratedCompetencies.length > 0 ? (
           ratedCompetencies.map((competency) => {
             const grade = record.competencyRatings[competency];
@@ -464,13 +499,54 @@ export function SummaryPageClient() {
         totalSubmittedRecords={summary.totalSubmittedRecords}
       />
 
+      <section className="grid gap-4 rounded-[1.9rem] border border-stone-200 bg-white p-6 shadow-sm sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]">
+        <div>
+          <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">요약 기준</p>
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
+            이 화면이 어떤 기록을 묶어 보여 주는지 확인해 보세요.
+          </h2>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+            현재 요약은 {formatDateRange(summary.window.startDate, summary.window.endDate)} 안에 제출한 기록{' '}
+            {summary.totalSubmittedRecords}개를 바탕으로 합니다.
+          </p>
+
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link
+              href="/my/records"
+              className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
+            >
+              내 기록 확인하기
+            </Link>
+            <Link
+              href="/templates"
+              className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
+            >
+              새 활동 고르기
+            </Link>
+          </div>
+        </div>
+
+        <div className="grid gap-3">
+          <SummaryBasisCard
+            title="포함되는 기록"
+            description="기간 안에 제출 완료한 기록만 요약에 묶입니다."
+          />
+          <SummaryBasisCard
+            title="잠시 빠지는 기록"
+            description="초안은 제출을 마치기 전까지는 요약 수치에 들어오지 않습니다."
+          />
+          <SummaryBasisCard
+            title="다시 이어보는 방법"
+            description="아래 최근 제출 기록부터 다시 열어 본 뒤, 내 기록 화면으로 돌아가 흐름을 살펴볼 수 있습니다."
+          />
+        </div>
+      </section>
+
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
         <Surface>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">
-                Counts by competency
-              </p>
+              <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">역량별 횟수</p>
               <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
                 어떤 역량을 자주 기록했는지 확인해 보세요.
               </h2>
@@ -493,14 +569,12 @@ export function SummaryPageClient() {
         <Surface>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">
-                Average grade
-              </p>
+              <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">역량별 평균</p>
               <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
                 역량별 평균 등급을 한눈에 볼 수 있어요.
               </h2>
             </div>
-            <p className="text-sm leading-6 text-slate-600">A=5점, B=4점, C=3점, D=2점, E=1점 기준입니다.</p>
+            <p className="text-sm leading-6 text-slate-600">A~E 등급을 점수로 환산해 평균을 냅니다.</p>
           </div>
 
           <div className="mt-6 grid gap-4">
@@ -526,11 +600,11 @@ export function SummaryPageClient() {
           <div>
             <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">최근 제출 5개</p>
             <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
-              가장 최근에 제출한 기록을 다시 볼 수 있습니다.
+              이 요약에 반영된 최근 기록을 다시 볼 수 있습니다.
             </h2>
           </div>
           <p className="text-sm leading-6 text-slate-600">
-            활동 날짜 최신순으로 최대 5개만 보여 드립니다.
+            활동 날짜 최신순으로 최대 5개까지 보여 드립니다.
           </p>
         </div>
 

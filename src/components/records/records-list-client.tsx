@@ -7,6 +7,11 @@ import { useEffect } from 'react';
 import { buildLoginHref } from '@/lib/auth/ensure-auth';
 import { useAuthUser } from '@/lib/auth/use-auth-user';
 import {
+  getSummaryDateRange,
+  isRecordInsideSummaryWindow,
+  type SummaryWindow,
+} from '@/lib/records/summary-utils';
+import {
   useRecords,
   type RecordsFilterStatus,
 } from '@/lib/records/use-records';
@@ -25,6 +30,58 @@ const STATUS_LABELS = {
   draft: '초안',
   submitted: '제출 완료',
 } satisfies Record<RecordStatus, string>;
+
+function formatRecordDateTime(timestamp: number) {
+  return new Date(timestamp).toLocaleString('ko-KR');
+}
+
+function formatDateStamp(dateStamp: string) {
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    weekday: 'short',
+  }).format(new Date(`${dateStamp}T00:00:00`));
+}
+
+function formatDateRange(startDate: string, endDate: string) {
+  return `${formatDateStamp(startDate)} - ${formatDateStamp(endDate)}`;
+}
+
+function getSummaryConnectionState(record: WorksheetRecord, summaryWindow: SummaryWindow) {
+  const isInsideSummaryWindow = isRecordInsideSummaryWindow(record, summaryWindow);
+
+  if (record.status === 'submitted' && isInsideSummaryWindow) {
+    return {
+      badgeClassName:
+        'rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-950',
+      badgeLabel: '현재 요약에 반영됨',
+      description:
+        '활동 날짜가 현재 14일 요약 기간 안이고 제출되어 있어 요약 수치에 포함됩니다.',
+      title: '현재 요약에 포함된 기록',
+    };
+  }
+
+  if (record.status === 'draft' && isInsideSummaryWindow) {
+    return {
+      badgeClassName:
+        'rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-950',
+      badgeLabel: '제출 시 반영 예정',
+      description:
+        '요약 기간 안의 활동이지만 아직 초안이라서, 제출 전까지는 요약에 포함되지 않습니다.',
+      title: '제출하면 요약에 이어지는 초안',
+    };
+  }
+
+  return {
+    badgeClassName:
+      'rounded-full border border-stone-200 bg-stone-100 px-3 py-1 text-sm font-medium text-slate-700',
+    badgeLabel: '요약 기간 밖 기록',
+    description:
+      '활동 날짜가 현재 14일 요약 기간 밖이라서, 이번 요약 수치에는 포함되지 않는 보관 기록입니다.',
+    title: '이전 요약 기간의 기록',
+  };
+}
 
 function PageFrame({ children }: { children: React.ReactNode }) {
   return (
@@ -46,7 +103,7 @@ function Surface({ children, tone = 'default' }: { children: React.ReactNode; to
 function AuthLoadingState() {
   return (
     <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">My records</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">내 기록</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
         기록 목록을 준비하는 중입니다.
       </h1>
@@ -68,7 +125,7 @@ function AuthLoadingState() {
 function RedirectingState() {
   return (
     <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Redirecting</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">로그인 필요</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
         로그인 화면으로 이동하고 있습니다.
       </h1>
@@ -82,7 +139,7 @@ function RedirectingState() {
 function AuthErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <Surface tone="error">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">Auth error</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">인증 오류</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-rose-950 sm:text-4xl">
         로그인 상태를 확인하지 못했습니다.
       </h1>
@@ -101,7 +158,7 @@ function AuthErrorState({ message, onRetry }: { message: string; onRetry: () => 
 function RecordsErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <Surface tone="error">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">Records error</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">기록 오류</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-rose-950 sm:text-4xl">
         기록 목록을 불러오지 못했습니다.
       </h1>
@@ -132,6 +189,7 @@ function Filters({
   statusFilter,
   templateFilter,
   templateOptions,
+  summaryWindow,
 }: {
   onReset: () => void;
   onStatusChange: (value: RecordsFilterStatus) => void;
@@ -142,16 +200,20 @@ function Filters({
     slug: string;
     title: string;
   }>;
+  summaryWindow: SummaryWindow;
 }) {
   return (
     <section className="grid gap-4 rounded-[1.9rem] border border-stone-200 bg-white p-6 shadow-sm sm:p-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
       <div>
-        <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">My records</p>
+        <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">내 기록</p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-          최근에 남긴 기록을 한곳에서 확인하세요.
+          다시 읽거나 이어서 정리할 기록을 한곳에서 확인하세요.
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-          가장 최근에 수정한 기록부터 보여 드립니다. 상태나 활동 템플릿 기준으로 빠르게 좁혀 볼 수 있어요.
+          최근 수정한 기록부터 보여 드립니다. 초안은 이어서 쓰고, 제출한 기록은 다시 읽으며 차분히 정리해 둘 수 있어요.
+        </p>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+          현재 요약 기간: {formatDateRange(summaryWindow.startDate, summaryWindow.endDate)}
         </p>
       </div>
 
@@ -197,26 +259,37 @@ function Filters({
   );
 }
 
-function EmptyState({ hasFilters }: { hasFilters: boolean }) {
+function EmptyState({ hasFilters, onReset }: { hasFilters: boolean; onReset: () => void }) {
   return (
     <section className="rounded-[1.9rem] border border-dashed border-stone-300 bg-stone-50 p-8 text-center sm:p-10">
       <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">
-        {hasFilters ? 'No matches' : 'No records'}
+        {hasFilters ? '선택 결과 없음' : '기록 없음'}
       </p>
       <h2 className="mt-4 text-2xl font-semibold tracking-tight text-slate-900">
         {hasFilters ? '선택한 조건에 맞는 기록이 없습니다.' : '아직 저장된 기록이 없습니다.'}
       </h2>
       <p className="mt-3 text-sm leading-6 text-slate-600 sm:text-base">
         {hasFilters
-          ? '필터를 조금 넓히거나 다른 템플릿 기록을 확인해 보세요.'
+          ? '필터를 넓히거나 다른 템플릿 기록을 확인해 보세요.'
           : '템플릿에서 활동을 시작하면 이곳에 초안과 제출 기록이 차곡차곡 쌓입니다.'}
       </p>
-      <Link
-        href="/templates"
-        className="mt-6 inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
-      >
-        템플릿 보러 가기
-      </Link>
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+        {hasFilters ? (
+          <button
+            type="button"
+            onClick={onReset}
+            className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
+          >
+            필터 초기화
+          </button>
+        ) : null}
+        <Link
+          href="/templates"
+          className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
+        >
+          템플릿 보러 가기
+        </Link>
+      </div>
     </section>
   );
 }
@@ -230,7 +303,83 @@ function RecordStatusBadge({ status }: { status: RecordStatus }) {
   return <span className={className}>{STATUS_LABELS[status]}</span>;
 }
 
-function RecordCard({ record }: { record: WorksheetRecord }) {
+function RevisitOverview({
+  filteredRecordsCount,
+  hasActiveFilters,
+  onReset,
+  records,
+  summaryWindow,
+}: {
+  filteredRecordsCount: number;
+  hasActiveFilters: boolean;
+  onReset: () => void;
+  records: WorksheetRecord[];
+  summaryWindow: SummaryWindow;
+}) {
+  const submittedInSummaryWindow = records.filter(
+    (record) => record.status === 'submitted' && isRecordInsideSummaryWindow(record, summaryWindow),
+  ).length;
+
+  return (
+    <section className="grid gap-4 rounded-[1.9rem] border border-stone-200 bg-gradient-to-br from-white to-stone-50 p-6 shadow-sm sm:p-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+      <div>
+        <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">다시 보기 흐름</p>
+        <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
+          전체 {records.length}개 중 {filteredRecordsCount}개의 기록을 보고 있어요.
+        </h2>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+          초안은 마지막 메모부터 이어 쓰고, 제출한 기록은 다시 읽으며 흐름을 확인해 보세요.
+          현재 내 요약에는 최근 14일간 제출한 기록 {submittedInSummaryWindow}개가 반영되어 있습니다.
+        </p>
+
+        <div className="mt-5 flex flex-wrap gap-3">
+          <Link
+            href="/my/summary"
+            className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
+          >
+            내 요약으로 이어보기
+          </Link>
+          <Link
+            href="/templates"
+            className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
+          >
+            새 활동 시작하기
+          </Link>
+          {hasActiveFilters ? (
+            <button
+              type="button"
+              onClick={onReset}
+              className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
+            >
+              필터 모두 풀기
+            </button>
+          ) : null}
+        </div>
+      </div>
+
+      <div className="grid gap-3 text-sm text-slate-600">
+        <div className="rounded-[1.25rem] border border-stone-200 bg-white/80 p-4">
+          <p className="font-medium text-slate-900">이어서 보기 (초안)</p>
+          <p className="mt-1">저장해 둔 문장과 체크 상태부터 다시 이어서 적을 수 있습니다. 제출 전에는 요약에 포함되지 않아요.</p>
+        </div>
+        <div className="rounded-[1.25rem] border border-stone-200 bg-white/80 p-4">
+          <p className="font-medium text-slate-900">다시 읽기 (제출 완료)</p>
+          <p className="mt-1">제출한 기록은 다시 읽고 필요하면 내용을 다듬을 수 있습니다. 요약 기간 안의 기록은 내 요약에도 함께 보입니다.</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function RecordCard({
+  record,
+  summaryWindow,
+}: {
+  record: WorksheetRecord;
+  summaryWindow: SummaryWindow;
+}) {
+  const summaryConnection = getSummaryConnectionState(record, summaryWindow);
+
   return (
     <article className="rounded-[1.75rem] border border-stone-200 bg-white p-6 shadow-sm transition hover:border-stone-300 hover:shadow-md sm:p-7">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -242,8 +391,8 @@ function RecordCard({ record }: { record: WorksheetRecord }) {
             <RecordStatusBadge status={record.status} />
           </div>
           <p className="mt-3 text-sm leading-6 text-slate-600">
-            활동 날짜 {record.performedOn || '-'} · 마지막 수정{' '}
-            {new Date(record.updatedAt).toLocaleString('ko-KR')}
+            활동 날짜 {record.performedOn ? formatDateStamp(record.performedOn) : '-'} · 마지막 수정{' '}
+            {formatRecordDateTime(record.updatedAt)}
           </p>
         </div>
 
@@ -251,7 +400,7 @@ function RecordCard({ record }: { record: WorksheetRecord }) {
           href={`/my/records/${record.id}`}
           className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
         >
-          {record.status === 'submitted' ? '기록 보기' : '기록 이어서 입력'}
+          {record.status === 'submitted' ? '기록 다시 보기' : '기록 이어서 입력'}
         </Link>
       </div>
 
@@ -265,15 +414,21 @@ function RecordCard({ record }: { record: WorksheetRecord }) {
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-2 sm:justify-end">
-          {record.competenciesSnapshot.map((competency) => (
-            <span
-              key={competency}
-              className="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sm font-medium text-sky-950"
-            >
-              {COMPETENCY_LABELS[competency]}
-            </span>
-          ))}
+        <div className="flex flex-col items-end gap-3">
+          <div className="flex flex-wrap gap-2 sm:justify-end">
+            <span className={summaryConnection.badgeClassName}>{summaryConnection.badgeLabel}</span>
+            {record.competenciesSnapshot.map((competency) => (
+              <span
+                key={competency}
+                className="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sm font-medium text-sky-950"
+              >
+                {COMPETENCY_LABELS[competency]}
+              </span>
+            ))}
+          </div>
+          <p className="text-xs text-slate-500 max-w-[200px] text-right leading-relaxed">
+            {summaryConnection.description}
+          </p>
         </div>
       </div>
     </article>
@@ -283,6 +438,7 @@ function RecordCard({ record }: { record: WorksheetRecord }) {
 export function RecordsListClient() {
   const router = useRouter();
   const { error: authError, retry: retryAuth, status: authStatus, user } = useAuthUser();
+  const summaryWindow = getSummaryDateRange();
   const {
     error: recordsError,
     filteredRecords,
@@ -349,45 +505,37 @@ export function RecordsListClient() {
     );
   }
 
+  const handleResetFilters = () => {
+    setStatusFilter('all');
+    setTemplateFilter('all');
+  };
+
   return (
     <PageFrame>
       <Filters
-        onReset={() => {
-          setStatusFilter('all');
-          setTemplateFilter('all');
-        }}
+        onReset={handleResetFilters}
         onStatusChange={setStatusFilter}
         onTemplateChange={setTemplateFilter}
         statusFilter={statusFilter}
         templateFilter={templateFilter}
         templateOptions={templateOptions}
+        summaryWindow={summaryWindow}
       />
 
-      <section className="grid gap-4 rounded-[1.9rem] border border-stone-200 bg-gradient-to-br from-white to-stone-50 p-6 shadow-sm sm:p-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-        <div>
-          <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Current view</p>
-          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
-            전체 {records.length}개 중 {filteredRecords.length}개의 기록을 보고 있어요.
-          </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-            목록은 마지막 수정 시각 기준으로 가장 최근 기록이 먼저 보입니다. 초안과 제출 완료 상태를 한눈에 구분할 수 있어요.
-          </p>
-        </div>
-
-        <div className="grid gap-3 rounded-[1.5rem] border border-stone-200 bg-white/80 p-4 text-sm text-slate-600">
-          <p className="font-medium text-slate-900">빠른 확인</p>
-          <p>정렬: `updatedAt desc` 기준</p>
-          <p>상태 필터: 초안 / 제출 완료</p>
-          <p>템플릿 필터: 저장된 템플릿 제목 기준</p>
-        </div>
-      </section>
+      <RevisitOverview
+        filteredRecordsCount={filteredRecords.length}
+        hasActiveFilters={hasActiveFilters}
+        onReset={handleResetFilters}
+        records={records}
+        summaryWindow={summaryWindow}
+      />
 
       {filteredRecords.length === 0 ? (
-        <EmptyState hasFilters={hasActiveFilters} />
+        <EmptyState hasFilters={hasActiveFilters} onReset={handleResetFilters} />
       ) : (
         <section className="grid gap-4 lg:grid-cols-2">
           {filteredRecords.map((record) => (
-            <RecordCard key={record.id} record={record} />
+            <RecordCard key={record.id} record={record} summaryWindow={summaryWindow} />
           ))}
         </section>
       )}

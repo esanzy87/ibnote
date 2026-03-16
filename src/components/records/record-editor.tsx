@@ -166,6 +166,18 @@ function Section({ description, title, children }: { children: React.ReactNode; 
 }
 
 function HeaderSummary({ record }: { record: WorksheetRecord }) {
+  const isSubmitted = record.status === 'submitted';
+  const hasWritingStarted = Boolean(
+    record.performedOn || record.childReflection.trim() || record.parentMemo.trim() || Object.values(record.competencyRatings).some(Boolean),
+  );
+
+  const statusHeadline = isSubmitted ? '이미 제출한 기록을 다시 읽고 다듬는 화면입니다.' : '멈춘 곳에서 바로 다시 적을 수 있는 초안입니다.';
+  const statusBody = isSubmitted
+    ? '이 기록은 이미 요약에 반영된 제출본입니다. 수정 후 저장하면 제출 상태가 유지되면서 내용만 갱신됩니다.'
+    : hasWritingStarted
+      ? '이전에 적어 둔 내용이 남아 있습니다. 날짜, 메모, 평정을 차례로 보며 이어서 정리해 보세요.'
+      : '아직 비어 있는 초안입니다. 오늘 떠오르는 장면 한 줄부터 가볍게 시작해 보세요.';
+
   return (
     <Surface>
       <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
@@ -177,24 +189,23 @@ function HeaderSummary({ record }: { record: WorksheetRecord }) {
             </h1>
             <span
               className={
-                record.status === 'submitted'
+                isSubmitted
                   ? 'rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-950'
                   : 'rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-950'
               }
             >
-              {record.status === 'submitted' ? '제출 완료' : '초안'}
+              {isSubmitted ? '제출 완료' : '초안'}
             </span>
           </div>
-          <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-            활동을 마친 뒤 기억이 생생할 때 짧게 남길 수 있도록 만든 기록입니다. 오늘 본 장면, 말, 반응만 간단하게 적어도 충분합니다.
-          </p>
+          <p className="mt-4 text-lg font-medium leading-7 text-slate-900">{statusHeadline}</p>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">{statusBody}</p>
         </div>
 
         <div className="grid gap-3 rounded-[1.75rem] border border-stone-200 bg-stone-50 p-4 text-sm text-slate-700 sm:min-w-80">
           <p className="font-medium text-slate-900">기록 정보</p>
           <p>원본 템플릿 학년: {GRADE_BAND_LABELS[record.gradeBandSnapshot]}</p>
           <p>PYP 주제: {PYP_THEME_LABELS[record.pypThemeSnapshot]}</p>
-          <p>템플릿 버전: {record.templateVersion}</p>
+          <p>활동 날짜: {record.performedOn || '아직 입력 전'}</p>
           <p>마지막 수정: {new Date(record.updatedAt).toLocaleString('ko-KR')}</p>
         </div>
       </div>
@@ -208,6 +219,33 @@ function HeaderSummary({ record }: { record: WorksheetRecord }) {
             {COMPETENCY_LABELS[competency]}
           </span>
         ))}
+      </div>
+    </Surface>
+  );
+}
+
+function WritingGuide({ record }: { record: WorksheetRecord }) {
+  const isSubmitted = record.status === 'submitted';
+
+  return (
+    <Surface>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">기록 가이드</p>
+      <h2 className="mt-4 text-2xl font-semibold tracking-tight text-slate-900">
+        {isSubmitted ? '기억이 더 또렷해졌다면 차분히 다시 다듬어 보세요.' : '길게 쓰기보다, 지금 떠오르는 장면부터 이어 적어 보세요.'}
+      </h2>
+      <div className="mt-5 grid gap-3 sm:grid-cols-3">
+        <div className="rounded-[1.25rem] border border-stone-200 bg-stone-50 p-4 text-sm leading-6 text-slate-700">
+          <p className="font-medium text-slate-900">1. 날짜와 메모</p>
+          <p className="mt-1">{record.performedOn ? '날짜를 확인하고,' : '날짜와'} 아이 반응 한두 문장부터 적습니다.</p>
+        </div>
+        <div className="rounded-[1.25rem] border border-stone-200 bg-stone-50 p-4 text-sm leading-6 text-slate-700">
+          <p className="font-medium text-slate-900">2. 체크와 평정</p>
+          <p className="mt-1">체크리스트를 훑어보고, 역량 평정을 하나 이상 선택합니다.</p>
+        </div>
+        <div className="rounded-[1.25rem] border border-stone-200 bg-stone-50 p-4 text-sm leading-6 text-slate-700">
+          <p className="font-medium text-slate-900">3. 저장 또는 제출</p>
+          <p className="mt-1">{isSubmitted ? '변경 저장으로 마칩니다.' : '초안으로 저장하거나 제출해 요약에 반영합니다.'}</p>
+        </div>
       </div>
     </Surface>
   );
@@ -356,10 +394,18 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
   return (
     <EditorPage>
       <HeaderSummary record={record} />
+      <WritingGuide record={record} />
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
-        <Section title="기본 입력" description="먼저 날짜와 간단한 배경을 남겨 주세요.">
+        <Section title="1) 장면 기록" description="짧게 시작해도 괜찮습니다. 필요한 항목부터 채워 주세요.">
           <div className="grid gap-5">
+            <div className="rounded-[1.5rem] border border-stone-200 bg-stone-50 px-4 py-4 text-sm leading-6 text-slate-700">
+              <p className="font-semibold text-slate-900">부담 줄이기 안내</p>
+              <p className="mt-1">
+                완성된 글처럼 쓰지 않아도 됩니다. 아이가 했던 말이나 기억나는 장면 한 줄부터 시작해 보세요.
+              </p>
+            </div>
+
             <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-950">
               <p className="font-semibold text-amber-950">개인정보 안내</p>
               <p className="mt-1">{RECORD_PRIVACY_NOTE}</p>
@@ -400,7 +446,7 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
                 className="rounded-[1.5rem] border border-stone-300 bg-white px-4 py-3 text-base leading-7 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-500"
               />
               <span className="text-xs font-normal text-slate-500">
-                꼭 길게 쓰지 않아도 괜찮아요. 기억나는 문장 하나만 있어도 충분합니다.
+                기억나는 문장 하나만 있어도 충분합니다.
               </span>
             </label>
 
@@ -417,7 +463,7 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
           </div>
         </Section>
 
-        <Section title="준비 상태" description="제출 전에 필요한 항목을 한눈에 확인할 수 있어요.">
+        <Section title="2) 제출 전 점검" description="현재 상태를 확인하고 필요한 항목을 채워 주세요.">
           <div className="grid gap-4">
             <div className="rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4">
               <p className="text-sm font-medium text-slate-900">현재 상태</p>
@@ -460,7 +506,7 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
         </Section>
       </section>
 
-      <Section title="역량 평정" description="이 활동에 포함된 역량만 보여 줍니다.">
+      <Section title="3) 역량 체크" description="이 활동과 연결된 역량만 표시됩니다.">
         <div className="grid gap-4">
           {record.competenciesSnapshot.map((competency) => (
             <RatingGroup
@@ -473,10 +519,10 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
         </div>
       </Section>
 
-      <Section title="다음 동작" description="초안을 저장하거나 제출 상태로 남길 수 있습니다.">
+      <Section title="4) 저장 또는 제출" description="지금 상태에 맞게 저장 또는 제출을 선택하세요.">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div className="max-w-2xl text-sm leading-6 text-slate-600">
-            <p>자동 저장은 하지 않습니다. 버튼을 눌렀을 때만 Firestore에 현재 입력값이 저장됩니다.</p>
+            <p>자동 저장은 하지 않습니다. 버튼을 눌렀을 때만 현재 입력값이 저장됩니다.</p>
             <p className="mt-2 font-medium text-slate-900">
               제출 조건: 활동 날짜와 역량 평정 하나 이상이 필요합니다.
             </p>
