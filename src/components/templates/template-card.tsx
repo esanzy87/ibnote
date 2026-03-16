@@ -1,79 +1,44 @@
+'use client';
+
 import Link from 'next/link';
 
-import type { WorksheetTemplate } from '@/lib/templates/template-types';
-
-const GRADE_BAND_LABELS = {
-  g1_2: '초1-2',
-  g3_4: '초3-4',
-  g5_6: '초5-6',
-} satisfies Record<WorksheetTemplate['gradeBand'], string>;
-
-const PYP_THEME_LABELS = {
-  who_we_are: '우리는 누구인가',
-  where_we_are_in_place_and_time: '우리는 시공간 속에서 어디에 있는가',
-  how_we_express_ourselves: '우리는 자신을 어떻게 표현하는가',
-  how_the_world_works: '세상은 어떻게 작동하는가',
-  how_we_organize_ourselves: '우리는 어떻게 조직하는가',
-  sharing_the_planet: '지구를 함께 나누기',
-} satisfies Record<WorksheetTemplate['pypTheme'], string>;
-
-const COMPETENCY_LABELS = {
-  literacy: '문해',
-  thinking: '사고력',
-  expression: '표현',
-  collaboration: '협력',
-  digital_literacy: '디지털 문해',
-} satisfies Record<WorksheetTemplate['competencies'][number], string>;
+import {
+  ACTIVITY_CLUSTER_LABELS,
+  type EnrichedWorksheetTemplate,
+} from '@/lib/templates/template-experience';
 
 interface TemplateCardProps {
-  template: WorksheetTemplate;
+  template: EnrichedWorksheetTemplate;
 }
 
 export function TemplateCard({ template }: TemplateCardProps) {
   return (
-    <article className="group flex h-full flex-col rounded-[1.75rem] border border-stone-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-      <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500">
-        <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-emerald-950">
-          {GRADE_BAND_LABELS[template.gradeBand]}
+    <article className="group overflow-hidden rounded-xl border border-slate-100 bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+      <div className="relative aspect-video overflow-hidden bg-primary/5 flex items-center justify-center">
+        <span className="material-symbols-outlined text-4xl text-primary/20 transition-transform duration-500 group-hover:scale-110">
+          {template.activityCluster === 'conversational_check_ins' ? 'chat' : 
+           template.activityCluster === 'notice_pattern_sort' ? 'visibility' : 'extension'}
         </span>
-        <span className="rounded-full border border-stone-200 bg-stone-50 px-3 py-1">
+        <div className="absolute right-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-primary backdrop-blur">
           {template.durationMinutes}분
-        </span>
+        </div>
       </div>
-
-      <h2 className="mt-4 text-2xl font-semibold tracking-tight text-slate-900">
-        {template.title}
-      </h2>
-
-      <p className="mt-3 text-sm leading-6 text-slate-600">{template.summary}</p>
-
-      <dl className="mt-5 grid gap-3 rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4 text-sm text-slate-600">
-        <div>
-          <dt className="text-xs font-medium uppercase tracking-[0.22em] text-slate-500">주제</dt>
-          <dd className="mt-1 text-sm font-medium text-slate-800">{PYP_THEME_LABELS[template.pypTheme]}</dd>
-        </div>
-        <div>
-          <dt className="text-xs font-medium uppercase tracking-[0.22em] text-slate-500">핵심 질문</dt>
-          <dd className="mt-1 leading-6 text-slate-700">{template.bigQuestion}</dd>
-        </div>
-      </dl>
-
-      <div className="mt-5 flex flex-wrap gap-2">
-        {template.competencies.map((competency) => (
-          <span
-            key={competency}
-            className="rounded-full border border-stone-300 bg-white px-3 py-1 text-xs font-medium text-slate-700"
-          >
-            {COMPETENCY_LABELS[competency]}
+      
+      <div className="p-5">
+        <div className="mb-2 flex items-center gap-2">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
+            {ACTIVITY_CLUSTER_LABELS[template.activityCluster]}
           </span>
-        ))}
-      </div>
-
-      <div className="mt-6 flex items-center justify-between gap-4 border-t border-stone-200 pt-5">
-        <p className="text-xs uppercase tracking-[0.22em] text-slate-400">IBNote template</p>
-        <Link
+        </div>
+        <h3 className="mb-2 text-xl font-bold text-slate-900 group-hover:text-primary transition-colors">
+          {template.title}
+        </h3>
+        <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-slate-600">
+          {template.parentSummary}
+        </p>
+        <Link 
           href={`/templates/${template.slug}`}
-          className="inline-flex items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
+          className="inline-flex w-full items-center justify-center rounded-lg bg-primary/10 py-2.5 font-bold text-primary transition-colors group-hover:bg-primary group-hover:text-white"
         >
           열어보기
         </Link>

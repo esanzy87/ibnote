@@ -1,4 +1,12 @@
+.print-only {
+  display: none;
+}
+
 @media print {
+  @page {
+    margin: 12mm;
+  }
+
   html,
   body {
     background: #ffffff;
@@ -32,6 +40,10 @@
 
   .template-print-rubric {
     grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  }
+
+  .print-only {
+    display: block !important;
   }
 
   a {

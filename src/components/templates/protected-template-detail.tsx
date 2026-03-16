@@ -4,297 +4,220 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-import { PrintButton } from '@/components/ui/print-button';
 import { buildLoginHref } from '@/lib/auth/ensure-auth';
 import { useAuthUser } from '@/lib/auth/use-auth-user';
-import type { WorksheetTemplate } from '@/lib/templates/template-types';
-
-const GRADE_BAND_LABELS = {
-  g1_2: '초1-2',
-  g3_4: '초3-4',
-  g5_6: '초5-6',
-} satisfies Record<WorksheetTemplate['gradeBand'], string>;
-
-const PYP_THEME_LABELS = {
-  who_we_are: '우리는 누구인가',
-  where_we_are_in_place_and_time: '우리는 시공간 속에서 어디에 있는가',
-  how_we_express_ourselves: '우리는 자신을 어떻게 표현하는가',
-  how_the_world_works: '세상은 어떻게 작동하는가',
-  how_we_organize_ourselves: '우리는 어떻게 조직하는가',
-  sharing_the_planet: '지구를 함께 나누기',
-} satisfies Record<WorksheetTemplate['pypTheme'], string>;
-
-const COMPETENCY_LABELS = {
-  literacy: '문해',
-  thinking: '사고력',
-  expression: '표현',
-  collaboration: '협력',
-  digital_literacy: '디지털 문해',
-} satisfies Record<WorksheetTemplate['competencies'][number], string>;
+import {
+  ACTIVITY_CLUSTER_LABELS,
+  type EnrichedWorksheetTemplate,
+} from '@/lib/templates/template-experience';
 
 interface ProtectedTemplateDetailProps {
   slug: string;
-  template: WorksheetTemplate | null;
+  template: EnrichedWorksheetTemplate | null;
 }
 
 function DetailLoadingState() {
   return (
-    <section className="rounded-[1.9rem] border border-stone-200 bg-white p-8 shadow-sm sm:p-10">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">템플릿 상세</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        템플릿 상세를 준비하고 있습니다.
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        로그인 상태를 확인한 뒤 선택한 템플릿의 활동 순서와 기록 시작 버튼을 보여 드립니다.
-      </p>
-      <div className="mt-8 space-y-4">
-        <div className="h-14 animate-pulse rounded-3xl border border-stone-200 bg-stone-50" />
-        <div className="h-52 animate-pulse rounded-[1.75rem] border border-stone-200 bg-stone-50" />
-        <div className="h-52 animate-pulse rounded-[1.75rem] border border-stone-200 bg-stone-50" />
+    <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
+      <div className="animate-pulse text-primary">
+        <span className="material-symbols-outlined text-5xl">nest_eco_leaf</span>
       </div>
-    </section>
-  );
-}
-
-function DetailErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
-  return (
-    <section className="rounded-[1.9rem] border border-rose-200 bg-rose-50 p-8 shadow-sm sm:p-10">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">인증 오류</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-rose-950 sm:text-4xl">
-        템플릿 상세 화면을 열지 못했습니다.
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-rose-900 sm:text-base">{message}</p>
-      <button
-        type="button"
-        onClick={onRetry}
-        className="mt-6 inline-flex items-center justify-center rounded-full bg-rose-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-rose-800"
-      >
-        다시 시도
-      </button>
-    </section>
+      <h1 className="mt-4 text-2xl font-bold text-slate-900">템플릿을 준비하고 있습니다...</h1>
+    </div>
   );
 }
 
 function DetailRedirectingState() {
   return (
-    <section className="rounded-[1.9rem] border border-stone-200 bg-white p-8 shadow-sm sm:p-10">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">로그인 필요</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        로그인 화면으로 이동하고 있습니다.
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        선택한 템플릿은 로그인 후에만 확인할 수 있습니다. 로그인 후 이 상세 화면으로 돌아옵니다.
-      </p>
-    </section>
-  );
-}
-
-function InvalidTemplateState({ slug }: { slug: string }) {
-  return (
-    <section className="rounded-[1.9rem] border border-dashed border-stone-300 bg-stone-50 p-8 text-center shadow-sm sm:p-10">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">템플릿 없음</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        요청한 템플릿을 찾을 수 없습니다.
-      </h1>
-      <p className="mt-3 text-sm leading-6 text-slate-600 sm:text-base">
-        `{slug}`에 해당하는 게시 템플릿이 없거나 현재 비공개 상태입니다.
-      </p>
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-        <Link
-          href="/templates"
-          className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
-        >
-          템플릿 목록으로 돌아가기
-        </Link>
-        <Link
-          href="/login?next=/templates"
-          className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
-        >
-          로그인 화면 보기
-        </Link>
+    <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
+      <div className="text-primary">
+        <span className="material-symbols-outlined text-5xl">lock</span>
       </div>
-    </section>
+      <h1 className="mt-4 text-2xl font-bold text-slate-900">로그인하고 있습니다...</h1>
+      <p className="mt-2 text-slate-600">선택한 활동의 상세 화면으로 돌아옵니다.</p>
+    </div>
   );
 }
 
-function DetailSection({ title, children }: { title: string; children: React.ReactNode }) {
+function InvalidTemplateState() {
   return (
-    <section className="template-print-card rounded-[1.75rem] border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
-      <h2 className="text-2xl font-semibold tracking-tight text-slate-900">{title}</h2>
-      <div className="mt-4 text-sm leading-7 text-slate-700 sm:text-base">{children}</div>
-    </section>
+    <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
+      <div className="text-slate-400">
+        <span className="material-symbols-outlined text-5xl">error</span>
+      </div>
+      <h1 className="mt-4 text-2xl font-bold text-slate-900">템플릿을 찾을 수 없습니다.</h1>
+      <Link
+        href="/templates"
+        className="mt-6 inline-flex items-center justify-center rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white transition hover:bg-primary/90"
+      >
+        템플릿 목록으로 돌아가기
+      </Link>
+    </div>
   );
 }
 
-function TemplateDetailContent({ template }: { template: WorksheetTemplate }) {
+function TemplateDetailContent({ template }: { template: EnrichedWorksheetTemplate }) {
+  const clusterLabel = ACTIVITY_CLUSTER_LABELS[template.activityCluster];
+  
   return (
-    <>
-      <section className="template-print-card rounded-[1.9rem] border border-stone-200 bg-white p-8 shadow-sm sm:p-10">
-        <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
-          <div className="max-w-3xl">
-            <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">템플릿 상세</p>
-            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
-              {template.title}
-            </h1>
-            <p className="mt-4 text-base leading-7 text-slate-600">{template.summary}</p>
-            <p className="mt-4 text-sm leading-6 text-slate-500">
-              아래 활동 안내를 읽고 `기록 시작`으로 바로 우리 아이 기록을 생성할 수 있어요.
+    <div className="layout-content-container mx-auto flex max-w-[800px] flex-1 flex-col px-4 py-5 pb-32">
+      {/* Hero Section */}
+      <div className="mb-8">
+        <div className="relative mb-6 h-48 w-full overflow-hidden rounded-xl bg-primary/5 md:h-64 flex items-center justify-center">
+          <span className="material-symbols-outlined text-7xl text-primary/20">
+            {template.activityCluster === 'conversational_check_ins' ? 'chat' : 
+             template.activityCluster === 'notice_pattern_sort' ? 'visibility' : 'extension'}
+          </span>
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/10 to-transparent" />
+          <div className="absolute bottom-6 left-6">
+            <span className="mb-2 inline-block rounded-full bg-primary px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">
+              {clusterLabel}
+            </span>
+            <h1 className="text-3xl font-black leading-tight tracking-tighter text-slate-900 md:text-4xl">{template.title}</h1>
+          </div>
+        </div>
+        
+        <div className="flex flex-wrap items-center gap-4 px-1">
+          <div className="flex items-center gap-1.5 text-primary">
+            <span className="material-symbols-outlined text-[20px]">psychology</span>
+            <span className="text-sm font-medium">{clusterLabel}</span>
+          </div>
+          <div className="h-1 w-1 rounded-full bg-primary/30" />
+          <div className="flex items-center gap-1.5 text-slate-500">
+            <span className="material-symbols-outlined text-[20px]">schedule</span>
+            <span className="text-sm font-medium">{template.durationMinutes}분 내외</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Decision Card */}
+      <section className="mb-10">
+        <div className="flex flex-col overflow-hidden rounded-xl border border-primary/5 bg-white shadow-sm">
+          <div className="flex-1 p-6">
+            <h3 className="mb-2 text-lg font-bold text-slate-900">우리에게 맞는 활동인가요?</h3>
+            <p className="mb-4 text-sm leading-relaxed text-slate-600">
+              {template.quickStart}
             </p>
           </div>
-
-          <div className="template-print-card grid gap-3 rounded-[1.75rem] border border-stone-200 bg-stone-50 p-4 text-sm text-slate-700 sm:min-w-72">
-            <p className="font-medium text-slate-900">기본 정보</p>
-            <p>학년: {GRADE_BAND_LABELS[template.gradeBand]}</p>
-            <p>활동 시간: {template.durationMinutes}분</p>
-            <p>PYP 주제: {PYP_THEME_LABELS[template.pypTheme]}</p>
-            <p>버전: {template.version}</p>
-          </div>
-        </div>
-
-        <div className="mt-6 flex flex-wrap gap-2">
-          {template.competencies.map((competency) => (
-            <span
-              key={competency}
-              className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-950"
-            >
-              {COMPETENCY_LABELS[competency]}
-            </span>
-          ))}
-        </div>
-
-        <div className="print-hidden mt-8 flex flex-wrap items-center gap-3 border-t border-stone-200 pt-6">
-          <Link
-            href={`/my/records/new?template=${encodeURIComponent(template.slug)}`}
-            className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
-          >
-            기록 시작
-          </Link>
-          <PrintButton className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900" />
-          <p className="w-full text-sm leading-6 text-slate-500">
-            `기록 시작`은 새 기록 작성 화면으로 이동하고, `인쇄하기`는 현재 템플릿만 출력합니다.
-          </p>
         </div>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-        <DetailSection title="큰 질문">
-          <p>{template.bigQuestion}</p>
-        </DetailSection>
-
-        <DetailSection title="준비물">
-          <ul className="space-y-2 pl-5">
-            {template.materials.map((material) => (
-              <li key={material} className="list-disc">
-                {material}
-              </li>
-            ))}
-          </ul>
-        </DetailSection>
-      </section>
-
-      <DetailSection title="활동 순서">
-        <ol className="space-y-3 pl-5">
-          {template.steps.map((step) => (
-            <li key={step} className="list-decimal">
-              {step}
+      {/* Materials */}
+      <section className="mb-10">
+        <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
+          <span className="material-symbols-outlined text-primary">shopping_basket</span>
+          준비물
+        </h2>
+        <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          {template.materials.map((material, idx) => (
+            <li key={idx} className="flex items-center gap-3 rounded-lg border border-primary/10 bg-primary/5 p-3">
+              <span className="material-symbols-outlined text-sm text-primary">check_circle</span>
+              <span className="text-sm font-medium text-slate-700">{material}</span>
             </li>
           ))}
-        </ol>
-      </DetailSection>
-
-      <section className="grid gap-6 xl:grid-cols-2">
-        <DetailSection title="생각해 보기">
-          <p>{template.thinkingPrompt}</p>
-        </DetailSection>
-
-        <DetailSection title="쓰기/그리기/설명하기">
-          <p>{template.outputPrompt}</p>
-        </DetailSection>
+          {template.materials.length === 0 && (
+            <li className="flex items-center gap-3 rounded-lg border border-primary/10 bg-primary/5 p-3">
+              <span className="material-symbols-outlined text-sm text-primary">check_circle</span>
+              <span className="text-sm font-medium text-slate-700">특별한 준비물이 필요 없어요</span>
+            </li>
+          )}
+        </ul>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-2">
-        <DetailSection title="되돌아보기 질문">
-          <ul className="space-y-2 pl-5">
-            {template.reflectionQuestions.map((question) => (
-              <li key={question} className="list-disc">
-                {question}
-              </li>
-            ))}
-          </ul>
-        </DetailSection>
-
-        <DetailSection title="부모 관찰 체크리스트">
-          <ul className="space-y-2 pl-5">
-            {template.checklist.map((item) => (
-              <li key={item} className="list-disc">
-                {item}
-              </li>
-            ))}
-          </ul>
-        </DetailSection>
-      </section>
-
-      <DetailSection title="간단 루브릭">
-        <div className="grid gap-4">
-          {template.rubric.map((rubricEntry) => (
-            <article
-              key={rubricEntry.competency}
-              className="template-print-card rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4"
-            >
-              <h3 className="text-lg font-semibold text-slate-900">
-                {COMPETENCY_LABELS[rubricEntry.competency]}
-              </h3>
-              <div className="template-print-rubric mt-4 grid gap-3 md:grid-cols-5">
-                {(['A', 'B', 'C', 'D', 'E'] as const).map((level) => (
-                  <div
-                    key={level}
-                    className="template-print-card rounded-2xl border border-stone-200 bg-white p-3"
-                  >
-                    <p className="text-xs font-medium uppercase tracking-[0.22em] text-slate-500">
-                      {level}
-                    </p>
-                    <p className="mt-2 text-sm leading-6 text-slate-700">
-                      {rubricEntry.levels[level]}
-                    </p>
-                  </div>
-                ))}
+      {/* How to do it */}
+      <section className="mb-10">
+        <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
+          <span className="material-symbols-outlined text-primary">footprint</span>
+          진행 순서
+        </h2>
+        <div className="relative space-y-6 before:absolute before:bottom-2 before:left-[11px] before:top-2 before:w-[2px] before:bg-primary/10">
+          {template.steps.map((step, idx) => (
+            <div key={idx} className="relative flex gap-4">
+              <div className="z-10 mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
+                {idx + 1}
               </div>
-            </article>
+              <div>
+                <p className="text-sm font-medium leading-relaxed text-slate-700">{step}</p>
+              </div>
+            </div>
           ))}
         </div>
-      </DetailSection>
-    </>
+      </section>
+
+      {/* What to notice */}
+      <section className="mb-10 rounded-xl border-l-4 border-primary bg-primary/5 p-6">
+        <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
+          <span className="material-symbols-outlined text-primary">visibility</span>
+          관찰 포인트
+        </h2>
+        <div className="space-y-3">
+          <ul className="space-y-2">
+            {template.recordFocus.map((focus, idx) => (
+              <li key={idx} className="flex gap-2 text-sm text-slate-700">
+                <span className="text-primary">•</span>
+                <span>{focus}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Why revisit later */}
+      <section className="mb-12">
+        <h2 className="mb-3 flex items-center gap-2 text-xl font-bold text-slate-900">
+          <span className="material-symbols-outlined text-primary">history_toggle_off</span>
+          나중에 다시 보면 좋은 이유
+        </h2>
+        <p className="text-sm leading-relaxed text-slate-600">
+          {template.revisitReason}
+        </p>
+      </section>
+
+      {/* CTAs */}
+      <div className="fixed bottom-6 left-1/2 w-full max-w-[400px] -translate-x-1/2 px-4 md:max-w-[600px]">
+        <div className="flex flex-col gap-3 rounded-2xl border border-primary/10 bg-white/90 p-4 shadow-lg backdrop-blur-sm sm:flex-row">
+          <Link
+            href={`/my/records/new?template=${encodeURIComponent(template.slug)}`}
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary py-4 font-bold text-white transition-transform active:scale-95 hover:bg-primary/90"
+          >
+            <span className="material-symbols-outlined">edit_note</span>
+            활동 기록하기
+          </Link>
+          <button 
+            onClick={() => window.print()}
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-primary/20 bg-transparent py-4 font-bold text-primary transition-colors hover:border-primary/40"
+          >
+            <span className="material-symbols-outlined">print</span>
+            활동 인쇄하기
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
 export function ProtectedTemplateDetail({ slug, template }: ProtectedTemplateDetailProps) {
+  const { user, status } = useAuthUser();
   const router = useRouter();
-  const { status, error, retry } = useAuthUser();
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      router.replace(buildLoginHref(`/templates/${slug}`));
+      const loginHref = buildLoginHref(`/templates/${slug}`);
+      router.replace(loginHref);
     }
-  }, [router, slug, status]);
+  }, [status, slug, router]);
 
-  return (
-    <main className="template-print-page bg-stone-100 px-6 py-12 text-slate-800 sm:py-16">
-      <div className="template-print-root mx-auto flex max-w-6xl flex-col gap-6">
-        {status === 'loading' ? <DetailLoadingState /> : null}
+  if (status === 'loading') {
+    return <DetailLoadingState />;
+  }
 
-        {status === 'error' ? (
-          <DetailErrorState
-            message={error?.message ?? '인증 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.'}
-            onRetry={retry}
-          />
-        ) : null}
+  if (status === 'unauthenticated') {
+    return <DetailRedirectingState />;
+  }
 
-        {status === 'unauthenticated' ? <DetailRedirectingState /> : null}
+  if (status === 'authenticated' && template) {
+    return <TemplateDetailContent template={template} />;
+  }
 
-        {status === 'authenticated' && template ? <TemplateDetailContent template={template} /> : null}
-
-        {status === 'authenticated' && !template ? <InvalidTemplateState slug={slug} /> : null}
-      </div>
-    </main>
-  );
+  return <InvalidTemplateState />;
 }

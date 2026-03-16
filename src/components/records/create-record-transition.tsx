@@ -8,209 +8,195 @@ import { buildLoginHref } from '@/lib/auth/ensure-auth';
 import { useAuthUser } from '@/lib/auth/use-auth-user';
 import { createDraftRecord } from '@/lib/records/record-repo';
 import { getTemplateBySlug } from '@/lib/templates/template-repo';
+import type { WorksheetTemplate } from '@/lib/templates/template-types';
 
 interface CreateRecordTransitionProps {
   templateSlug: string | null;
 }
 
-function TransitionCard({ children }: { children: React.ReactNode }) {
+function TransitionLayout({ children }: { children: React.ReactNode }) {
   return (
-    <section className="rounded-[1.9rem] border border-stone-200 bg-white p-8 shadow-sm sm:p-10">
-      {children}
-    </section>
+    <div className="flex min-h-screen flex-col bg-background-light">
+      <main className="flex flex-1 flex-col items-center justify-center px-6 py-12 md:px-20 lg:px-40">
+        <div className="flex w-full max-w-[520px] flex-col items-center text-center">
+          {children}
+        </div>
+      </main>
+    </div>
   );
 }
 
 function InvalidTemplateState({ templateSlug }: { templateSlug: string | null }) {
   return (
-    <TransitionCard>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Invalid template</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        기록을 시작할 템플릿을 확인할 수 없습니다.
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        {templateSlug
-          ? `게시된 템플릿 "${templateSlug}"을 찾지 못했습니다. 템플릿 목록에서 다시 선택해 주세요.`
-          : '템플릿 정보가 없어서 새 기록을 만들 수 없습니다. 템플릿 목록에서 다시 시작해 주세요.'}
-      </p>
-      <div className="mt-6 flex flex-wrap gap-3">
-        <Link
-          href="/templates"
-          className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
-        >
-          템플릿 목록으로 돌아가기
-        </Link>
+    <TransitionLayout>
+      <div className="mb-10 flex flex-col items-center">
+        <div className="relative mb-8 flex items-center justify-center">
+          <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+            <span className="material-symbols-outlined text-3xl">error</span>
+          </div>
+        </div>
+        <h1 className="mb-2 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">템플릿을 찾을 수 없습니다</h1>
+        <p className="font-medium text-slate-600">템플릿 식별자: {templateSlug}</p>
       </div>
-    </TransitionCard>
+      <Link
+        href="/templates"
+        className="inline-flex items-center justify-center rounded-xl bg-primary px-8 py-4 text-sm font-bold text-white transition hover:bg-primary/90"
+      >
+        템플릿 목록으로 돌아가기
+      </Link>
+    </TransitionLayout>
   );
 }
 
-function TransitionLoadingState({ title, description }: { title: string; description: string }) {
+function TransitionLoadingState({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <TransitionCard>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Record transition</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{title}</h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">{description}</p>
-      <div className="mt-8 h-24 animate-pulse rounded-[1.75rem] border border-stone-200 bg-stone-50" />
-    </TransitionCard>
+    <>
+      <div className="mb-10 flex flex-col items-center">
+        <div className="relative mb-8 flex items-center justify-center">
+          <div className="absolute h-24 w-24 animate-pulse rounded-full bg-primary/10 scale-110"></div>
+          <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 text-primary">
+            <span className="material-symbols-outlined text-3xl">favorite</span>
+          </div>
+        </div>
+        <h1 className="mb-2 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">{title}</h1>
+        <p className="font-medium text-slate-600">{subtitle}</p>
+      </div>
+      
+      {/* Indeterminate Progress Bar */}
+      <div className="mb-12 h-1.5 w-full overflow-hidden rounded-full bg-primary/10">
+        <div className="h-full w-1/3 animate-[indeterminate_1.5s_infinite_linear] rounded-full bg-primary"></div>
+      </div>
+    </>
+  );
+}
+
+function StartGuidance() {
+  return (
+    <div className="mb-8 w-full rounded-xl border border-primary/5 bg-white p-6 shadow-sm">
+      <p className="text-lg leading-relaxed text-slate-800">
+        "기록보다 오늘 있었던 장면에 집중해 보세요. 정답은 없습니다. 느낀 그대로를 짧게 남기는 것만으로도 충분합니다."
+      </p>
+    </div>
+  );
+}
+
+function TemplatePreview({ template }: { template: WorksheetTemplate }) {
+  return (
+    <div className="w-full">
+      <div className="flex flex-col items-stretch overflow-hidden rounded-xl border border-slate-100 bg-white shadow-md">
+        <div className="flex flex-1 flex-col justify-center gap-2 p-6 text-left">
+          <p className="text-xs font-bold uppercase tracking-widest text-primary">선택한 템플릿</p>
+          <h3 className="text-xl font-bold text-slate-900">{template.title}</h3>
+        </div>
+      </div>
+    </div>
   );
 }
 
 function TransitionErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
-    <TransitionCard>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">Transition error</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-rose-950 sm:text-4xl">
-        새 기록을 만들지 못했습니다.
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-rose-900 sm:text-base">{message}</p>
-      <div className="mt-6 flex flex-wrap gap-3">
+    <TransitionLayout>
+      <div className="mb-10 flex flex-col items-center">
+        <div className="relative mb-8 flex items-center justify-center">
+          <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+            <span className="material-symbols-outlined text-3xl">warning</span>
+          </div>
+        </div>
+        <h1 className="mb-2 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">오류가 발생했습니다</h1>
+        <p className="font-medium text-slate-600">{message}</p>
+      </div>
+      <div className="flex flex-col gap-3 w-full">
         <button
-          type="button"
           onClick={onRetry}
-          className="inline-flex items-center justify-center rounded-full bg-rose-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-rose-800"
+          className="inline-flex items-center justify-center rounded-xl bg-primary px-8 py-4 text-sm font-bold text-white transition hover:bg-primary/90"
         >
-          다시 시도
+          다시 시도하기
         </button>
         <Link
           href="/templates"
-          className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
+          className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-8 py-4 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
         >
-          템플릿 목록 보기
+          템플릿 목록으로 돌아가기
         </Link>
       </div>
-    </TransitionCard>
+    </TransitionLayout>
   );
 }
 
 export function CreateRecordTransition({ templateSlug }: CreateRecordTransitionProps) {
   const router = useRouter();
+  const { user, status } = useAuthUser();
   const template = templateSlug ? getTemplateBySlug(templateSlug) : null;
-  const { user, status, error, retry } = useAuthUser();
+
   const [creationStatus, setCreationStatus] = useState<'idle' | 'creating' | 'error'>('idle');
   const [creationError, setCreationError] = useState<string | null>(null);
-  const [attemptKey, setAttemptKey] = useState(0);
   const hasStartedCreationRef = useRef(false);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      const target = templateSlug
-        ? `/my/records/new?template=${encodeURIComponent(templateSlug)}`
-        : '/my/records/new';
-
-      router.replace(buildLoginHref(target));
-    }
-  }, [router, status, templateSlug]);
-
-  useEffect(() => {
-    if (status !== 'authenticated' || !user || !template || creationStatus === 'creating') {
+      const loginHref = buildLoginHref(`/my/records/new?template=${templateSlug}`);
+      router.replace(loginHref);
       return;
     }
 
-    if (hasStartedCreationRef.current) {
-      return;
-    }
-
-    const currentUser = user;
-    const currentTemplate = template;
-    hasStartedCreationRef.current = true;
-
-    async function runTransition() {
+    if (status === 'authenticated' && user && template && !hasStartedCreationRef.current) {
+      hasStartedCreationRef.current = true;
       setCreationStatus('creating');
-      setCreationError(null);
 
-      try {
-        const record = await createDraftRecord(currentUser.uid, currentTemplate);
+      const uid = user.uid;
+      const currentTemplate = template;
 
-        window.location.replace(`/my/records/${record.id}`);
-      } catch (nextError) {
-        hasStartedCreationRef.current = false;
-        setCreationStatus('error');
-        setCreationError(
-          nextError instanceof Error
-            ? nextError.message
-            : '초안 기록을 만드는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
-        );
+      async function runTransition() {
+        try {
+          const draftId = await createDraftRecord(uid, currentTemplate);
+          // Small delay to let the transition feel intentional
+          await new Promise((resolve) => setTimeout(resolve, 800));
+          router.replace(`/my/records/${draftId}`);
+        } catch (err) {
+          console.error('Failed to create draft:', err);
+          setCreationStatus('error');
+          setCreationError(
+            err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.',
+          );
+        }
       }
-    }
 
-    void runTransition();
-  }, [attemptKey, creationStatus, router, status, template, user]);
+      void runTransition();
+    }
+  }, [creationStatus, status, template, user, templateSlug, router]);
 
   if (!template) {
-    return (
-      <main className="bg-stone-100 px-6 py-12 text-slate-800 sm:py-16">
-        <div className="mx-auto max-w-4xl">
-          <InvalidTemplateState templateSlug={templateSlug} />
-        </div>
-      </main>
-    );
-  }
-
-  if (status === 'loading') {
-    return (
-      <main className="bg-stone-100 px-6 py-12 text-slate-800 sm:py-16">
-        <div className="mx-auto max-w-4xl">
-          <TransitionLoadingState
-            title="로그인 상태를 확인하는 중입니다."
-            description="선택한 템플릿으로 기록 초안을 만들기 전에 계정 정보를 먼저 확인하고 있습니다."
-          />
-        </div>
-      </main>
-    );
-  }
-
-  if (status === 'error') {
-    return (
-      <main className="bg-stone-100 px-6 py-12 text-slate-800 sm:py-16">
-        <div className="mx-auto max-w-4xl">
-          <TransitionErrorState
-            message={error?.message ?? '인증 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.'}
-            onRetry={retry}
-          />
-        </div>
-      </main>
-    );
-  }
-
-  if (status === 'unauthenticated') {
-    return (
-      <main className="bg-stone-100 px-6 py-12 text-slate-800 sm:py-16">
-        <div className="mx-auto max-w-4xl">
-          <TransitionLoadingState
-            title="로그인 화면으로 이동하고 있습니다."
-            description="새 기록은 로그인한 계정에서만 만들 수 있어요. 잠시 후 로그인 화면으로 이동합니다."
-          />
-        </div>
-      </main>
-    );
+    return <InvalidTemplateState templateSlug={templateSlug} />;
   }
 
   if (creationStatus === 'error') {
     return (
-      <main className="bg-stone-100 px-6 py-12 text-slate-800 sm:py-16">
-        <div className="mx-auto max-w-4xl">
-          <TransitionErrorState
-            message={creationError ?? '초안 기록을 만드는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'}
-            onRetry={() => {
-              hasStartedCreationRef.current = false;
-              setCreationStatus('idle');
-              setAttemptKey((currentValue) => currentValue + 1);
-            }}
-          />
-        </div>
-      </main>
+      <TransitionErrorState
+        message={creationError ?? '기록 공간을 준비하는 중 오류가 발생했습니다.'}
+        onRetry={() => {
+          hasStartedCreationRef.current = false;
+          setCreationStatus('idle');
+        }}
+      />
     );
   }
 
+  let title = '기록 공간을 준비하고 있습니다...';
+  let subtitle = '기록을 시작할 수 있게 공간을 준비합니다';
+
+  if (status === 'loading') {
+    title = '사용자 정보를 확인하고 있습니다...';
+    subtitle = '잠시만 기다려 주세요';
+  } else if (status === 'unauthenticated') {
+    title = '로그인 상태를 확인하고 있습니다...';
+    subtitle = '로그인 후 기록 공간으로 이동합니다';
+  }
+
   return (
-    <main className="bg-stone-100 px-6 py-12 text-slate-800 sm:py-16">
-      <div className="mx-auto max-w-4xl">
-        <TransitionLoadingState
-          title="기록 초안을 만드는 중입니다."
-          description={`선택한 템플릿 "${template.title}"으로 새 기록을 만들고 있습니다. 곧 편집 화면으로 이동합니다.`}
-        />
-      </div>
-    </main>
+    <TransitionLayout>
+      <TransitionLoadingState title={title} subtitle={subtitle} />
+      <StartGuidance />
+      <TemplatePreview template={template} />
+    </TransitionLayout>
   );
 }

@@ -1,19 +1,17 @@
-import type { Competency, GradeBand, PypTheme, WorksheetTemplate } from '../templates/template-types';
-
-export type TemplateFilterOption<T extends string> = T | 'all';
+import {
+  matchesTemplateLibraryFilter,
+  type EnrichedWorksheetTemplate,
+  type TemplateLibraryFilter,
+} from '../templates/template-experience';
 
 export interface TemplateFilters {
   search: string;
-  gradeBand: TemplateFilterOption<GradeBand>;
-  competency: TemplateFilterOption<Competency>;
-  pypTheme: TemplateFilterOption<PypTheme>;
+  cluster: TemplateLibraryFilter;
 }
 
 export const DEFAULT_TEMPLATE_FILTERS: TemplateFilters = {
   search: '',
-  gradeBand: 'all',
-  competency: 'all',
-  pypTheme: 'all',
+  cluster: 'all',
 };
 
 function normalizeSearchValue(value: string): string {
@@ -21,27 +19,27 @@ function normalizeSearchValue(value: string): string {
 }
 
 export function matchesTemplateFilters(
-  template: WorksheetTemplate,
+  template: EnrichedWorksheetTemplate,
   filters: TemplateFilters,
 ): boolean {
   const normalizedSearch = normalizeSearchValue(filters.search);
+  const searchableText = [
+    template.title,
+    template.summary,
+    template.parentSummary,
+    template.bigQuestion,
+    template.quickStart,
+    ...template.familyMoments,
+    ...template.recordFocus,
+  ]
+    .join(' ')
+    .toLocaleLowerCase();
 
-  if (normalizedSearch && !template.title.toLocaleLowerCase().includes(normalizedSearch)) {
+  if (normalizedSearch && !searchableText.includes(normalizedSearch)) {
     return false;
   }
 
-  if (filters.gradeBand !== 'all' && template.gradeBand !== filters.gradeBand) {
-    return false;
-  }
-
-  if (
-    filters.competency !== 'all' &&
-    !template.competencies.includes(filters.competency)
-  ) {
-    return false;
-  }
-
-  if (filters.pypTheme !== 'all' && template.pypTheme !== filters.pypTheme) {
+  if (!matchesTemplateLibraryFilter(template, filters.cluster)) {
     return false;
   }
 
@@ -49,8 +47,8 @@ export function matchesTemplateFilters(
 }
 
 export function filterTemplates(
-  templates: WorksheetTemplate[],
+  templates: EnrichedWorksheetTemplate[],
   filters: TemplateFilters,
-): WorksheetTemplate[] {
+): EnrichedWorksheetTemplate[] {
   return templates.filter((template) => matchesTemplateFilters(template, filters));
 }

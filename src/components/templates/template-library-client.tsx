@@ -1,103 +1,67 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
 import { TemplateCard } from '@/components/templates/template-card';
-import { TemplateLibraryFilters } from '@/components/templates/template-library-filters';
+import {
+  TemplateLibraryFilters,
+} from '@/components/templates/template-library-filters';
 import { buildLoginHref } from '@/lib/auth/ensure-auth';
 import { useAuthUser } from '@/lib/auth/use-auth-user';
-import type { WorksheetTemplate } from '@/lib/templates/template-types';
+import {
+  buildTemplateLibrarySections,
+  type EnrichedWorksheetTemplate,
+} from '@/lib/templates/template-experience';
 import { DEFAULT_TEMPLATE_FILTERS, filterTemplates, type TemplateFilters } from '@/lib/utils/filters';
 
 interface TemplateLibraryClientProps {
-  templates: WorksheetTemplate[];
+  templates: EnrichedWorksheetTemplate[];
 }
 
 function AuthLoadingState() {
   return (
-    <section className="rounded-[1.9rem] border border-stone-200 bg-white p-8 shadow-sm sm:p-10">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Templates</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        템플릿 라이브러리를 준비하고 있습니다.
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        보호된 화면이라 먼저 로그인 상태를 확인합니다. 확인이 끝나면 바로 템플릿 목록을 보여 드릴게요.
-      </p>
-      <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {Array.from({ length: 6 }, (_, index) => `auth-loading-card-${index}` ).map((placeholderId) => (
-          <div
-            key={placeholderId}
-            className="h-72 animate-pulse rounded-[1.75rem] border border-stone-200 bg-stone-50"
-          />
-        ))}
+    <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
+      <div className="animate-pulse text-primary">
+        <span className="material-symbols-outlined text-5xl">auto_stories</span>
       </div>
-    </section>
-  );
-}
-
-function AuthErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
-  return (
-    <section className="rounded-[1.9rem] border border-rose-200 bg-rose-50 p-8 shadow-sm sm:p-10">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">인증 오류</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-rose-950 sm:text-4xl">
-        템플릿 라이브러리를 여는 데 실패했습니다.
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-rose-900 sm:text-base">{message}</p>
-      <button
-        type="button"
-        onClick={onRetry}
-        className="mt-6 inline-flex items-center justify-center rounded-full bg-rose-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-rose-800"
-      >
-        다시 시도
-      </button>
-    </section>
+      <h1 className="mt-4 text-2xl font-bold text-slate-900">템플릿 보관함을 불러오고 있습니다...</h1>
+    </div>
   );
 }
 
 function RedirectingState() {
   return (
-    <section className="rounded-[1.9rem] border border-stone-200 bg-white p-8 shadow-sm sm:p-10">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">로그인 필요</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        로그인 화면으로 이동하고 있습니다.
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        템플릿 라이브러리는 로그인한 계정에서만 사용할 수 있습니다. 로그인 후에는 이 화면으로
-        다시 돌아옵니다.
-      </p>
-    </section>
+    <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
+      <div className="text-primary">
+        <span className="material-symbols-outlined text-5xl">lock</span>
+      </div>
+      <h1 className="mt-4 text-2xl font-bold text-slate-900">로그인하고 있습니다...</h1>
+      <p className="mt-2 text-slate-600">템플릿 보관함은 로그인한 사용자만 이용할 수 있습니다.</p>
+    </div>
   );
 }
 
-function EmptyState({ hasFilters, onReset }: { hasFilters: boolean; onReset: () => void }) {
+function EmptyState({ onReset }: { onReset: () => void }) {
   return (
-    <section className="rounded-[1.9rem] border border-dashed border-stone-300 bg-stone-50 p-8 text-center sm:p-10">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">No matches</p>
-      <h2 className="mt-4 text-2xl font-semibold tracking-tight text-slate-900">
-        {hasFilters ? '조건에 맞는 템플릿을 찾지 못했어요.' : '아직 게시된 템플릿이 없습니다.'}
-      </h2>
-      <p className="mt-3 text-sm leading-6 text-slate-600 sm:text-base">
-        {hasFilters
-          ? '검색어를 지우거나 필터를 완화하면 더 많은 템플릿을 볼 수 있어요.'
-          : '템플릿이 준비되면 이곳에서 바로 확인할 수 있습니다.'}
-      </p>
-      {hasFilters ? (
-        <button
-          type="button"
-          onClick={onReset}
-          className="mt-6 inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
-        >
-          전체 템플릿 다시 보기
-        </button>
-      ) : null}
-    </section>
+    <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/30 p-12 text-center">
+      <span className="material-symbols-outlined mb-4 text-5xl text-slate-300">search_off</span>
+      <p className="font-medium text-slate-500">찾으시는 활동이 없습니다.</p>
+      <p className="mb-6 text-sm text-slate-400">다른 검색어나 필터를 선택해 보세요.</p>
+      <button 
+        onClick={onReset}
+        className="text-sm font-bold text-primary hover:underline"
+      >
+        필터 초기화하기
+      </button>
+    </div>
   );
 }
 
 export function TemplateLibraryClient({ templates }: TemplateLibraryClientProps) {
   const router = useRouter();
-  const { status, error, retry } = useAuthUser();
+  const { status } = useAuthUser();
   const [filters, setFilters] = useState<TemplateFilters>(DEFAULT_TEMPLATE_FILTERS);
 
   useEffect(() => {
@@ -107,68 +71,65 @@ export function TemplateLibraryClient({ templates }: TemplateLibraryClientProps)
   }, [router, status]);
 
   const filteredTemplates = useMemo(() => filterTemplates(templates, filters), [templates, filters]);
-  const hasActiveFilters =
-    filters.search.trim().length > 0 ||
-    filters.gradeBand !== 'all' ||
-    filters.competency !== 'all' ||
-    filters.pypTheme !== 'all';
+  const sections = useMemo(
+    () => buildTemplateLibrarySections(filteredTemplates),
+    [filteredTemplates],
+  );
+
+  if (status === 'loading') return <AuthLoadingState />;
+  if (status === 'unauthenticated') return <RedirectingState />;
 
   return (
-    <main className="bg-stone-100 px-6 py-12 text-slate-800 sm:py-16">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6">
-        {status === 'loading' ? <AuthLoadingState /> : null}
+    <div className="flex min-h-screen flex-col bg-background-light">
+      <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 md:py-12">
+        {/* Hero Section */}
+        <div className="mb-10">
+          <h1 className="mb-3 text-3xl font-black text-slate-900 md:text-4xl">오늘의 관찰을 시작해 보세요</h1>
+          <p className="max-w-2xl text-lg text-slate-600">오늘 해 본 활동을 하나 고르고 짧게 기록해 보세요. 꾸준한 기록이 모이면 아이의 성장을 더 뚜렷하게 볼 수 있습니다.</p>
+        </div>
 
-        {status === 'error' ? (
-          <AuthErrorState
-            message={error?.message ?? '인증 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.'}
-            onRetry={retry}
-          />
-        ) : null}
+        <TemplateLibraryFilters
+          filters={filters}
+          onChange={setFilters}
+          onReset={() => setFilters(DEFAULT_TEMPLATE_FILTERS)}
+        />
 
-        {status === 'unauthenticated' ? <RedirectingState /> : null}
+        {/* Guidance Block */}
+        <div className="mb-12 flex items-start gap-4 rounded-xl border border-primary/20 bg-primary/5 p-6">
+          <span className="material-symbols-outlined shrink-0 text-3xl text-primary">lightbulb</span>
+          <div>
+            <p className="text-lg font-semibold text-slate-800">하나만 골라도 충분합니다.</p>
+            <p className="mt-1 text-slate-600">모든 활동을 다 하려고 애쓰지 마세요. 오늘 가장 마음이 가는 활동 하나에만 집중해 보는 것만으로도 충분합니다.</p>
+          </div>
+        </div>
 
-        {status === 'authenticated' ? (
-          <>
-            <TemplateLibraryFilters
-              filters={filters}
-              onChange={setFilters}
-              onReset={() => setFilters(DEFAULT_TEMPLATE_FILTERS)}
-            />
-
-            <section className="grid gap-4 rounded-[1.9rem] border border-stone-200 bg-gradient-to-br from-white to-stone-50 p-6 shadow-sm sm:p-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-              <div>
-                <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">
-                  현재 보기
-                </p>
-                <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
-                  {filteredTemplates.length}개의 템플릿을 바로 확인할 수 있어요.
-                </h2>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-                  필터를 바꾸면 목록이 즉시 갱신됩니다. 마음에 드는 템플릿에서 `열어보기`를 누르면
-                  상세 화면으로 이동합니다.
-                </p>
-              </div>
-
-              <div className="grid gap-3 rounded-[1.5rem] border border-stone-200 bg-white/80 p-4 text-sm text-slate-600">
-                <p className="font-medium text-slate-900">빠른 확인</p>
-                <p>검색: 제목 기준 부분 일치</p>
-                <p>학년/역량/PYP 주제: 클라이언트 즉시 필터</p>
-                <p>비로그인 상태: `/login?next=/templates`로 이동 후 복귀</p>
-              </div>
-            </section>
-
-            {filteredTemplates.length === 0 ? (
-              <EmptyState hasFilters={hasActiveFilters} onReset={() => setFilters(DEFAULT_TEMPLATE_FILTERS)} />
-            ) : (
-              <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {filteredTemplates.map((template) => (
-                  <TemplateCard key={template.slug} template={template} />
-                ))}
+        {/* Activity Grid Sections */}
+        <div className="space-y-16">
+          {sections.length === 0 ? (
+            <EmptyState onReset={() => setFilters(DEFAULT_TEMPLATE_FILTERS)} />
+          ) : (
+            sections.map((section) => (
+              <section key={section.id}>
+                <div className="mb-6 flex items-center justify-between">
+                  <h2 className="flex items-center gap-2 text-2xl font-bold text-slate-800">
+                    <span className="material-symbols-outlined text-primary">
+                      {section.id === 'conversational_check_ins' ? 'self_improvement' : 
+                       section.id === 'notice_pattern_sort' ? 'visibility' : 'palette'}
+                    </span>
+                    {section.label}
+                  </h2>
+                  <span className="text-sm font-medium text-slate-400">{section.templates.length}개의 활동</span>
+                </div>
+                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                  {section.templates.map((template) => (
+                    <TemplateCard key={template.slug} template={template} />
+                  ))}
+                </div>
               </section>
-            )}
-          </>
-        ) : null}
-      </div>
-    </main>
+            ))
+          )}
+        </div>
+      </main>
+    </div>
   );
 }
