@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#cf5417",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#211611",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<title>IBNote - Template Library</title>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-16">
+<div class="flex items-center gap-2">
+<div class="text-primary">
+<span class="material-symbols-outlined text-3xl">auto_stories</span>
+</div>
+<span class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">IBNote</span>
+</div>
+<nav class="hidden md:flex space-x-8">
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary font-medium transition-colors" href="#">Home</a>
+<a class="text-primary font-semibold border-b-2 border-primary" href="#">Library</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary font-medium transition-colors" href="#">Journal</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:bg-primary/10 rounded-full transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-primary/20 border-2 border-primary/30 overflow-hidden">
+<img alt="User profile" class="h-full w-full object-cover" data-alt="A soft focus portrait of a smiling woman" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9tRFy-FBIwW-AyELCzRMF3SE3ksIllUJA-v7fk6zjnwtOHsOQ4zED4XDJtmjcmAB5j_mNEcHxnZca5cVgBn9YIy--wlNNAFHFX4AgxAo9Dwnd9XyFxscTPP0cOdOp1RIlQJckbh-x6a0L6qupTQ4gMq6Iug7wakFxKomNMUMRUXpjwOVlsRl-gu2FDLhEVWL5tuFJ94DC8-NWB10p9QBDFeK9RJ1ETvZ7kOKEIWA8CLUoSaNceQqGmzT--YuaFT-4wUacV77_qes"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+<!-- Hero/Greeting Section -->
+<div class="mb-10">
+<h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-slate-100 mb-3">Find a moment for today</h1>
+<p class="text-slate-600 dark:text-slate-400 text-lg max-w-2xl">Take a breath. Your daily inspiration is here. These small moments build deep connections.</p>
+</div>
+<!-- Search & Filter Area -->
+<div class="space-y-6 mb-12">
+<div class="relative max-w-2xl">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full pl-12 pr-4 py-4 bg-white dark:bg-slate-800/50 border-none rounded-xl shadow-sm focus:ring-2 focus:ring-primary/40 transition-all text-slate-900 dark:text-slate-100" placeholder="Search activities (e.g., 'outdoor', 'calm')..." type="text"/>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="px-5 py-2 rounded-full bg-primary text-white font-medium shadow-sm hover:bg-primary/90 transition-colors">All Moments</button>
+<button class="px-5 py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-primary/50 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">palette</span> Creative
+                </button>
+<button class="px-5 py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-primary/50 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">self_improvement</span> Quiet Time
+                </button>
+<button class="px-5 py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-primary/50 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">directions_run</span> Active Play
+                </button>
+<button class="px-5 py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-primary/50 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">visibility</span> Observation
+                </button>
+</div>
+</div>
+<!-- Guidance Block -->
+<div class="bg-primary/5 dark:bg-primary/10 border border-primary/20 rounded-xl p-6 mb-12 flex items-start gap-4">
+<span class="material-symbols-outlined text-primary text-3xl shrink-0">lightbulb</span>
+<div>
+<p class="text-slate-800 dark:text-slate-200 font-semibold text-lg">You only need to pick one.</p>
+<p class="text-slate-600 dark:text-slate-400 mt-1">Today's manageable moment is just a click away. Don't worry about doing everything—focus on the presence.</p>
+</div>
+</div>
+<!-- Activity Grid Sections -->
+<div class="space-y-16">
+<!-- Category 1 -->
+<section>
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-2xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">psychology</span> Quiet Discovery
+                    </h2>
+<a class="text-primary font-medium hover:underline text-sm" href="#">View all</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<div class="group bg-white dark:bg-slate-800/40 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+<div class="aspect-video relative overflow-hidden">
+<img alt="Activity image" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Sunlight filtering through leaves in a garden" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwx5A8-FoDxsSTOij0Ib7-KI8ONJMHYh9ANZktn3fCOsHUoSkRodj4O6pr_2J8oJYGO9lBhftIi8Egyl4g_1D8E9aaCKjBsux19YU5IkF4f4Af-rldWoP8YsLWrX3ap5DDAFFDPMnsTeOks557FG5B6jDKYo5s6n2T2k6poA0drDx-ZoHNkmE9TC_Su-O_4WOptf-UcJ599T8RHNKASgdwM62l2aaPyhSkyjREr-oNnbf0YfEJSGKt_b-zuk_3-g1NW-5Oj6FPC5g"/>
+<div class="absolute top-3 right-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary">
+                                5-10 MINS
+                            </div>
+</div>
+<div class="p-5">
+<h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Garden Discovery</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4">A simple walk to notice the smallest changes in the soil and leaves together.</p>
+<button class="w-full py-2 bg-primary/10 dark:bg-primary/20 text-primary font-bold rounded-lg group-hover:bg-primary group-hover:text-white transition-colors">Start Moment</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group bg-white dark:bg-slate-800/40 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+<div class="aspect-video relative overflow-hidden">
+<img alt="Shadow play" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Soft shadows of hands forming shapes on a wall" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDl2rpvD82uj4bdUn7sQyewjJEkp4W6LYcvv8yEvGiMQqa_2uXZ3zDgyXMe8RvreK2iZ8RfiIpBhLKE9lAKcTkhgdbwVWDD3ZdyX4UMSlqUqsM7Nf4dTSKQ6MoLDiXSEuIjFPK-bn2AECkOClcrSJy8WQxbDpPIXf-1TZGdR2x8D6I2Nc1fB3i1_OrwXpaF6Npswb_skpdvDbwW34pUo9me4GVjiQhvYGCALl6XQh4JiWWsaxKm5Wp4fX-yhTsi9exooQvY_kfRLlA"/>
+<div class="absolute top-3 right-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary">
+                                10 MINS
+                            </div>
+</div>
+<div class="p-5">
+<h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Shadow Play</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4">Explore light and dark using just your hands and a simple flashlight.</p>
+<button class="w-full py-2 bg-primary/10 dark:bg-primary/20 text-primary font-bold rounded-lg group-hover:bg-primary group-hover:text-white transition-colors">Start Moment</button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group bg-white dark:bg-slate-800/40 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+<div class="aspect-video relative overflow-hidden">
+<div class="w-full h-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-4xl">cloud_queue</span>
+</div>
+<div class="absolute top-3 right-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary">
+                                5 MINS
+                            </div>
+</div>
+<div class="p-5">
+<h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Cloud Shapes</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4">Lie back and watch the sky. What stories are the clouds telling today?</p>
+<button class="w-full py-2 bg-primary/10 dark:bg-primary/20 text-primary font-bold rounded-lg group-hover:bg-primary group-hover:text-white transition-colors">Start Moment</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Category 2 -->
+<section>
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-2xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">palette</span> Creative Flows
+                    </h2>
+<a class="text-primary font-medium hover:underline text-sm" href="#">View all</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Card 4 -->
+<div class="group bg-white dark:bg-slate-800/40 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+<div class="aspect-video relative overflow-hidden">
+<img alt="Water painting" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Child painting with water on a stone surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDC7O67stMQQOpLrWxb3dIh_tEiajhTXEKdKQo8XsHAqqx_8r6YD6Yj0edLUMLUYwqL8bfRmpuqISFtsAhi3LJl-LojbdHdBjv37Qa_uDZWfeDfQZnIO84LVUXLgn0nphpskm6PgYuQyj9aCpb1mhX7JUF9uGPDEon4SSnki3ESVwoxeQMVfV_APF453-id188wjNy8mrtoLyNqLRU-cPhHBBTSdI-j7_n68f_w5ChhojAQ95TJ_drYGrdPHQNYjNAB0pe2acotqzI"/>
+<div class="absolute top-3 right-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary">
+                                15 MINS
+                            </div>
+</div>
+<div class="p-5">
+<h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Water Painting</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4">No mess, just magic. Watch how water changes the color of concrete and stone.</p>
+<button class="w-full py-2 bg-primary/10 dark:bg-primary/20 text-primary font-bold rounded-lg group-hover:bg-primary group-hover:text-white transition-colors">Start Moment</button>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="group bg-white dark:bg-slate-800/40 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+<div class="aspect-video relative overflow-hidden">
+<img alt="Nature patterns" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Arrangement of colored stones and leaves on sand" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4hmZ9sspiVVe9uZpsQYlYXx-OFC46AFvLvi40STqtoupGCKRK9c1tsOThty32JipGCa7jyuMW39atcbJAlc8WOoXThzBLpaA1BRNQdRdHiA9rEBzuL3DUzUGDfPZFq0tyfm9SoB_hZ_pfVjEMFddAzDS-Nouw6Y1Yb2XlI1vIQd07G4AXBWUiitmT-dL6ehfZArvI_8D1qX-QxXQytwtW9259rY2zKfqHVpL-PnjS1gvuNNHEFX1m43hwbcIiYQOhMystgqMw0wM"/>
+<div class="absolute top-3 right-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary">
+                                20 MINS
+                            </div>
+</div>
+<div class="p-5">
+<h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Nature Mandalas</h3>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4">Gather treasures from the backyard to create temporary circular art.</p>
+<button class="w-full py-2 bg-primary/10 dark:bg-primary/20 text-primary font-bold rounded-lg group-hover:bg-primary group-hover:text-white transition-colors">Start Moment</button>
+</div>
+</div>
+<!-- Empty State Placeholder / Featured Suggestion -->
+<div class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl flex flex-col items-center justify-center p-8 text-center bg-slate-50/30 dark:bg-slate-800/10">
+<span class="material-symbols-outlined text-slate-300 dark:text-slate-600 text-5xl mb-4">auto_awesome</span>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Looking for something else?</p>
+<p class="text-slate-400 dark:text-slate-500 text-xs mb-4">We are curating more moments for you.</p>
+<button class="text-primary font-bold text-sm hover:underline">Suggest an activity</button>
+</div>
+</div>
+</section>
+</div>
+<!-- Sticky Mobile Floating Action (Concept) -->
+<div class="fixed bottom-6 right-6 md:hidden">
+<button class="size-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</main>
+<footer class="bg-white dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 py-12 mt-20">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">auto_stories</span>
+<span class="text-lg font-bold text-slate-900 dark:text-slate-100">IBNote</span>
+</div>
+<div class="flex gap-8 text-sm font-medium text-slate-500 dark:text-slate-400">
+<a class="hover:text-primary" href="#">Privacy</a>
+<a class="hover:text-primary" href="#">Community</a>
+<a class="hover:text-primary" href="#">Resources</a>
+</div>
+<p class="text-sm text-slate-400">© 2024 IBNote. Made for parents, by parents.</p>
+</div>
+</footer>
+</body></html>

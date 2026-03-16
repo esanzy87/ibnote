@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#cf5417",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#211611",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>Reset Your Password | IBNote</title>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="flex min-h-screen w-full flex-col lg:flex-row">
+<!-- Left Panel: Brand & Narrative -->
+<div class="relative hidden w-full lg:flex lg:w-1/2 flex-col justify-between p-12 overflow-hidden bg-primary/5">
+<div class="z-10">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z" fill="currentColor" fill-rule="evenodd"></path>
+<path clip-rule="evenodd" d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<span class="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">IBNote</span>
+</div>
+</div>
+<div class="z-10 max-w-lg space-y-6">
+<h1 class="text-5xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
+                    We've got you covered.
+                </h1>
+<p class="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+                    Take a deep breath. We'll help you get back to your family moments in just a few steps. Your privacy and security are our priority, so we'll send a secure link to your email.
+                </p>
+<div class="pt-8">
+<div class="w-full h-64 rounded-xl overflow-hidden shadow-sm">
+<img alt="Parent and child moment" class="w-full h-full object-cover" data-alt="A calm parent holding a child in a sunlit room" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH_lcEr14NagON8yO6aCTKI3-bVzNSErMxkSCNgZ_wrTEjdaePVetYxXt4LV1tT8WS35yngRwMmPAveaxEz-d-bLSy3nCbXtZ-Dvwu9hzkMmYIjJfYAjxTB1jZT5JD3945GsE-Ka1--UO3aRAigyPI_Hqr87BO6n0sYjbKHC2vPdfCLmywQpVtm8I6vRNTIkIguvbpg7SM-ZqwZz_5TgvQWWqV_SpPolEo6veksnQx_W_rvGP1OXlXpVaKL5eY7KKD7H5xehMYRc0"/>
+</div>
+</div>
+</div>
+<div class="z-10">
+<p class="text-sm text-slate-400">© 2024 IBNote. All family moments secured.</p>
+</div>
+<!-- Background soft glow elements -->
+<div class="absolute top-0 right-0 -mr-20 -mt-20 size-96 rounded-full bg-primary/10 blur-3xl"></div>
+<div class="absolute bottom-0 left-0 -ml-20 -mb-20 size-96 rounded-full bg-primary/5 blur-3xl"></div>
+</div>
+<!-- Right Panel: Password Reset Form -->
+<div class="flex w-full flex-col justify-center items-center p-6 sm:p-12 lg:w-1/2 bg-background-light dark:bg-background-dark">
+<!-- Mobile Logo Only -->
+<div class="lg:hidden mb-12 flex items-center gap-2 text-primary">
+<div class="size-6">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z" fill="currentColor" fill-rule="evenodd"></path>
+<path clip-rule="evenodd" d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<span class="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">IBNote</span>
+</div>
+<div class="w-full max-w-md space-y-8">
+<div class="space-y-2">
+<h2 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Reset your password</h2>
+<p class="text-slate-500 dark:text-slate-400">Enter the email address associated with your account.</p>
+</div>
+<!-- Success Feedback (Hidden by default or shown via state) -->
+<div class="flex items-start gap-3 rounded-lg bg-primary/10 p-4 border border-primary/20">
+<span class="material-symbols-outlined text-primary text-xl">info</span>
+<p class="text-sm leading-tight text-slate-700 dark:text-slate-300">
+                        If an account exists for this email, you'll receive a link shortly. Please check your inbox and spam folder.
+                    </p>
+</div>
+<form class="space-y-6">
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300" for="email">
+                            Email Address
+                        </label>
+<div class="relative">
+<input class="block w-full rounded-lg border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500" id="email" name="email" placeholder="name@example.com" required="" type="email"/>
+</div>
+</div>
+<button class="flex w-full items-center justify-center rounded-lg bg-primary px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" type="submit">
+                        Send Reset Link
+                    </button>
+</form>
+<div class="flex flex-col items-center gap-4 pt-4">
+<a class="flex items-center gap-1 text-sm font-medium text-slate-500 transition-colors hover:text-primary dark:text-slate-400 dark:hover:text-primary" href="#">
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+                        Back to Login
+                    </a>
+</div>
+</div>
+</div>
+</div>
+</body></html>

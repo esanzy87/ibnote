@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>IBNote | Preparing Reflection</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#cf5417",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#211611",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Navigation -->
+<header class="flex items-center justify-between border-b border-primary/10 px-6 py-4 md:px-40 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
+<div class="flex items-center gap-3">
+<div class="text-primary">
+<svg class="size-8" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z" fill="currentColor" fill-rule="evenodd"></path>
+<path clip-rule="evenodd" d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-bold tracking-tight">IBNote</h2>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</header>
+<main class="flex flex-1 flex-col items-center justify-center px-6 py-12 md:px-40">
+<div class="w-full max-w-[520px] flex flex-col items-center text-center">
+<!-- Central Loading Area -->
+<div class="mb-10 flex flex-col items-center">
+<div class="relative flex items-center justify-center mb-8">
+<div class="absolute h-24 w-24 bg-primary/10 rounded-full scale-110 animate-pulse"></div>
+<div class="relative h-16 w-16 bg-primary/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl">favorite</span>
+</div>
+</div>
+<h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight mb-2">Preparing your reflection space...</h1>
+<p class="text-slate-600 dark:text-slate-400 font-medium">Drafting your moment with care</p>
+</div>
+<!-- Progress Bar -->
+<div class="w-full bg-primary/10 h-1.5 rounded-full mb-12 overflow-hidden">
+<div class="bg-primary h-full rounded-full transition-all duration-700 ease-out" style="width: 65%;"></div>
+</div>
+<!-- Guidance Block -->
+<div class="bg-white dark:bg-primary/5 rounded-xl p-6 mb-8 w-full border border-primary/5 shadow-sm">
+<div class="flex items-center gap-3 justify-center text-primary mb-2">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+<p class="text-xs font-bold uppercase tracking-widest">Parenting Tip</p>
+</div>
+<p class="text-lg text-slate-800 dark:text-slate-200 leading-relaxed italic">
+                            "Just a short record of what you noticed. No right or wrong answers."
+                        </p>
+</div>
+<!-- Moment Preview Card -->
+<div class="w-full @container">
+<div class="flex flex-col md:flex-row items-stretch overflow-hidden rounded-xl bg-white dark:bg-slate-800/50 shadow-md border border-slate-100 dark:border-slate-800">
+<div class="w-full md:w-1/3 min-h-[140px] bg-center bg-no-repeat bg-cover" data-alt="Close up of vibrant green garden leaves" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA3BueULEz_vZsUdCEiNn9RQmKix5aZDXdMK3tNFOTKeR_AiyhCJ0g2SalaH0-XJbZ8MPGbixFxmESkeUiPB6LW2Siocgr2bgz6aTAWAbKZcIUgsQcUQsstb-cHoXLiAUgtHCMoXs2aPOUd88DzSvE1v8p4sLmF6det4dszh_9NElNe4sGaGJF9_8ZE_eGhEEwUIsA-5SnMBQagh9A0S2W_Z1t5DdIS82M9k3UypHqG7E4_5fJPtAD7g6vd11e-diHzmiBGB3I57QQ");'></div>
+<div class="flex flex-1 flex-col justify-center gap-2 p-6 text-left">
+<p class="text-primary text-xs font-bold uppercase tracking-widest">Template Chosen</p>
+<h3 class="text-slate-900 dark:text-slate-100 text-xl font-bold">Garden Discovery</h3>
+<div class="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium uppercase mb-1">Preview Question</p>
+<p class="text-slate-700 dark:text-slate-300 text-base leading-snug">What color caught their eye most?</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Hidden Error State (Example visual) -->
+<div class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-800 w-full opacity-60">
+<div class="flex flex-col items-center gap-3">
+<div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-xl">info</span>
+<p class="text-sm">Something went wrong, but don't worry. Your progress is safe.</p>
+</div>
+<a class="text-primary font-bold text-sm hover:underline flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-base">arrow_back</span>
+                                Return to Library
+                            </a>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer-ish branding -->
+<footer class="flex items-center justify-center p-8 opacity-40">
+<p class="text-xs uppercase tracking-[0.2em] font-medium">Breathe in. Reflect. Record.</p>
+</footer>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#cf5417",
+              "background-light": "#f8f6f6",
+              "background-dark": "#211611",
+            },
+            fontFamily: {
+              "display": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<title>IBNote | Welcome Back</title>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex items-center justify-center p-0 md:p-6 lg:p-12">
+<div class="flex flex-col md:flex-row w-full max-w-6xl min-h-[85vh] bg-white dark:bg-slate-900 rounded-none md:rounded-xl shadow-2xl overflow-hidden">
+<!-- Left Panel: Informational -->
+<div class="relative w-full md:w-1/2 bg-primary/10 dark:bg-primary/5 flex flex-col justify-center p-8 md:p-16 lg:p-24 overflow-hidden">
+<!-- Decorative soft shapes -->
+<div class="absolute -top-24 -left-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-3 mb-12">
+<div class="size-10 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z" fill="currentColor" fill-rule="evenodd"></path>
+<path clip-rule="evenodd" d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<span class="text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">IBNote</span>
+</div>
+<h1 class="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white leading-[1.15] mb-6">
+                    Welcome back to your <br/><span class="text-primary italic">family journey</span>
+</h1>
+<p class="text-lg text-slate-600 dark:text-slate-300 mb-8 leading-relaxed max-w-md">
+                    Logging in takes you to your personal reflection space. Your private moments stay private, held in a safe space for you and your loved ones.
+                </p>
+<div class="flex items-center gap-4 py-6 border-t border-primary/10">
+<div class="flex -space-x-3">
+<img alt="" class="w-10 h-10 rounded-full border-2 border-white dark:border-slate-800 object-cover" data-alt="Portrait of a smiling mother" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDm8DGtbKmodt4TXCP_H4SXYdcxUL0Il6FpV00vOOJdgWCLoS0K1n5NWI2Ll-Fp8iudsPketJNpRa9KMUE9DMfUIwWJi2GAj43-F_Da3USd6qd2PswQ_MWEPdkItvQeNPEOtvcPqo1kZVw3Td2XgPcsA3wBup4opDJ7f6FALgB5R3im-g3WpnSbAL5sGTsu_uq245cwD3SuHaOyEv2mu8EBA_ShzkoGSBRCT2uo5Zfw8-jebpShCYkV-7hCgkbm2yvlcMresxBORvI"/>
+<img alt="" class="w-10 h-10 rounded-full border-2 border-white dark:border-slate-800 object-cover" data-alt="Portrait of a smiling father" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdI4WPhPN5p90b-_LTn9P0K0Qcdvt1HXEnQ3qXosLKfGJBBwJmbveVf-onSLzobN3c3BHnVypNMhf6phVLiTLYuVLzWUzrXCmkPd2F5z5X-C5wbfLxmANTnA6NsbOxdnpmgHNbLZFjFasxvKoAuLFwE0mW3Avjeuy8uO6ujUJsOx1Pfvy7mDLOzcB_D4O-M1aqAJ46dhUrokrKyLcX7z5opO7SCQFg33q2TJRlftwUzAnnmJ_ddjRI-rQqdfRp3rzcBqkagUBikM"/>
+<img alt="" class="w-10 h-10 rounded-full border-2 border-white dark:border-slate-800 object-cover" data-alt="Portrait of a happy parent" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNYZa5Ox7cR2AqD27APrQs_e00ocOdgTAK7XBGahAY18N_6y59zQTNeNohoz14zkNqOMhx-LzJl6rjdinYLGWUNcdsqGszH9hgXW4tINOhuJuA4Rm1-CCWCTpmz9oUa92mw8ovP6K8YsSfn3iXEDTaeLmVx7SJpRWL1FAdtsvdWenRLyvFpcgEs1TKfnsnGEuGls_0ht9hVoHclG54KDzIOCtSNiqmLyHOjIdrgRGmVMm8XkEwvWPQDz24DG7DU0ZTr8qERgaBtU8"/>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 font-medium">
+                        Join 12,000+ parents noticing the magic.
+                    </p>
+</div>
+</div>
+</div>
+<!-- Right Panel: Form -->
+<div class="w-full md:w-1/2 bg-white dark:bg-slate-900 flex flex-col items-center justify-center p-8 md:p-16 lg:p-20">
+<div class="w-full max-w-sm">
+<!-- Toggle Switch -->
+<div class="flex p-1.5 mb-10 bg-slate-100 dark:bg-slate-800 rounded-xl">
+<button class="flex-1 py-2.5 text-sm font-semibold rounded-lg bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white transition-all">
+                        Sign In
+                    </button>
+<button class="flex-1 py-2.5 text-sm font-medium rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all">
+                        Create Account
+                    </button>
+</div>
+<div class="space-y-6">
+<div>
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2" for="email">
+                            Email address
+                        </label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+</span>
+<input class="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" id="email" placeholder="parent@example.com" type="email"/>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300" for="password">
+                                Password
+                            </label>
+<a class="text-xs font-semibold text-primary hover:text-primary/80 transition-colors" href="#">
+                                Forgot password?
+                            </a>
+</div>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</span>
+<input class="block w-full pl-11 pr-11 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</div>
+<div class="pt-2">
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/20 transition-all transform active:scale-[0.98]">
+                            Sign In to Journey
+                        </button>
+</div>
+<div class="relative flex py-4 items-center">
+<div class="flex-grow border-t border-slate-100 dark:border-slate-800"></div>
+<span class="flex-shrink mx-4 text-xs font-medium text-slate-400 uppercase tracking-widest">or continue with</span>
+<div class="flex-grow border-t border-slate-100 dark:border-slate-800"></div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-2 py-3 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<img alt="Google" class="h-5 w-5" data-alt="Google logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCU5e7arhGOfBTrPCcrwtJAQoSuJ0RQHKAtx1jaFoqOXnAXMMgMuSZGWTGq_ZpTtZe5eWSDxlv8Fl5ovufekSH49d_wVFIPIs408wW6eGg1KfYCzVpu8njhSXxdch0usiXT-0VcheP5gLiRg5brrgLVVuPRosMcrqxh6xLKMYGnF3EJ0UPu-oDoVpsP_titU7tAR7YlfFwQEhBmFUE4Vp8YMVsB-KDfQ-w5ebLTy0sCg6_n1T4qJok3b15R2J9OkTeknsJCgzOsfY4"/>
+<span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Google</span>
+</button>
+<button class="flex items-center justify-center gap-2 py-3 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<img alt="Apple" class="h-5 w-5 dark:invert" data-alt="Apple logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGbAmkYltf3pePXVlo7NGR3GNaKJLLRywJ_xNt-7BagL-hfOJu0Y7ek5z5V89QoU7IqZXPwVmuYqMTAhgyqR9Up8yMboGY7Mn_ELN6-yendCkh-sNO_umSQPygNb3cba7P3mJq3rwWKBxfjWETJ5hzwBpofoRQBcJ-O1gMY55HGB_urkbhFbD4STztnotHHyEbnGwjQfXF3JfNoyFMZJvmDYzwHIH8-SsrB_iVbgFnrbyaWcKqhztAiLtClr_8MbYByRFsBniiRuk"/>
+<span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Apple</span>
+</button>
+</div>
+</div>
+<div class="mt-10 text-center">
+<p class="text-sm text-slate-500 dark:text-slate-400">
+                        Need help? <a class="text-primary font-semibold hover:underline" href="#">Visit our Support Center</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+</body></html>

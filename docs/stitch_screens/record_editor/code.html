@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#cf5417",
+                        "background-light": "#fdfcfb",
+                        "background-dark": "#211611",
+                        "neutral-soft": "#f4f2f0",
+                        "neutral-border": "#e5dfdc",
+                        "neutral-text": "#886f63",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Header / Navigation -->
+<header class="sticky top-0 z-50 bg-background-light/80 backdrop-blur-md border-b border-neutral-border px-4 md:px-10 py-4">
+<div class="max-w-4xl mx-auto flex items-center justify-between">
+<div class="flex flex-col gap-1">
+<nav class="flex items-center gap-2 text-neutral-text text-sm font-medium">
+<a class="hover:text-primary flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+                        Library
+                    </a>
+<span>/</span>
+<span class="text-slate-900 font-semibold">Record Editor</span>
+</nav>
+<h1 class="text-xl font-bold tracking-tight">Garden Discovery</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="hidden md:flex flex-col items-end mr-2">
+<span class="text-[10px] uppercase tracking-wider text-neutral-text font-bold">Status</span>
+<div class="flex items-center gap-1.5">
+<span class="size-2 rounded-full bg-amber-400"></span>
+<span class="text-xs font-bold">Draft</span>
+</div>
+</div>
+<div class="bg-neutral-soft px-4 py-2 rounded-lg border border-neutral-border">
+<p class="text-[10px] text-neutral-text font-bold uppercase tracking-tight leading-none mb-1">Last Saved</p>
+<p class="text-xs font-bold leading-none">2m ago</p>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 w-full max-w-3xl mx-auto px-4 py-8 pb-32">
+<!-- Section 1: Guidance -->
+<section class="mb-8">
+<div class="bg-primary/5 border border-primary/10 rounded-xl p-5 flex gap-4 items-start">
+<span class="material-symbols-outlined text-primary mt-0.5">auto_awesome</span>
+<div>
+<h3 class="text-primary font-bold text-sm mb-1">Take your time.</h3>
+<p class="text-neutral-text text-sm leading-relaxed">
+                        These are just notes for you. Reflection is a journey, not a task. Capture what feels meaningful in this moment.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Section 2: Scene Capture -->
+<section class="mb-10 space-y-6">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary">filter_vintage</span>
+<h2 class="text-lg font-bold">Scene Capture</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Inline Date Picker Component -->
+<div class="bg-white border border-neutral-border rounded-xl p-4 shadow-sm">
+<div class="flex items-center justify-between mb-4 px-2">
+<button class="p-1 hover:bg-neutral-soft rounded-full text-neutral-text">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<span class="font-bold text-sm">October 2023</span>
+<button class="p-1 hover:bg-neutral-soft rounded-full text-neutral-text">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<div class="grid grid-cols-7 text-center text-[10px] font-bold text-neutral-text mb-2">
+<span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+</div>
+<div class="grid grid-cols-7 gap-1">
+<!-- Simplified placeholder calendar -->
+<div class="h-8 flex items-center justify-center text-xs text-neutral-border">28</div>
+<div class="h-8 flex items-center justify-center text-xs text-neutral-border">29</div>
+<div class="h-8 flex items-center justify-center text-xs text-neutral-border">30</div>
+<div class="h-8 flex items-center justify-center text-xs">1</div>
+<div class="h-8 flex items-center justify-center text-xs">2</div>
+<div class="h-8 flex items-center justify-center text-xs">3</div>
+<div class="h-8 flex items-center justify-center text-xs">4</div>
+<button class="h-8 flex items-center justify-center text-xs bg-primary text-white rounded-full font-bold">5</button>
+<div class="h-8 flex items-center justify-center text-xs">6</div>
+<div class="h-8 flex items-center justify-center text-xs">7</div>
+<div class="h-8 flex items-center justify-center text-xs">8</div>
+<div class="h-8 flex items-center justify-center text-xs">9</div>
+<div class="h-8 flex items-center justify-center text-xs">10</div>
+<div class="h-8 flex items-center justify-center text-xs">11</div>
+</div>
+</div>
+<!-- Grade/Age Dropdown -->
+<div class="flex flex-col justify-end">
+<label class="block text-xs font-bold text-neutral-text uppercase tracking-widest mb-2">Child's Stage</label>
+<div class="relative">
+<select class="w-full appearance-none bg-white border border-neutral-border rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm transition-all shadow-sm">
+<option>Early Explorers (3-4 yrs)</option>
+<option selected="">Garden Stage (4-5 yrs)</option>
+<option>Junior Discovery (5-6 yrs)</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-text">unfold_more</span>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div>
+<label class="block text-xs font-bold text-neutral-text uppercase tracking-widest mb-2">Child's Reaction</label>
+<textarea class="w-full bg-white border border-neutral-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm min-h-[100px] shadow-sm transition-all resize-none" placeholder="What did they notice? (e.g. The texture of the soil, a passing butterfly...)"></textarea>
+</div>
+<div>
+<label class="block text-xs font-bold text-neutral-text uppercase tracking-widest mb-2">Parent Memo</label>
+<textarea class="w-full bg-white border border-neutral-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm min-h-[100px] shadow-sm transition-all resize-none" placeholder="How did it feel for you? (e.g. I felt a sense of pride seeing their curiosity...)"></textarea>
+</div>
+</div>
+</section>
+<!-- Section 3: Reflection Guide -->
+<section class="mb-10">
+<div class="bg-neutral-soft rounded-xl p-6 border border-neutral-border">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary">lightbulb</span>
+<h3 class="font-bold text-sm">Reflection Tips</h3>
+</div>
+<ul class="space-y-3">
+<li class="flex items-center gap-3 text-sm text-neutral-text">
+<span class="size-1.5 rounded-full bg-primary/40"></span>
+                        Observe their focus—was it fleeting or deep?
+                    </li>
+<li class="flex items-center gap-3 text-sm text-neutral-text">
+<span class="size-1.5 rounded-full bg-primary/40"></span>
+                        Notice their breathing and physical stillness.
+                    </li>
+<li class="flex items-center gap-3 text-sm text-neutral-text">
+<span class="size-1.5 rounded-full bg-primary/40"></span>
+                        Did they invite you to share the moment?
+                    </li>
+</ul>
+</div>
+</section>
+<!-- Section 4: Growth & Observation -->
+<section class="mb-10">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary">psychology_alt</span>
+<h2 class="text-lg font-bold">Growth Observation</h2>
+</div>
+<p class="text-sm text-neutral-text mb-6">Where is your child in their journey with this activity today?</p>
+<div class="flex flex-wrap gap-4 justify-between">
+<button class="flex-1 min-w-[120px] group flex flex-col items-center gap-2">
+<div class="size-14 rounded-full border-2 border-neutral-border group-hover:border-primary/40 flex items-center justify-center transition-all bg-white text-neutral-text group-hover:text-primary font-bold text-lg">A</div>
+<span class="text-[10px] font-bold uppercase tracking-tight text-neutral-text group-hover:text-primary">Watching</span>
+</button>
+<button class="flex-1 min-w-[120px] group flex flex-col items-center gap-2">
+<div class="size-14 rounded-full border-2 border-neutral-border group-hover:border-primary/40 flex items-center justify-center transition-all bg-white text-neutral-text group-hover:text-primary font-bold text-lg">B</div>
+<span class="text-[10px] font-bold uppercase tracking-tight text-neutral-text group-hover:text-primary">Exploring</span>
+</button>
+<button class="flex-1 min-w-[120px] group flex flex-col items-center gap-2">
+<div class="size-14 rounded-full border-2 border-primary bg-primary/10 flex items-center justify-center transition-all text-primary font-bold text-lg shadow-sm">C</div>
+<span class="text-[10px] font-bold uppercase tracking-tight text-primary">Connecting</span>
+</button>
+<button class="flex-1 min-w-[120px] group flex flex-col items-center gap-2">
+<div class="size-14 rounded-full border-2 border-neutral-border group-hover:border-primary/40 flex items-center justify-center transition-all bg-white text-neutral-text group-hover:text-primary font-bold text-lg">D</div>
+<span class="text-[10px] font-bold uppercase tracking-tight text-neutral-text group-hover:text-primary">Deepening</span>
+</button>
+<button class="flex-1 min-w-[120px] group flex flex-col items-center gap-2">
+<div class="size-14 rounded-full border-2 border-neutral-border group-hover:border-primary/40 flex items-center justify-center transition-all bg-white text-neutral-text group-hover:text-primary font-bold text-lg">E</div>
+<span class="text-[10px] font-bold uppercase tracking-tight text-neutral-text group-hover:text-primary">Mastering</span>
+</button>
+</div>
+</section>
+<!-- Section 5: Review Checklist -->
+<section class="mb-12">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary">task_alt</span>
+<h2 class="text-lg font-bold">Review</h2>
+</div>
+<div class="space-y-3">
+<label class="flex items-center gap-3 p-4 bg-white border border-neutral-border rounded-xl cursor-pointer hover:border-primary/30 transition-all shadow-sm">
+<input class="size-5 rounded border-neutral-border text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="text-sm font-medium">I've captured the core moment of discovery.</span>
+</label>
+<label class="flex items-center gap-3 p-4 bg-white border border-neutral-border rounded-xl cursor-pointer hover:border-primary/30 transition-all shadow-sm">
+<input class="size-5 rounded border-neutral-border text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="text-sm font-medium">I feel ready to look back on this later.</span>
+</label>
+</div>
+</section>
+</main>
+<!-- Sticky Bottom Action Bar -->
+<footer class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-neutral-border py-4 px-4 md:px-10 z-50">
+<div class="max-w-3xl mx-auto flex items-center gap-4">
+<button class="flex-1 bg-neutral-soft hover:bg-neutral-border text-slate-900 font-bold py-3.5 rounded-xl transition-all text-sm tracking-wide border border-neutral-border">
+                Save Draft
+            </button>
+<button class="flex-[2] bg-primary hover:bg-primary/90 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-primary/20 text-sm tracking-wide">
+                Submit Record
+            </button>
+</div>
+</footer>
+</body></html>
