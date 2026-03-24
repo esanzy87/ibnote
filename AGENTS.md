@@ -18,6 +18,7 @@ Keep it short, durable, and mostly independent of any single epic.
 9. Prefer updating existing docs over creating new parallel status documents.
 10. Keep verification claims honest. If something was not rerun or directly checked, do not present it as confirmed.
 11. When an epic is complete or durably blocked, move to the next highest-leverage documented step instead of leaving the repo in a passive status state.
+12. When creating a git commit, follow [docs/guides/COMMIT_RULE.md](/home/dev/projects/ibnote/docs/guides/COMMIT_RULE.md).
 
 ## Document roles
 
