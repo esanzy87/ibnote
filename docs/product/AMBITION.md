@@ -1,12 +1,12 @@
 # IBNote Ambition
 
-> Purpose: define the long-term product direction that should guide feature selection, doc shaping, and unattended forward progress.
+> Purpose: define the long-term product direction that should guide feature selection, doc shaping, and forward progress.
 > Scope: this document captures strategic direction, product ambition, anti-goals, and feature-selection criteria.
 > Non-goal: this is not a feature spec, implementation plan, or task tracker.
 
 ## 1. Why this document exists
 
-IBNote now uses a more autonomous unattended operating model.
+IBNote now uses a more autonomous, documentation-driven operating model.
 That makes it more important to keep one durable product-direction document that answers a higher-level question:
 
 **What kind of product is IBNote trying to become, and what kinds of features are most worth building next?**
@@ -117,7 +117,7 @@ Do not drift into document-center, file-history, PDF-management, share-center, o
 Do not rush toward strong recommendation, diagnosis, scoring, or pseudo-expert interpretation as the core product value.
 
 ### 6.5 Not a broad admin/CMS/platform build-out
-Do not let unattended feature selection default toward admin dashboards, complex content operations, or broad systemization that does not clearly strengthen the parent reflection loop.
+Do not let feature selection default toward admin dashboards, complex content operations, or broad systemization that does not clearly strengthen the parent reflection loop.
 
 ---
 
@@ -188,7 +188,7 @@ Before selecting or shaping the next feature, ask:
 
 Use this document together with:
 - `docs/BLACKBOARD.md` for current operational truth
-- `docs/guides/FEATURE_ADVANCEMENT_PROTOCOL.md` for feature progression rules
+- `docs/guides/EPIC_ADVANCEMENT_PROTOCOL.md` for feature progression rules
 - each feature `prd.md` for package-specific justification
 
 If these documents ever conflict:

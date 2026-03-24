@@ -67,7 +67,7 @@ ibnote 0.1.0 add records list route
 
 - implement /my/records route shell and filtering UI
 - add local verification for empty and loaded states
-- update bootstrap tracker and night run report
+- update the bootstrap tracker and any affected companion docs
 ```
 
 ---

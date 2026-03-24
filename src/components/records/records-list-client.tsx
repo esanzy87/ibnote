@@ -443,15 +443,17 @@ function RecordCard({
 
         <Link
           href={`/my/records/${record.id}`}
-          className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
+          className="inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
         >
           {record.status === 'submitted' ? '기록 다시 보기' : '기록 이어서 입력'}
         </Link>
       </div>
 
-      <div className="relative mt-5 grid gap-4 rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">기록 개요</span>
-        <div>
+      <div className="relative mt-5 grid gap-4 rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4 sm:grid-cols-[minmax(0,1fr)_minmax(220px,auto)] sm:items-start">
+        <span className="sm:col-span-full text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+          기록 개요
+        </span>
+        <div className="min-w-0">
           <p className="text-sm font-medium text-slate-900">기록 메모</p>
           <p className="mt-2 text-sm leading-6 text-slate-600">
             {record.childReflection.trim() || record.parentMemo.trim()
@@ -460,7 +462,7 @@ function RecordCard({
           </p>
         </div>
 
-        <div className="flex flex-col items-end gap-3">
+        <div className="flex min-w-0 flex-col gap-3 sm:items-end sm:text-right">
           <div className="flex flex-wrap gap-2 sm:justify-end">
             <span className={summaryConnection.badgeClassName}>{summaryConnection.badgeLabel}</span>
             {record.competenciesSnapshot.map((competency) => (
@@ -472,7 +474,7 @@ function RecordCard({
               </span>
             ))}
           </div>
-      <p className="text-xs text-slate-500 max-w-[200px] text-right leading-relaxed">
+          <p className="max-w-[220px] text-xs leading-relaxed text-slate-500 sm:text-right">
             {summaryConnection.description}
           </p>
         </div>
