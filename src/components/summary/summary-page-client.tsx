@@ -8,6 +8,7 @@ import { buildLoginHref } from '@/lib/auth/ensure-auth';
 import { useAuthUser } from '@/lib/auth/use-auth-user';
 import { getSummaryDateRange } from '@/lib/records/summary-utils';
 import { useSummary } from '@/lib/records/use-summary';
+import { RecordsWorkspaceShell } from '@/components/records/records-workspace-shell';
 import type { AbsoluteGrade, WorksheetRecord } from '@/lib/records/record-types';
 import { COMPETENCIES, type Competency } from '@/lib/templates/template-types';
 
@@ -32,6 +33,15 @@ function PageFrame({ children }: { children: React.ReactNode }) {
     <main className="bg-stone-100 px-6 py-12 text-slate-800 sm:py-16">
       <div className="mx-auto flex max-w-6xl flex-col gap-6">{children}</div>
     </main>
+  );
+}
+
+function SummaryWorkspaceFrame({ children }: { children: React.ReactNode }) {
+  return (
+    <PageFrame>
+      <RecordsWorkspaceShell active="summary" />
+      {children}
+    </PageFrame>
   );
 }
 
@@ -433,55 +443,55 @@ export function SummaryPageClient() {
 
   if (authStatus === 'loading') {
     return (
-      <PageFrame>
+      <SummaryWorkspaceFrame>
         <AuthLoadingState />
-      </PageFrame>
+      </SummaryWorkspaceFrame>
     );
   }
 
   if (authStatus === 'error') {
     return (
-      <PageFrame>
+      <SummaryWorkspaceFrame>
         <AuthErrorState
           message={authError?.message ?? '인증 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.'}
           onRetry={retryAuth}
         />
-      </PageFrame>
+      </SummaryWorkspaceFrame>
     );
   }
 
   if (authStatus === 'unauthenticated') {
     return (
-      <PageFrame>
+      <SummaryWorkspaceFrame>
         <RedirectingState />
-      </PageFrame>
+      </SummaryWorkspaceFrame>
     );
   }
 
   if (summaryStatus === 'idle' || summaryStatus === 'loading') {
     return (
-      <PageFrame>
+      <SummaryWorkspaceFrame>
         <SummaryLoadingState />
-      </PageFrame>
+      </SummaryWorkspaceFrame>
     );
   }
 
   if (summaryStatus === 'error') {
     return (
-      <PageFrame>
+      <SummaryWorkspaceFrame>
         <SummaryErrorState
           message={summaryError?.message ?? '요약 데이터를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'}
           onRetry={retrySummary}
         />
-      </PageFrame>
+      </SummaryWorkspaceFrame>
     );
   }
 
   if (!summary) {
     return (
-      <PageFrame>
+      <SummaryWorkspaceFrame>
         <EmptyState startDate={emptyWindow.startDate} endDate={emptyWindow.endDate} />
-      </PageFrame>
+      </SummaryWorkspaceFrame>
     );
   }
 
@@ -491,7 +501,7 @@ export function SummaryPageClient() {
   const maxCount = Math.max(...summary.countsByCompetency.map((entry) => entry.count), 0);
 
   return (
-    <PageFrame>
+    <SummaryWorkspaceFrame>
       <SummaryOverview
         averageCount={summary.averageGradesByCompetency.length}
         endDate={summary.window.endDate}
@@ -614,6 +624,6 @@ export function SummaryPageClient() {
           ))}
         </div>
       </Surface>
-    </PageFrame>
+    </SummaryWorkspaceFrame>
   );
 }

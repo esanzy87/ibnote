@@ -54,6 +54,17 @@ function clearRecordState(
   setRecord(null);
 }
 
+function resolveRecordLoadError(nextError: unknown): Error {
+  if (
+    nextError instanceof Error &&
+    nextError.message.startsWith('기록 응답이 지연되고 있습니다.')
+  ) {
+    return nextError;
+  }
+
+  return new Error('기록을 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+}
+
 export function useRecord({ authStatus, recordId, user }: UseRecordOptions): UseRecordResult {
   const [status, setStatus] = useState<RecordLoadStatus>('idle');
   const [error, setError] = useState<Error | null>(null);
@@ -124,11 +135,7 @@ export function useRecord({ authStatus, recordId, user }: UseRecordOptions): Use
           return;
         }
 
-        const resolvedError =
-          nextError instanceof Error
-            ? nextError
-            : new Error('기록을 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
-        setError(resolvedError);
+        setError(resolveRecordLoadError(nextError));
         setStatus('error');
       }
     }

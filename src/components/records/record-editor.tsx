@@ -43,7 +43,7 @@ const ABSOLUTE_GRADE_LABELS = {
 } satisfies Record<AbsoluteGrade, string>;
 
 const RECORD_PRIVACY_NOTE =
-  'Please do not enter real names, school names, or other sensitive personal information.';
+  '실제 아이 이름, 학교명, 기타 민감한 개인 정보는 입력하지 마세요.';
 
 interface RecordEditorProps {
   recordId: string;
@@ -54,6 +54,15 @@ function EditorPage({ children }: { children: React.ReactNode }) {
     <main className="bg-stone-100 px-6 py-12 text-slate-800 sm:py-16">
       <div className="mx-auto flex max-w-6xl flex-col gap-6">{children}</div>
     </main>
+  );
+}
+
+function RecordEditorFrame({ children }: { children: React.ReactNode }) {
+  return (
+    <EditorPage>
+      <RecordsWorkspaceShell active="records" />
+      {children}
+    </EditorPage>
   );
 }
 
@@ -69,7 +78,7 @@ function Surface({ children, tone = 'default' }: { children: React.ReactNode; to
 function RecordLoadingState() {
   return (
     <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Record editor</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">기록 편집</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
         기록을 불러오는 중입니다.
       </h1>
@@ -88,7 +97,7 @@ function RecordLoadingState() {
 function RecordRedirectingState() {
   return (
     <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Redirecting</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">로그인 이동</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
         로그인 화면으로 이동하고 있습니다.
       </h1>
@@ -102,7 +111,7 @@ function RecordRedirectingState() {
 function RecordErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <Surface tone="error">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">Record error</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">기록 오류</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-rose-950 sm:text-4xl">
         기록 편집 화면을 열지 못했습니다.
       </h1>
@@ -129,7 +138,7 @@ function RecordErrorState({ message, onRetry }: { message: string; onRetry: () =
 function MissingRecordState({ recordId }: { recordId: string }) {
   return (
     <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Record not found</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">기록 없음</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
         이 기록을 찾을 수 없습니다.
       </h1>
@@ -225,7 +234,7 @@ function HeaderSummary({ record }: { record: WorksheetRecord }) {
     <Surface>
       <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
         <div className="max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Record editor</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">기록 편집</p>
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
               {record.templateTitleSnapshot}
@@ -382,55 +391,55 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
 
   if (authStatus === 'loading') {
     return (
-      <EditorPage>
+      <RecordEditorFrame>
         <RecordLoadingState />
-      </EditorPage>
+      </RecordEditorFrame>
     );
   }
 
   if (authStatus === 'error') {
     return (
-      <EditorPage>
+      <RecordEditorFrame>
         <RecordErrorState
           message={authError?.message ?? '인증 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.'}
           onRetry={retryAuth}
         />
-      </EditorPage>
+      </RecordEditorFrame>
     );
   }
 
   if (authStatus === 'unauthenticated') {
     return (
-      <EditorPage>
+      <RecordEditorFrame>
         <RecordRedirectingState />
-      </EditorPage>
+      </RecordEditorFrame>
     );
   }
 
   if (recordStatus === 'loading' || recordStatus === 'idle') {
     return (
-      <EditorPage>
+      <RecordEditorFrame>
         <RecordLoadingState />
-      </EditorPage>
+      </RecordEditorFrame>
     );
   }
 
   if (recordStatus === 'error') {
     return (
-      <EditorPage>
+      <RecordEditorFrame>
         <RecordErrorState
           message={recordError?.message ?? '기록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'}
           onRetry={retryRecord}
         />
-      </EditorPage>
+      </RecordEditorFrame>
     );
   }
 
   if (recordStatus === 'missing' || !record) {
     return (
-      <EditorPage>
+      <RecordEditorFrame>
         <MissingRecordState recordId={recordId} />
-      </EditorPage>
+      </RecordEditorFrame>
     );
   }
 

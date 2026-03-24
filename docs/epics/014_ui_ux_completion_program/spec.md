@@ -223,6 +223,21 @@ Phase 2 evidence basis:
 - carry forward `P1-F01`, `P1-F02`, and `P1-F03` as primary implementation drivers
 - treat `P1-F08` as supporting evidence only, not as a mandate for immediate additional image production
 
+Phase 2 execution status (current step):
+- completed: `/my/summary` now renders the shared `RecordsWorkspaceShell` with `active="summary"` in loading/error/empty/content states (`findings.md` `P2-F01`).
+- completed: `/my/records/[id]` key loading/error/missing/admin-state copy and privacy guidance has been localized and aligned to parent-facing Korean language (`findings.md` `P2-F02`).
+- completed: `/my/records` non-content states now use the shared workspace frame and `RecordsWorkspaceShell` so the `/my` route family keeps a consistent shell through auth/loading/error/redirect transitions (`findings.md` `P2-F03`).
+- completed: `/my/records/[id]` non-content states now use `RecordEditorFrame` with `RecordsWorkspaceShell active="records"` so editor auth/loading/error/missing/redirect transitions remain inside the locked workspace shell (`findings.md` `P2-F04`).
+- completed: `/my/summary` redirect state now renders inside `SummaryWorkspaceFrame` to preserve shell continuity on `unauthenticated` transitions.
+- completed: `/my/records` content now renders `RecordsWorkspaceShell` before the page hero, so first-viewport identity remains on the shared shell across all three locked routes.
+- completed: a host-side headless validation pass now confirms that `/my/records`, `/my/records/[id]`, and `/my/summary` each expose the shared workspace shell and readable first-viewport loading states at both desktop and mobile widths.
+- completed: a development-only local auth bypass is now available in the client auth hook for `localhost` development sessions when `NEXT_PUBLIC_DEV_AUTH_BYPASS_ENABLED=true`, using the documented QA email/password account for real Firebase sign-in.
+- completed: the development QA-account auto sign-in path now sets Firebase auth persistence to in-memory storage and applies an explicit sign-in timeout plus UID mismatch guard, so headless validation should surface a concrete auth error instead of hanging in loading indefinitely if the bypass still fails.
+- completed: a headed Chrome validation pass now confirms authenticated content-state behavior for `/my/records`, `/my/records/[id]`, and `/my/summary` at desktop and mobile widths, including shared shell/header continuity, visible route identity, route-aware nav pills, calm Korean top-level guidance, and acceptable first-viewport CTA density.
+- completed: Phase 2 success checks are now satisfied for the locked `/my` routes. A headless auth-settling mismatch remains as a tooling-specific follow-up candidate, but it does not contradict the user-facing Phase 2 outcome verified in headed Chrome.
+- next: keep Phase 2 closed and choose the next bounded Phase 3 slice from the remaining epic program work before making any further route changes.
+- blocker: none for Phase 2 closeout.
+
 ### Future phase briefs
 
 Append new sections sequentially:
@@ -231,6 +246,40 @@ Append new sections sequentially:
 - and so on
 
 Do not overwrite earlier phase briefs once they become part of the decision chain.
+
+### Phase 3 brief
+
+Phase 3 target:
+- public-to-locked brand continuity across `/`, `/templates`, `/templates/[slug]`, and the authenticated `/my` workspace entry routes
+
+Phase 3 objective:
+- reduce the visual and tonal disconnect between the warm parent-facing public journey and the calmer authenticated workspace so IBNote feels like one product before and after sign-in
+
+Phase 3 planned scope:
+- shared color-language alignment between public-route hero surfaces and the `/my` workspace shell
+- tighten typography, surface treatment, and section framing so the public and locked route families feel intentionally related
+- preserve the stronger workspace coherence achieved in Phase 2 while improving cross-journey brand recognition
+
+Phase 3 allowed changes:
+- route-level color tokens, gradients, panel backgrounds, and accent usage on `/`, `/templates`, `/templates/[slug]`, `/my/records`, `/my/records/[id]`, and `/my/summary`
+- bounded shell/hero visual treatment adjustments that improve continuity without changing route purpose
+- top-level route framing copy where minor tone adjustment is required to smooth the public-to-locked handoff
+
+Phase 3 non-goals:
+- no changes to authentication, data models, persistence, filtering, summary logic, or editor schema
+- no route expansion beyond the documented public discovery routes plus the already-locked `/my` workspace routes
+- no broad information architecture rewrite, template taxonomy rewrite, or asset-generation program
+- no reopening of Phase 2 shell/navigation mechanics unless a fresh contradiction is directly discovered
+
+Phase 3 success checks:
+- `/`, `/templates`, and `/templates/[slug]` feel visually related to `/my/records`, `/my/records/[id]`, and `/my/summary`
+- the public-to-locked handoff no longer feels like a jump between separate products
+- shared color and surface language strengthens IBNote recognition without collapsing the distinction between exploration and workspace tasks
+- mobile readability remains acceptable on both public and locked routes after any continuity adjustments
+
+Phase 3 verification notes:
+- compare desktop and mobile first-view impressions across at least one public route and one locked route
+- verify that continuity improvements do not erase the workspace clarity gains closed in Phase 2
 
 ## 6. Explicit exclusions
 

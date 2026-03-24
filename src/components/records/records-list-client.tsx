@@ -92,6 +92,15 @@ function PageFrame({ children }: { children: React.ReactNode }) {
   );
 }
 
+function RecordsWorkspaceFrame({ children }: { children: React.ReactNode }) {
+  return (
+    <PageFrame>
+      <RecordsWorkspaceShell active="records" />
+      {children}
+    </PageFrame>
+  );
+}
+
 function Surface({ children, tone = 'default' }: { children: React.ReactNode; tone?: 'default' | 'error' }) {
   const className =
     tone === 'error'
@@ -512,47 +521,47 @@ export function RecordsListClient() {
 
   if (authStatus === 'loading') {
     return (
-      <PageFrame>
+      <RecordsWorkspaceFrame>
         <AuthLoadingState />
-      </PageFrame>
+      </RecordsWorkspaceFrame>
     );
   }
 
   if (authStatus === 'error') {
     return (
-      <PageFrame>
+      <RecordsWorkspaceFrame>
         <AuthErrorState
           message={authError?.message ?? '인증 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.'}
           onRetry={retryAuth}
         />
-      </PageFrame>
+      </RecordsWorkspaceFrame>
     );
   }
 
   if (authStatus === 'unauthenticated') {
     return (
-      <PageFrame>
+      <RecordsWorkspaceFrame>
         <RedirectingState />
-      </PageFrame>
+      </RecordsWorkspaceFrame>
     );
   }
 
   if (recordsStatus === 'loading' || recordsStatus === 'idle') {
     return (
-      <PageFrame>
+      <RecordsWorkspaceFrame>
         <AuthLoadingState />
-      </PageFrame>
+      </RecordsWorkspaceFrame>
     );
   }
 
   if (recordsStatus === 'error') {
     return (
-      <PageFrame>
+      <RecordsWorkspaceFrame>
         <RecordsErrorState
           message={recordsError?.message ?? '기록 목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'}
           onRetry={retryRecords}
         />
-      </PageFrame>
+      </RecordsWorkspaceFrame>
     );
   }
 
@@ -563,9 +572,8 @@ export function RecordsListClient() {
 
   return (
     <PageFrame>
-      <RecordsHero recordCount={records.length} summaryWindow={summaryWindow} />
-
       <RecordsWorkspaceShell active="records" />
+      <RecordsHero recordCount={records.length} summaryWindow={summaryWindow} />
 
       <FiltersPanel
         onReset={handleResetFilters}
