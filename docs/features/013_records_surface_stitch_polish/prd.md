@@ -3,7 +3,7 @@
 Version: 0.1
 Date: 2026-03-17
 Owner: unattended agent
-Status: Ready for implementation
+Status: Implementation complete, runtime closeout blocked on inherited protected-route revalidation
 Depends on:
 - `012_stitch_warmth_and_deferred_surface_review`
 
@@ -56,3 +56,14 @@ That means 012 improved structure/content but did not fully complete the visible
 2. a human can clearly see the Stitch-style alignment on `/my/records/[id]`
 3. density and guidance feel calmer, not heavier
 4. product truth remains unchanged
+
+## 8. Current closeout truth
+
+- Phase A through Phase B implementation is present in the current worktree.
+- The route-local workspace shell and stronger visual hierarchy are now applied on both records surfaces.
+- Static repo health is expected to stay green after any final cleanup.
+- Fresh 2026-03-24 runtime revalidation reached a live local production server but did not clear protected-route QA.
+- The canonical QA sign-in flow stayed on `/login?next=/my/records`, so browser-backed verification never reached the touched records surfaces.
+- The next truthful action is not more 013 implementation. It is either:
+  1. revalidate the inherited auth/protected-route failure in a diagnosable runtime and then rerun 013 `C-01`, or
+  2. explicitly close 013 as visual-review-only with the runtime evidence gap stated plainly.

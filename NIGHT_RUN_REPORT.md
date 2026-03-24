@@ -3,9 +3,9 @@
 ## Current truth header
 
 - Active package: `013_records_surface_stitch_polish`
-- Current state: `ready-implementation`
-- Exact next action: execute 013 Phase B by strengthening `/my/records` hierarchy/cards, strengthening `/my/records/[id]` section hierarchy, and applying only the smallest bounded non-landing app-shell/top-nav correction needed for coherence.
-- Last revalidated at: 2026-03-17 00:57 Asia/Seoul
+- Current state: `pending-revalidation`
+- Exact next action: keep the completed 013 implementation in place, recheck the inherited auth/protected-route failure in a diagnosable runtime, and rerun the dedicated 013 records-route smoke before claiming browser-backed closeout or downgrading the package to visual-review-only.
+- Last revalidated at: 2026-03-24 21:10 Asia/Seoul
 - Readiness note: unattended operator remains `yellow / conditional-go` until BLACKBOARD snapshot, active docpack, and dirty-tree interpretation stay aligned.
 
 
@@ -66,13 +66,12 @@
 
 ## Current in-progress task
 
-- Canonical current truth as of 2026-03-14 17:00 Asia/Seoul: `002_password_reset_foundation` is complete through Phase C (`C-03`) and now closed agent-side in `ready-handoff` state.
-- Current work stop point: no further unattended implementation work remains for 002; the correct next action is explicit human acknowledgment or next-package selection.
-- Current package selection truth as of 2026-03-14 19:02 Asia/Seoul: `003_learning_experience_foundation` is the active unattended implementation package.
-- Current 003 progress truth: Phase A (`A-01` -> `A-03`) doc sync is complete, Flow A implementation (`B-01`) is complete, and the exact next action is `B-02` (record start -> writing guidance), then `B-03`.
-- Worker-liveness note: older 003 worker-launch wording should be treated as historical context only unless fresh pane/process evidence proves otherwise.
-- Current blocker truth: no external blocker is currently confirmed. Fresh revalidation succeeded for local listener bind, local production runtime startup, canonical QA-account sign-in, and Firebase password-reset request initiation.
-- Evidence boundary for the current stop state: request initiation is verified against the active Firebase/Auth runtime, but inbox delivery was not independently checked in this run and should not be claimed as verified.
+- Canonical current truth as of 2026-03-24 21:10 Asia/Seoul: `013_records_surface_stitch_polish` implementation is present in the worktree, static verification is green, and the package now has fresh runtime evidence.
+- Current work stop point: the dedicated 013 records-route smoke could not reach `/my/records` after canonical QA sign-in, so browser-backed closeout remains open.
+- Current next action truth: do not relaunch more 013 UI implementation by default. The correct next action is auth/protected-route runtime revalidation in a diagnosable environment, then a rerun of `scripts/qa/013_records_surface_closeout.mjs`.
+- Worker-liveness note: older `ready-implementation` or generic evidence-pending wording for 013 in this file is now historical context only.
+- Current blocker truth: local production runtime startup succeeded, but protected-route access failed in-browser after login; treat this as an inherited auth/protected-route blocker for 013 closeout rather than as missing route-level implementation.
+- Evidence boundary for the current stop state: `npm run lint`, `npm run typecheck`, `npm run build`, local `next start`, and the artifact `tmp/qa-logs/013_records_surface_closeout.json` are current. What is still not verified is live browser rendering of the touched records surfaces after successful authentication.
 
 ## Verification results per task
 

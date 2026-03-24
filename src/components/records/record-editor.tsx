@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { buildLoginHref } from '@/lib/auth/ensure-auth';
 import { useAuthUser } from '@/lib/auth/use-auth-user';
 import { useRecord } from '@/lib/records/use-record';
+import { RecordsWorkspaceShell } from '@/components/records/records-workspace-shell';
 import type { AbsoluteGrade, WorksheetRecord } from '@/lib/records/record-types';
 import type { Competency, GradeBand, PypTheme } from '@/lib/templates/template-types';
 
@@ -153,10 +154,52 @@ function MissingRecordState({ recordId }: { recordId: string }) {
   );
 }
 
-function Section({ description, title, children }: { children: React.ReactNode; description?: string; title: string }) {
+function EntryIntro({ record }: { record: WorksheetRecord }) {
+  const isSubmitted = record.status === 'submitted';
+  const labelClassName =
+    'inline-flex items-center rounded-full bg-slate-900 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-white';
+
   return (
-    <section className="rounded-[1.75rem] border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+    <section className="rounded-[1.9rem] border border-slate-800 bg-gradient-to-r from-slate-900 to-slate-700 p-7 text-white shadow-sm sm:p-8">
+      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-200">기록 에디터</p>
+      <h1 className="mt-4 text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">
+        {isSubmitted ? '돌아보며 다듬는 기록' : '지금의 장면부터 이어 적는 기록'}
+      </h1>
+      <p className="mt-4 max-w-3xl text-sm leading-7 text-stone-100 sm:text-base">
+        초안이든 제출본이든, 기록은 한 번에 완성되지 않아도 괜찮습니다. 지금 필요한 것부터 채워 다음으로 넘어가면 돼요.
+      </p>
+      <div className="mt-6 flex flex-wrap gap-3">
+        <span className={labelClassName}>현재 단계</span>
+        <span className="inline-flex items-center rounded-full border border-stone-200/40 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-stone-100">
+          {isSubmitted ? '제출 후 재정리' : '초안 계속 작성'}
+        </span>
+      </div>
+    </section>
+  );
+}
+
+function Section({
+  description,
+  title,
+  children,
+  tone = 'neutral',
+}: {
+  children: React.ReactNode;
+  description?: string;
+  title: string;
+  tone?: 'dominant' | 'neutral' | 'quiet';
+}) {
+  const frameClass =
+    tone === 'dominant'
+      ? 'rounded-[1.9rem] border border-slate-200 bg-white p-7 shadow-sm sm:p-8'
+      : tone === 'quiet'
+        ? 'rounded-[1.9rem] border border-stone-200 bg-stone-50 p-6 sm:p-7'
+        : 'rounded-[1.75rem] border border-stone-200 bg-white p-6 shadow-sm sm:p-8';
+
+  return (
+    <section className={frameClass}>
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">기록 단계</span>
         <h2 className="text-2xl font-semibold tracking-tight text-slate-900">{title}</h2>
         {description ? <p className="text-sm text-slate-500">{description}</p> : null}
       </div>
@@ -182,7 +225,7 @@ function HeaderSummary({ record }: { record: WorksheetRecord }) {
     <Surface>
       <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
         <div className="max-w-3xl">
-          <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Record editor</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Record editor</p>
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
               {record.templateTitleSnapshot}
@@ -393,11 +436,17 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
 
   return (
     <EditorPage>
+      <RecordsWorkspaceShell active="records" />
+      <EntryIntro record={record} />
       <HeaderSummary record={record} />
       <WritingGuide record={record} />
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
-        <Section title="1) 장면 기록" description="짧게 시작해도 괜찮습니다. 필요한 항목부터 채워 주세요.">
+        <Section
+          tone="dominant"
+          title="1) 장면 기록"
+          description="짧게 시작해도 괜찮습니다. 필요한 항목부터 채워 주세요."
+        >
           <div className="grid gap-5">
             <div className="rounded-[1.5rem] border border-stone-200 bg-stone-50 px-4 py-4 text-sm leading-6 text-slate-700">
               <p className="font-semibold text-slate-900">부담 줄이기 안내</p>
@@ -463,7 +512,11 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
           </div>
         </Section>
 
-        <Section title="2) 제출 전 점검" description="현재 상태를 확인하고 필요한 항목을 채워 주세요.">
+        <Section
+          tone="neutral"
+          title="2) 제출 전 점검"
+          description="현재 상태를 확인하고 필요한 항목을 채워 주세요."
+        >
           <div className="grid gap-4">
             <div className="rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4">
               <p className="text-sm font-medium text-slate-900">현재 상태</p>
@@ -506,7 +559,7 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
         </Section>
       </section>
 
-      <Section title="3) 역량 체크" description="이 활동과 연결된 역량만 표시됩니다.">
+      <Section tone="dominant" title="3) 역량 체크" description="이 활동과 연결된 역량만 표시됩니다.">
         <div className="grid gap-4">
           {record.competenciesSnapshot.map((competency) => (
             <RatingGroup
@@ -519,7 +572,7 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
         </div>
       </Section>
 
-      <Section title="4) 저장 또는 제출" description="지금 상태에 맞게 저장 또는 제출을 선택하세요.">
+      <Section tone="neutral" title="4) 저장 또는 제출" description="지금 상태에 맞게 저장 또는 제출을 선택하세요.">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div className="max-w-2xl text-sm leading-6 text-slate-600">
             <p>자동 저장은 하지 않습니다. 버튼을 눌렀을 때만 현재 입력값이 저장됩니다.</p>

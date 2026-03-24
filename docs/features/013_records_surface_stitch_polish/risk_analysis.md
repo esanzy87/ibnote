@@ -2,7 +2,7 @@
 
 Version: 0.1
 Date: 2026-03-17
-Status: Active
+Status: Active closeout review
 
 ## 1. Main risks
 
@@ -39,10 +39,17 @@ Mitigation:
 - sync tracker/report truth whenever implementation state changes materially
 - separate incidental generated dirt from real package work
 
-## 2. Ready-to-implement verdict
+## 2. Current closeout verdict
 
-Current verdict: `conditionally ready`
+Current verdict: `implementation-complete / closeout-honesty-pending`
 
 Reason:
-- the package is now specific enough to start bounded implementation on `/my/records`, `/my/records/[id]`, and a minimal non-landing shell correction
-- however, closeout honesty still depends on maintaining control-plane sync during execution
+- the bounded records-surface implementation is now present in code
+- however, closeout honesty still depends on keeping the control plane synced and making the evidence boundary explicit until runtime/browser-backed `C-01` proof is attached
+
+## 3. Fresh runtime evidence note
+
+- 2026-03-24 revalidation improved evidence honesty but did not close the package.
+- Local production runtime boot succeeded and the dedicated 013 Playwright smoke was added and executed.
+- The smoke reproduced an inherited protected-route/auth failure: after login submission, the browser remained on `/login?next=/my/records`, so the touched `/my/records` and `/my/records/[id]` surfaces could not be verified live.
+- Treat this as a shared runtime/auth revalidation dependency, not as proof that 013 UI implementation itself regressed.

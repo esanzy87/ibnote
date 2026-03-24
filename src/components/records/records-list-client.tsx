@@ -15,6 +15,7 @@ import {
   useRecords,
   type RecordsFilterStatus,
 } from '@/lib/records/use-records';
+import { RecordsWorkspaceShell } from '@/components/records/records-workspace-shell';
 import type { RecordStatus, WorksheetRecord } from '@/lib/records/record-types';
 import type { Competency } from '@/lib/templates/template-types';
 
@@ -100,6 +101,39 @@ function Surface({ children, tone = 'default' }: { children: React.ReactNode; to
   return <section className={className}>{children}</section>;
 }
 
+function RecordsHero({
+  recordCount,
+  summaryWindow,
+}: {
+  recordCount: number;
+  summaryWindow: SummaryWindow;
+}) {
+  return (
+    <section className="rounded-[2rem] border border-stone-200 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 px-7 py-10 text-white shadow-lg sm:px-10">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-200">내 기록</p>
+      <h1 className="mt-4 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
+        오늘의 기록이 내일의 다시 보기로 이어지는 곳.
+      </h1>
+      <p className="mt-4 max-w-2xl text-sm leading-7 text-stone-100 sm:text-base">
+        초안은 이어 쓰기로, 제출 기록은 다시 읽기와 성장 연결로 자연스럽게 넘어갑니다.
+        지금은 <strong className="text-white">현재 요약 기간 {formatDateRange(summaryWindow.startDate, summaryWindow.endDate)}</strong> 안의 기록을 중심으로 안내합니다.
+      </p>
+      <div className="mt-7 grid gap-3 sm:grid-cols-2">
+        <div className="rounded-2xl border border-white/20 bg-white/10 px-5 py-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-stone-200">현재 상태</p>
+          <p className="mt-2 text-2xl font-semibold text-white">{recordCount}개 기록</p>
+          <p className="mt-1 text-xs text-stone-200">필터를 바꾸면 바로 이어 보기 흐름이 바뀝니다.</p>
+        </div>
+        <div className="rounded-2xl border border-white/20 bg-white/10 px-5 py-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-stone-200">기록의 루틴</p>
+          <p className="mt-2 text-2xl font-semibold text-white">기록 시작 → 이어쓰기 → 복기</p>
+          <p className="mt-1 text-xs text-stone-200">핵심은 데이터 정리보다 다시 쓰고 다시 보는 리듬입니다.</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function AuthLoadingState() {
   return (
     <Surface>
@@ -182,14 +216,13 @@ function RecordsErrorState({ message, onRetry }: { message: string; onRetry: () 
   );
 }
 
-function Filters({
+function FiltersPanel({
   onReset,
   onStatusChange,
   onTemplateChange,
   statusFilter,
   templateFilter,
   templateOptions,
-  summaryWindow,
 }: {
   onReset: () => void;
   onStatusChange: (value: RecordsFilterStatus) => void;
@@ -200,24 +233,28 @@ function Filters({
     slug: string;
     title: string;
   }>;
-  summaryWindow: SummaryWindow;
 }) {
   return (
-    <section className="grid gap-4 rounded-[1.9rem] border border-stone-200 bg-white p-6 shadow-sm sm:p-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-      <div>
-        <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">내 기록</p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-          다시 읽거나 이어서 정리할 기록을 한곳에서 확인하세요.
-        </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-          최근 수정한 기록부터 보여 드립니다. 초안은 이어서 쓰고, 제출한 기록은 다시 읽으며 차분히 정리해 둘 수 있어요.
-        </p>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-          현재 요약 기간: {formatDateRange(summaryWindow.startDate, summaryWindow.endDate)}
-        </p>
+    <section className="rounded-[1.9rem] border border-stone-200 bg-white p-7 shadow-sm">
+      <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div>
+          <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">기록 찾기와 정리</p>
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+            다시 읽고 이어 쓸 기록을 원하는 방식으로 정렬해 보세요.
+          </h2>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+            최신 수정순으로 정렬된 기록은 초안/제출 상태별로 바로 확인됩니다.
+          </p>
+        </div>
+        <Link
+          href="/templates"
+          className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
+        >
+          새 기록 시작
+        </Link>
       </div>
 
-      <div className="grid gap-4 rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4 sm:grid-cols-2">
+      <div className="mt-6 grid gap-4 rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4 sm:grid-cols-2">
         <label className="grid gap-2 text-sm font-medium text-slate-800">
           상태 필터
           <select
@@ -379,10 +416,18 @@ function RecordCard({
   summaryWindow: SummaryWindow;
 }) {
   const summaryConnection = getSummaryConnectionState(record, summaryWindow);
+  const isDraft = record.status === 'draft';
 
   return (
-    <article className="rounded-[1.75rem] border border-stone-200 bg-white p-6 shadow-sm transition hover:border-stone-300 hover:shadow-md sm:p-7">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <article
+      className={`relative overflow-hidden rounded-[1.75rem] border p-6 shadow-sm transition hover:border-stone-300 hover:shadow-md sm:p-7 ${
+        isDraft ? 'border-amber-200 bg-white' : 'border-emerald-200 bg-white'
+      }`}
+    >
+      <div
+        className={`absolute inset-y-0 left-0 w-1.5 ${isDraft ? 'bg-amber-300' : 'bg-emerald-300'}`}
+      />
+      <div className="relative flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="max-w-2xl">
           <div className="flex flex-wrap items-center gap-3">
             <h2 className="text-2xl font-semibold tracking-tight text-slate-900">
@@ -404,7 +449,8 @@ function RecordCard({
         </Link>
       </div>
 
-      <div className="mt-5 grid gap-4 rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+      <div className="relative mt-5 grid gap-4 rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">기록 개요</span>
         <div>
           <p className="text-sm font-medium text-slate-900">기록 메모</p>
           <p className="mt-2 text-sm leading-6 text-slate-600">
@@ -426,10 +472,13 @@ function RecordCard({
               </span>
             ))}
           </div>
-          <p className="text-xs text-slate-500 max-w-[200px] text-right leading-relaxed">
+      <p className="text-xs text-slate-500 max-w-[200px] text-right leading-relaxed">
             {summaryConnection.description}
           </p>
         </div>
+      </div>
+      <div className="relative mt-5 border-t border-stone-200 pt-4 text-xs text-slate-500">
+        <p>연결된 역량 {record.competenciesSnapshot.length}개를 기준으로 다시 읽고 이어서 정리할 수 있습니다.</p>
       </div>
     </article>
   );
@@ -512,14 +561,17 @@ export function RecordsListClient() {
 
   return (
     <PageFrame>
-      <Filters
+      <RecordsHero recordCount={records.length} summaryWindow={summaryWindow} />
+
+      <RecordsWorkspaceShell active="records" />
+
+      <FiltersPanel
         onReset={handleResetFilters}
         onStatusChange={setStatusFilter}
         onTemplateChange={setTemplateFilter}
         statusFilter={statusFilter}
         templateFilter={templateFilter}
         templateOptions={templateOptions}
-        summaryWindow={summaryWindow}
       />
 
       <RevisitOverview
@@ -534,6 +586,11 @@ export function RecordsListClient() {
         <EmptyState hasFilters={hasActiveFilters} onReset={handleResetFilters} />
       ) : (
         <section className="grid gap-4 lg:grid-cols-2">
+          <div className="col-span-full">
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">
+              기록 목록
+            </h2>
+          </div>
           {filteredRecords.map((record) => (
             <RecordCard key={record.id} record={record} summaryWindow={summaryWindow} />
           ))}
