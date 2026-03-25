@@ -15,6 +15,7 @@ import {
   useRecords,
   type RecordsFilterStatus,
 } from '@/lib/records/use-records';
+import { GlobalTopBar } from '@/components/navigation/global-top-bar';
 import { RecordsWorkspaceShell } from '@/components/records/records-workspace-shell';
 import type { RecordStatus, WorksheetRecord } from '@/lib/records/record-types';
 import type { Competency } from '@/lib/templates/template-types';
@@ -76,7 +77,7 @@ function getSummaryConnectionState(record: WorksheetRecord, summaryWindow: Summa
 
   return {
     badgeClassName:
-      'rounded-full border border-stone-200 bg-stone-100 px-3 py-1 text-sm font-medium text-slate-700',
+      'rounded-full border border-primary/10 bg-background-light px-3 py-1 text-sm font-medium text-slate-700',
     badgeLabel: '요약 기간 밖 기록',
     description:
       '활동 날짜가 현재 14일 요약 기간 밖이라서, 이번 요약 수치에는 포함되지 않는 보관 기록입니다.',
@@ -86,9 +87,16 @@ function getSummaryConnectionState(record: WorksheetRecord, summaryWindow: Summa
 
 function PageFrame({ children }: { children: React.ReactNode }) {
   return (
-    <main className="bg-stone-100 px-6 py-12 text-slate-800 sm:py-16">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6">{children}</div>
-    </main>
+    <div className="min-h-screen bg-background-light text-slate-800">
+      <GlobalTopBar
+        active="workspace"
+        variant="workspace"
+        action={{ href: '/templates', icon: 'filter_vintage', label: '템플릿 둘러보기', tone: 'secondary' }}
+      />
+      <main className="bg-gradient-to-b from-background-light via-[#fff8ef] to-[#f6ecdf] px-6 py-12 sm:py-16">
+        <div className="mx-auto flex max-w-6xl flex-col gap-6">{children}</div>
+      </main>
+    </div>
   );
 }
 
@@ -105,7 +113,7 @@ function Surface({ children, tone = 'default' }: { children: React.ReactNode; to
   const className =
     tone === 'error'
       ? 'rounded-[1.9rem] border border-rose-200 bg-rose-50 p-8 shadow-sm sm:p-10'
-      : 'rounded-[1.9rem] border border-stone-200 bg-white p-8 shadow-sm sm:p-10';
+      : 'rounded-[1.9rem] border border-primary/10 bg-white/90 p-8 shadow-[0_24px_60px_-40px_rgba(186,93,28,0.38)] sm:p-10';
 
   return <section className={className}>{children}</section>;
 }
@@ -118,25 +126,39 @@ function RecordsHero({
   summaryWindow: SummaryWindow;
 }) {
   return (
-    <section className="rounded-[2rem] border border-stone-200 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 px-7 py-10 text-white shadow-lg sm:px-10">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-200">내 기록</p>
+    <section className="rounded-[2rem] border border-primary/10 bg-gradient-to-br from-white via-[#fff5eb] to-[#f8dfca] px-7 py-10 text-slate-900 shadow-[0_28px_80px_-48px_rgba(186,93,28,0.52)] sm:px-10">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/80">내 기록</p>
       <h1 className="mt-4 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
         오늘의 기록이 내일의 다시 보기로 이어지는 곳.
       </h1>
-      <p className="mt-4 max-w-2xl text-sm leading-7 text-stone-100 sm:text-base">
+      <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
         초안은 이어 쓰기로, 제출 기록은 다시 읽기와 성장 연결로 자연스럽게 넘어갑니다.
-        지금은 <strong className="text-white">현재 요약 기간 {formatDateRange(summaryWindow.startDate, summaryWindow.endDate)}</strong> 안의 기록을 중심으로 안내합니다.
+        지금은 <strong className="text-slate-900">현재 요약 기간 {formatDateRange(summaryWindow.startDate, summaryWindow.endDate)}</strong> 안의 기록을 중심으로 안내합니다.
       </p>
+      <div className="mt-6 flex flex-wrap gap-3">
+        <Link
+          href="/templates"
+          className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/25 transition hover:bg-primary/90"
+        >
+          새 기록 시작
+        </Link>
+        <Link
+          href="/my/summary"
+          className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white/90 px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-white"
+        >
+          내 요약 보기
+        </Link>
+      </div>
       <div className="mt-7 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-2xl border border-white/20 bg-white/10 px-5 py-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-stone-200">현재 상태</p>
-          <p className="mt-2 text-2xl font-semibold text-white">{recordCount}개 기록</p>
-          <p className="mt-1 text-xs text-stone-200">필터를 바꾸면 바로 이어 보기 흐름이 바뀝니다.</p>
+        <div className="rounded-2xl border border-primary/10 bg-white/75 px-5 py-4 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/70">현재 상태</p>
+          <p className="mt-2 text-2xl font-semibold text-slate-900">{recordCount}개 기록</p>
+          <p className="mt-1 text-xs text-slate-600">필터를 바꾸면 바로 이어 보기 흐름이 바뀝니다.</p>
         </div>
-        <div className="rounded-2xl border border-white/20 bg-white/10 px-5 py-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-stone-200">기록의 루틴</p>
-          <p className="mt-2 text-2xl font-semibold text-white">기록 시작 → 이어쓰기 → 복기</p>
-          <p className="mt-1 text-xs text-stone-200">핵심은 데이터 정리보다 다시 쓰고 다시 보는 리듬입니다.</p>
+        <div className="rounded-2xl border border-primary/10 bg-white/75 px-5 py-4 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/70">기록의 루틴</p>
+          <p className="mt-2 text-2xl font-semibold text-slate-900">기록 시작 → 이어쓰기 → 복기</p>
+          <p className="mt-1 text-xs text-slate-600">핵심은 데이터 정리보다 다시 쓰고 다시 보는 리듬입니다.</p>
         </div>
       </div>
     </section>
@@ -157,7 +179,7 @@ function AuthLoadingState() {
         {Array.from({ length: 4 }, (_, index) => (
           <div
             key={index}
-            className="h-44 animate-pulse rounded-[1.75rem] border border-stone-200 bg-stone-50"
+            className="h-44 animate-pulse rounded-[1.75rem] border border-primary/10 bg-background-light"
           />
         ))}
       </div>
@@ -244,7 +266,7 @@ function FiltersPanel({
   }>;
 }) {
   return (
-    <section className="rounded-[1.9rem] border border-stone-200 bg-white p-7 shadow-sm">
+    <section className="rounded-[1.9rem] border border-primary/10 bg-white/92 p-7 shadow-[0_24px_60px_-40px_rgba(186,93,28,0.38)]">
       <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
         <div>
           <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">기록 찾기와 정리</p>
@@ -257,19 +279,19 @@ function FiltersPanel({
         </div>
         <Link
           href="/templates"
-          className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
+          className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
         >
-          새 기록 시작
+          템플릿 둘러보기
         </Link>
       </div>
 
-      <div className="mt-6 grid gap-4 rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4 sm:grid-cols-2">
+      <div className="mt-6 grid gap-4 rounded-[1.5rem] border border-primary/10 bg-background-light p-4 sm:grid-cols-2">
         <label className="grid gap-2 text-sm font-medium text-slate-800">
           상태 필터
           <select
             value={statusFilter}
             onChange={(event) => onStatusChange(event.target.value as RecordsFilterStatus)}
-            className="rounded-2xl border border-stone-300 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-slate-500"
+            className="rounded-2xl border border-primary/15 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-primary/40"
           >
             <option value="all">전체 상태</option>
             <option value="draft">초안만</option>
@@ -282,7 +304,7 @@ function FiltersPanel({
           <select
             value={templateFilter}
             onChange={(event) => onTemplateChange(event.target.value)}
-            className="rounded-2xl border border-stone-300 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-slate-500"
+            className="rounded-2xl border border-primary/15 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-primary/40"
           >
             <option value="all">전체 템플릿</option>
             {templateOptions.map((option) => (
@@ -296,7 +318,7 @@ function FiltersPanel({
         <button
           type="button"
           onClick={onReset}
-          className="inline-flex items-center justify-center self-end rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900 sm:col-span-2"
+          className="inline-flex items-center justify-center self-end rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5 sm:col-span-2"
         >
           필터 초기화
         </button>
@@ -307,7 +329,7 @@ function FiltersPanel({
 
 function EmptyState({ hasFilters, onReset }: { hasFilters: boolean; onReset: () => void }) {
   return (
-    <section className="rounded-[1.9rem] border border-dashed border-stone-300 bg-stone-50 p-8 text-center sm:p-10">
+    <section className="rounded-[1.9rem] border border-dashed border-primary/20 bg-background-light p-8 text-center sm:p-10">
       <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">
         {hasFilters ? '선택 결과 없음' : '기록 없음'}
       </p>
@@ -324,14 +346,14 @@ function EmptyState({ hasFilters, onReset }: { hasFilters: boolean; onReset: () 
           <button
             type="button"
             onClick={onReset}
-            className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
+            className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
           >
             필터 초기화
           </button>
         ) : null}
         <Link
           href="/templates"
-          className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
+          className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
         >
           템플릿 보러 가기
         </Link>
@@ -367,7 +389,7 @@ function RevisitOverview({
   ).length;
 
   return (
-    <section className="grid gap-4 rounded-[1.9rem] border border-stone-200 bg-gradient-to-br from-white to-stone-50 p-6 shadow-sm sm:p-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+    <section className="grid gap-4 rounded-[1.9rem] border border-primary/10 bg-gradient-to-br from-white via-[#fff9f1] to-[#f8e6d4] p-6 shadow-[0_24px_60px_-40px_rgba(186,93,28,0.38)] sm:p-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
       <div>
         <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">다시 보기 흐름</p>
         <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
@@ -381,13 +403,13 @@ function RevisitOverview({
         <div className="mt-5 flex flex-wrap gap-3">
           <Link
             href="/my/summary"
-            className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
+            className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
           >
             내 요약으로 이어보기
           </Link>
           <Link
             href="/templates"
-            className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
+            className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
           >
             새 활동 시작하기
           </Link>
@@ -395,7 +417,7 @@ function RevisitOverview({
             <button
               type="button"
               onClick={onReset}
-              className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
+              className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
             >
               필터 모두 풀기
             </button>
@@ -404,11 +426,11 @@ function RevisitOverview({
       </div>
 
       <div className="grid gap-3 text-sm text-slate-600">
-        <div className="rounded-[1.25rem] border border-stone-200 bg-white/80 p-4">
+        <div className="rounded-[1.25rem] border border-primary/10 bg-white/85 p-4">
           <p className="font-medium text-slate-900">이어서 보기 (초안)</p>
           <p className="mt-1">저장해 둔 문장과 체크 상태부터 다시 이어서 적을 수 있습니다. 제출 전에는 요약에 포함되지 않아요.</p>
         </div>
-        <div className="rounded-[1.25rem] border border-stone-200 bg-white/80 p-4">
+        <div className="rounded-[1.25rem] border border-primary/10 bg-white/85 p-4">
           <p className="font-medium text-slate-900">다시 읽기 (제출 완료)</p>
           <p className="mt-1">제출한 기록은 다시 읽고 필요하면 내용을 다듬을 수 있습니다. 요약 기간 안의 기록은 내 요약에도 함께 보입니다.</p>
         </div>
@@ -429,8 +451,8 @@ function RecordCard({
 
   return (
     <article
-      className={`relative overflow-hidden rounded-[1.75rem] border p-6 shadow-sm transition hover:border-stone-300 hover:shadow-md sm:p-7 ${
-        isDraft ? 'border-amber-200 bg-white' : 'border-emerald-200 bg-white'
+      className={`relative overflow-hidden rounded-[1.75rem] border p-6 shadow-[0_22px_56px_-42px_rgba(148,73,22,0.28)] transition hover:border-primary/20 hover:shadow-md sm:p-7 ${
+        isDraft ? 'border-amber-200 bg-white/95' : 'border-emerald-200 bg-white/95'
       }`}
     >
       <div
@@ -452,14 +474,14 @@ function RecordCard({
 
         <Link
           href={`/my/records/${record.id}`}
-          className="inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
+          className="inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
         >
           {record.status === 'submitted' ? '기록 다시 보기' : '기록 이어서 입력'}
         </Link>
       </div>
 
-      <div className="relative mt-5 grid gap-4 rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4 sm:grid-cols-[minmax(0,1fr)_minmax(220px,auto)] sm:items-start">
-        <span className="sm:col-span-full text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+      <div className="relative mt-5 grid gap-4 rounded-[1.5rem] border border-primary/10 bg-background-light p-4 sm:grid-cols-[minmax(0,1fr)_minmax(220px,auto)] sm:items-start">
+        <span className="sm:col-span-full text-xs font-semibold uppercase tracking-[0.2em] text-primary/80">
           기록 개요
         </span>
         <div className="min-w-0">
@@ -488,7 +510,7 @@ function RecordCard({
           </p>
         </div>
       </div>
-      <div className="relative mt-5 border-t border-stone-200 pt-4 text-xs text-slate-500">
+      <div className="relative mt-5 border-t border-primary/10 pt-4 text-xs text-slate-500">
         <p>연결된 역량 {record.competenciesSnapshot.length}개를 기준으로 다시 읽고 이어서 정리할 수 있습니다.</p>
       </div>
     </article>

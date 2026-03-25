@@ -8,6 +8,7 @@ import { buildLoginHref } from '@/lib/auth/ensure-auth';
 import { useAuthUser } from '@/lib/auth/use-auth-user';
 import { getSummaryDateRange } from '@/lib/records/summary-utils';
 import { useSummary } from '@/lib/records/use-summary';
+import { GlobalTopBar } from '@/components/navigation/global-top-bar';
 import { RecordsWorkspaceShell } from '@/components/records/records-workspace-shell';
 import type { AbsoluteGrade, WorksheetRecord } from '@/lib/records/record-types';
 import { COMPETENCIES, type Competency } from '@/lib/templates/template-types';
@@ -30,9 +31,16 @@ const GRADE_TONE_CLASSES = {
 
 function PageFrame({ children }: { children: React.ReactNode }) {
   return (
-    <main className="bg-stone-100 px-6 py-12 text-slate-800 sm:py-16">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6">{children}</div>
-    </main>
+    <div className="min-h-screen bg-background-light text-slate-800">
+      <GlobalTopBar
+        active="workspace"
+        variant="workspace"
+        action={{ href: '/templates', icon: 'filter_vintage', label: '템플릿 둘러보기', tone: 'secondary' }}
+      />
+      <main className="bg-gradient-to-b from-background-light via-[#fff8ef] to-[#f6ecdf] px-6 py-12 sm:py-16">
+        <div className="mx-auto flex max-w-6xl flex-col gap-6">{children}</div>
+      </main>
+    </div>
   );
 }
 
@@ -49,7 +57,7 @@ function Surface({ children, tone = 'default' }: { children: React.ReactNode; to
   const className =
     tone === 'error'
       ? 'rounded-[1.9rem] border border-rose-200 bg-rose-50 p-8 shadow-sm sm:p-10'
-      : 'rounded-[1.9rem] border border-stone-200 bg-white p-8 shadow-sm sm:p-10';
+      : 'rounded-[1.9rem] border border-primary/10 bg-white/90 p-8 shadow-[0_24px_60px_-40px_rgba(186,93,28,0.38)] sm:p-10';
 
   return <section className={className}>{children}</section>;
 }
@@ -103,7 +111,7 @@ function AuthLoadingState() {
         {Array.from({ length: 3 }, (_, index) => `summary-loading-card-${index}`).map((placeholderId) => (
           <div
             key={placeholderId}
-            className="h-36 animate-pulse rounded-[1.75rem] border border-stone-200 bg-stone-50"
+            className="h-36 animate-pulse rounded-[1.75rem] border border-primary/10 bg-background-light"
           />
         ))}
       </div>
@@ -122,8 +130,8 @@ function SummaryLoadingState() {
         활동 날짜와 역량 평가를 정리해 이해하기 쉬운 14일 요약으로 변환하고 있습니다.
       </p>
       <div className="mt-8 grid gap-4 lg:grid-cols-2">
-        <div className="h-72 animate-pulse rounded-[1.75rem] border border-stone-200 bg-stone-50" />
-        <div className="h-72 animate-pulse rounded-[1.75rem] border border-stone-200 bg-stone-50" />
+        <div className="h-72 animate-pulse rounded-[1.75rem] border border-primary/10 bg-background-light" />
+        <div className="h-72 animate-pulse rounded-[1.75rem] border border-primary/10 bg-background-light" />
       </div>
     </Surface>
   );
@@ -204,13 +212,13 @@ function EmptyState({ startDate, endDate }: { startDate: string; endDate: string
         생기면 이곳에 역량별 횟수와 평균 등급이 자동으로 정리됩니다.
       </p>
       <div className="mt-6 grid gap-3 rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4 text-left text-sm text-slate-700 sm:grid-cols-2">
-        <div className="rounded-[1.25rem] border border-white bg-white px-4 py-3">
+        <div className="rounded-[1.25rem] border border-primary/10 bg-white px-4 py-3">
           <p className="font-medium text-slate-900">이미 초안이 있다면</p>
           <p className="mt-2 leading-6 text-slate-600">
             내 기록에서 이어서 제출해 주세요. 초안은 제출되기 전까지 요약에 포함되지 않습니다.
           </p>
         </div>
-        <div className="rounded-[1.25rem] border border-white bg-white px-4 py-3">
+        <div className="rounded-[1.25rem] border border-primary/10 bg-white px-4 py-3">
           <p className="font-medium text-slate-900">처음이라면</p>
           <p className="mt-2 leading-6 text-slate-600">
             템플릿에서 활동을 하나 고르고 기록해 보세요. 제출하면 이 화면에 자동으로 반영됩니다.
@@ -220,13 +228,13 @@ function EmptyState({ startDate, endDate }: { startDate: string; endDate: string
       <div className="mt-6 flex flex-wrap gap-3">
         <Link
           href="/my/records"
-          className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
+          className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
         >
           초안/기록 보러 가기
         </Link>
         <Link
           href="/templates"
-          className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
+          className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
         >
           템플릿에서 시작하기
         </Link>
@@ -247,7 +255,7 @@ function SummaryOverview({
   totalSubmittedRecords: number;
 }) {
   return (
-    <section className="grid gap-4 rounded-[1.9rem] border border-stone-200 bg-gradient-to-br from-white via-stone-50 to-amber-50 p-6 shadow-sm sm:p-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+    <section className="grid gap-4 rounded-[1.9rem] border border-primary/10 bg-gradient-to-br from-white via-[#fff6ed] to-[#f7e2cf] p-6 shadow-[0_24px_60px_-40px_rgba(186,93,28,0.38)] sm:p-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
       <div>
          <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">내 요약</p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
@@ -260,7 +268,7 @@ function SummaryOverview({
       </div>
 
       <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-        <div className="rounded-[1.5rem] border border-stone-200 bg-white/90 p-4">
+        <div className="rounded-[1.5rem] border border-primary/10 bg-white/90 p-4">
           <p className="text-sm font-medium text-slate-500">제출 기록 수</p>
           <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">
             {totalSubmittedRecords}개
@@ -268,13 +276,13 @@ function SummaryOverview({
           <p className="mt-2 text-sm leading-6 text-slate-600">최근 14일 안에 제출된 기록만 셉니다.</p>
         </div>
 
-        <div className="rounded-[1.5rem] border border-stone-200 bg-white/90 p-4">
+        <div className="rounded-[1.5rem] border border-primary/10 bg-white/90 p-4">
           <p className="text-sm font-medium text-slate-500">평균 집계 역량</p>
           <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">{averageCount}개</p>
           <p className="mt-2 text-sm leading-6 text-slate-600">평가값이 있는 역량만 평균 등급을 계산합니다.</p>
         </div>
 
-        <div className="rounded-[1.5rem] border border-stone-200 bg-white/90 p-4">
+        <div className="rounded-[1.5rem] border border-primary/10 bg-white/90 p-4">
           <p className="text-sm font-medium text-slate-500">요약에 연결된 기록</p>
           <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">최대 5개</p>
           <p className="mt-2 text-sm leading-6 text-slate-600">
@@ -294,7 +302,7 @@ function SummaryBasisCard({
   title: string;
 }) {
   return (
-    <article className="rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4">
+    <article className="rounded-[1.5rem] border border-primary/10 bg-background-light p-4">
       <p className="text-sm font-medium text-slate-900">{title}</p>
       <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
     </article>
@@ -313,7 +321,7 @@ function CompetencyCountCard({
   const widthPercent = maxCount === 0 ? 0 : Math.max((count / maxCount) * 100, count > 0 ? 18 : 0);
 
   return (
-    <article className="rounded-[1.5rem] border border-stone-200 bg-stone-50 p-5">
+    <article className="rounded-[1.5rem] border border-primary/10 bg-background-light p-5">
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-sm font-medium text-slate-500">역량</p>
@@ -321,9 +329,9 @@ function CompetencyCountCard({
         </div>
         <p className="text-3xl font-semibold tracking-tight text-slate-900">{count}</p>
       </div>
-      <div className="mt-5 h-3 rounded-full bg-white">
+      <div className="mt-5 h-3 rounded-full bg-white/95">
         <div
-          className="h-full rounded-full bg-slate-900 transition-all"
+          className="h-full rounded-full bg-gradient-to-r from-primary to-[#cc6a24] transition-all"
           style={{ width: `${widthPercent}%` }}
         />
       </div>
@@ -345,7 +353,7 @@ function AverageGradeCard({
   ratingCount: number;
   roundedAverage: number | null;
 }) {
-  const toneClassName = gradeLabel ? GRADE_TONE_CLASSES[gradeLabel] : 'border-stone-200 bg-stone-50 text-slate-500';
+  const toneClassName = gradeLabel ? GRADE_TONE_CLASSES[gradeLabel] : 'border-primary/10 bg-background-light text-slate-500';
 
   return (
     <article className={`rounded-[1.5rem] border p-5 ${toneClassName}`}>
@@ -371,7 +379,7 @@ function RecentRecordCard({ record }: { record: WorksheetRecord }) {
   );
 
   return (
-    <article className="rounded-[1.6rem] border border-stone-200 bg-white p-6 shadow-sm">
+    <article className="rounded-[1.6rem] border border-primary/10 bg-white/92 p-6 shadow-[0_22px_56px_-42px_rgba(148,73,22,0.28)]">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="max-w-2xl">
           <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">다시 볼 기록</p>
@@ -385,13 +393,13 @@ function RecentRecordCard({ record }: { record: WorksheetRecord }) {
 
         <Link
           href={`/my/records/${record.id}`}
-          className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
+          className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
         >
           기록 다시 보기
         </Link>
       </div>
 
-      <p className="mt-5 rounded-[1.25rem] border border-stone-200 bg-stone-50 px-4 py-3 text-sm leading-6 text-slate-600">
+      <p className="mt-5 rounded-[1.25rem] border border-primary/10 bg-background-light px-4 py-3 text-sm leading-6 text-slate-600">
         {getRecordPreview(record)}
       </p>
 
@@ -417,7 +425,7 @@ function RecentRecordCard({ record }: { record: WorksheetRecord }) {
             );
           })
         ) : (
-          <span className="rounded-full border border-stone-300 bg-stone-50 px-3 py-1 text-sm font-medium text-slate-600">
+          <span className="rounded-full border border-primary/10 bg-background-light px-3 py-1 text-sm font-medium text-slate-600">
             표시할 평가가 없습니다.
           </span>
         )}
@@ -509,7 +517,7 @@ export function SummaryPageClient() {
         totalSubmittedRecords={summary.totalSubmittedRecords}
       />
 
-      <section className="grid gap-4 rounded-[1.9rem] border border-stone-200 bg-white p-6 shadow-sm sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]">
+      <section className="grid gap-4 rounded-[1.9rem] border border-primary/10 bg-white/92 p-6 shadow-[0_24px_60px_-40px_rgba(186,93,28,0.34)] sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]">
         <div>
           <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">요약 기준</p>
           <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
@@ -523,13 +531,13 @@ export function SummaryPageClient() {
           <div className="mt-5 flex flex-wrap gap-3">
             <Link
               href="/my/records"
-              className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
+              className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
             >
               내 기록 확인하기
             </Link>
             <Link
               href="/templates"
-              className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
+              className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
             >
               새 활동 고르기
             </Link>

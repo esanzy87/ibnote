@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import { GlobalTopBar } from '@/components/navigation/global-top-bar';
+
 const HOW_IT_WORKS_STEPS = [
   {
     title: '템플릿 고르기',
@@ -39,25 +41,10 @@ const TEMPLATE_EXAMPLES = [
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background-light font-display text-slate-900 antialiased">
-      {/* Top Navigation */}
-      <header className="sticky top-0 z-50 border-b border-primary/10 bg-background-light/80 backdrop-blur-md">
-        <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white">
-              <span className="material-symbols-outlined">auto_stories</span>
-            </div>
-            <h1 className="text-xl font-extrabold tracking-tight text-slate-900">IBNote</h1>
-          </div>
-          <div className="flex items-center gap-4">
-            <Link
-              href="/login"
-              className="rounded-full bg-primary px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-transform hover:scale-105"
-            >
-              로그인
-            </Link>
-          </div>
-        </div>
-      </header>
+      <GlobalTopBar
+        active="home"
+        action={{ href: '/login', icon: 'login', label: '로그인', tone: 'primary' }}
+      />
 
       <main>
         {/* Hero Section */}

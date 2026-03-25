@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { buildLoginHref } from '@/lib/auth/ensure-auth';
 import { useAuthUser } from '@/lib/auth/use-auth-user';
 import { useRecord } from '@/lib/records/use-record';
+import { GlobalTopBar } from '@/components/navigation/global-top-bar';
 import { RecordsWorkspaceShell } from '@/components/records/records-workspace-shell';
 import type { AbsoluteGrade, WorksheetRecord } from '@/lib/records/record-types';
 import type { Competency, GradeBand, PypTheme } from '@/lib/templates/template-types';
@@ -51,9 +52,16 @@ interface RecordEditorProps {
 
 function EditorPage({ children }: { children: React.ReactNode }) {
   return (
-    <main className="bg-stone-100 px-6 py-12 text-slate-800 sm:py-16">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6">{children}</div>
-    </main>
+    <div className="min-h-screen bg-background-light text-slate-800">
+      <GlobalTopBar
+        active="workspace"
+        variant="workspace"
+        action={{ href: '/templates', icon: 'filter_vintage', label: '템플릿 둘러보기', tone: 'secondary' }}
+      />
+      <main className="bg-gradient-to-b from-background-light via-[#fff8ef] to-[#f6ecdf] px-6 py-12 sm:py-16">
+        <div className="mx-auto flex max-w-6xl flex-col gap-6">{children}</div>
+      </main>
+    </div>
   );
 }
 
@@ -70,7 +78,7 @@ function Surface({ children, tone = 'default' }: { children: React.ReactNode; to
   const className =
     tone === 'error'
       ? 'rounded-[1.9rem] border border-rose-200 bg-rose-50 p-8 shadow-sm sm:p-10'
-      : 'rounded-[1.9rem] border border-stone-200 bg-white p-8 shadow-sm sm:p-10';
+      : 'rounded-[1.9rem] border border-primary/10 bg-white/90 p-8 shadow-[0_24px_60px_-40px_rgba(186,93,28,0.38)] sm:p-10';
 
   return <section className={className}>{children}</section>;
 }
@@ -86,9 +94,9 @@ function RecordLoadingState() {
         로그인 상태와 저장된 기록을 확인한 뒤 편집 화면을 준비하고 있습니다.
       </p>
       <div className="mt-8 space-y-4">
-        <div className="h-24 animate-pulse rounded-[1.75rem] border border-stone-200 bg-stone-50" />
-        <div className="h-56 animate-pulse rounded-[1.75rem] border border-stone-200 bg-stone-50" />
-        <div className="h-56 animate-pulse rounded-[1.75rem] border border-stone-200 bg-stone-50" />
+        <div className="h-24 animate-pulse rounded-[1.75rem] border border-primary/10 bg-background-light" />
+        <div className="h-56 animate-pulse rounded-[1.75rem] border border-primary/10 bg-background-light" />
+        <div className="h-56 animate-pulse rounded-[1.75rem] border border-primary/10 bg-background-light" />
       </div>
     </Surface>
   );
@@ -148,13 +156,13 @@ function MissingRecordState({ recordId }: { recordId: string }) {
       <div className="mt-6 flex flex-wrap gap-3">
         <Link
           href="/templates"
-          className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
+          className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
         >
           템플릿 보러 가기
         </Link>
         <Link
           href="/my/records"
-          className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
+          className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
         >
           기록 목록으로 가기
         </Link>
@@ -166,33 +174,41 @@ function MissingRecordState({ recordId }: { recordId: string }) {
 function EntryIntro({ record }: { record: WorksheetRecord }) {
   const isSubmitted = record.status === 'submitted';
   const labelClassName =
-    'inline-flex items-center rounded-full bg-slate-900 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-white';
+    'inline-flex items-center rounded-full bg-primary px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-white';
 
   return (
-    <section className="rounded-[1.9rem] border border-slate-800 bg-gradient-to-r from-slate-900 to-slate-700 p-7 text-white shadow-sm sm:p-8">
-      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-200">기록 에디터</p>
+    <section className="rounded-[1.9rem] border border-primary/10 bg-gradient-to-br from-white via-[#fff5ea] to-[#f7dcc7] p-7 text-slate-900 shadow-[0_28px_80px_-48px_rgba(186,93,28,0.52)] sm:p-8">
+      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/80">기록 에디터</p>
       <h1 className="mt-4 text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">
         {isSubmitted ? '돌아보며 다듬는 기록' : '지금의 장면부터 이어 적는 기록'}
       </h1>
-      <p className="mt-4 max-w-3xl text-sm leading-7 text-stone-100 sm:text-base">
+      <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-600 sm:text-base">
         초안이든 제출본이든, 기록은 한 번에 완성되지 않아도 괜찮습니다. 지금 필요한 것부터 채워 다음으로 넘어가면 돼요.
       </p>
       <div className="mt-6 flex flex-wrap gap-3">
         <span className={labelClassName}>현재 단계</span>
-        <span className="inline-flex items-center rounded-full border border-stone-200/40 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-stone-100">
+        <span className="inline-flex items-center rounded-full border border-primary/15 bg-white/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-primary/90">
           {isSubmitted ? '제출 후 재정리' : '초안 계속 작성'}
         </span>
+        <Link
+          href="#record-editor-form"
+          className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/25 transition hover:bg-primary/90"
+        >
+          {isSubmitted ? '아래에서 기록 다듬기' : '아래에서 이어 적기'}
+        </Link>
       </div>
     </section>
   );
 }
 
 function Section({
+  anchorId,
   description,
   title,
   children,
   tone = 'neutral',
 }: {
+  anchorId?: string;
   children: React.ReactNode;
   description?: string;
   title: string;
@@ -200,13 +216,13 @@ function Section({
 }) {
   const frameClass =
     tone === 'dominant'
-      ? 'rounded-[1.9rem] border border-slate-200 bg-white p-7 shadow-sm sm:p-8'
+      ? 'rounded-[1.9rem] border border-primary/10 bg-white/92 p-7 shadow-[0_24px_60px_-40px_rgba(186,93,28,0.38)] sm:p-8'
       : tone === 'quiet'
-        ? 'rounded-[1.9rem] border border-stone-200 bg-stone-50 p-6 sm:p-7'
-        : 'rounded-[1.75rem] border border-stone-200 bg-white p-6 shadow-sm sm:p-8';
+        ? 'rounded-[1.9rem] border border-primary/10 bg-background-light p-6 sm:p-7'
+        : 'rounded-[1.75rem] border border-primary/10 bg-white/92 p-6 shadow-[0_24px_60px_-40px_rgba(186,93,28,0.34)] sm:p-8';
 
   return (
-    <section className={frameClass}>
+    <section id={anchorId} className={frameClass}>
       <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">기록 단계</span>
         <h2 className="text-2xl font-semibold tracking-tight text-slate-900">{title}</h2>
@@ -253,7 +269,7 @@ function HeaderSummary({ record }: { record: WorksheetRecord }) {
           <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">{statusBody}</p>
         </div>
 
-        <div className="grid gap-3 rounded-[1.75rem] border border-stone-200 bg-stone-50 p-4 text-sm text-slate-700 sm:min-w-80">
+        <div className="grid gap-3 rounded-[1.75rem] border border-primary/10 bg-background-light p-4 text-sm text-slate-700 sm:min-w-80">
           <p className="font-medium text-slate-900">기록 정보</p>
           <p>원본 템플릿 학년: {GRADE_BAND_LABELS[record.gradeBandSnapshot]}</p>
           <p>PYP 주제: {PYP_THEME_LABELS[record.pypThemeSnapshot]}</p>
@@ -286,15 +302,15 @@ function WritingGuide({ record }: { record: WorksheetRecord }) {
         {isSubmitted ? '기억이 더 또렷해졌다면 차분히 다시 다듬어 보세요.' : '길게 쓰기보다, 지금 떠오르는 장면부터 이어 적어 보세요.'}
       </h2>
       <div className="mt-5 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-[1.25rem] border border-stone-200 bg-stone-50 p-4 text-sm leading-6 text-slate-700">
+        <div className="rounded-[1.25rem] border border-primary/10 bg-background-light p-4 text-sm leading-6 text-slate-700">
           <p className="font-medium text-slate-900">1. 날짜와 메모</p>
           <p className="mt-1">{record.performedOn ? '날짜를 확인하고,' : '날짜와'} 아이 반응 한두 문장부터 적습니다.</p>
         </div>
-        <div className="rounded-[1.25rem] border border-stone-200 bg-stone-50 p-4 text-sm leading-6 text-slate-700">
+        <div className="rounded-[1.25rem] border border-primary/10 bg-background-light p-4 text-sm leading-6 text-slate-700">
           <p className="font-medium text-slate-900">2. 체크와 평정</p>
           <p className="mt-1">체크리스트를 훑어보고, 역량 평정을 하나 이상 선택합니다.</p>
         </div>
-        <div className="rounded-[1.25rem] border border-stone-200 bg-stone-50 p-4 text-sm leading-6 text-slate-700">
+        <div className="rounded-[1.25rem] border border-primary/10 bg-background-light p-4 text-sm leading-6 text-slate-700">
           <p className="font-medium text-slate-900">3. 저장 또는 제출</p>
           <p className="mt-1">{isSubmitted ? '변경 저장으로 마칩니다.' : '초안으로 저장하거나 제출해 요약에 반영합니다.'}</p>
         </div>
@@ -313,7 +329,7 @@ function RatingGroup({
   selectedGrade: AbsoluteGrade | undefined;
 }) {
   return (
-    <article className="rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4">
+    <article className="rounded-[1.5rem] border border-primary/10 bg-background-light p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-semibold text-slate-900">{COMPETENCY_LABELS[competency]}</h3>
@@ -323,7 +339,7 @@ function RatingGroup({
           <button
             type="button"
             onClick={() => onSelect(null)}
-            className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
+            className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-4 py-2 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
           >
             선택 지우기
           </button>
@@ -341,8 +357,8 @@ function RatingGroup({
               onClick={() => onSelect(grade)}
               className={
                 isSelected
-                  ? 'rounded-2xl border border-slate-900 bg-slate-900 px-4 py-4 text-left text-white shadow-sm'
-                  : 'rounded-2xl border border-stone-200 bg-white px-4 py-4 text-left text-slate-800 transition hover:border-slate-300 hover:bg-stone-50'
+                  ? 'rounded-2xl border border-primary bg-primary px-4 py-4 text-left text-white shadow-lg shadow-primary/25'
+                  : 'rounded-2xl border border-primary/10 bg-white px-4 py-4 text-left text-slate-800 transition hover:border-primary/25 hover:bg-background-light'
               }
             >
               <p className="text-xs font-medium uppercase tracking-[0.22em] opacity-80">
@@ -452,12 +468,13 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
         <Section
+          anchorId="record-editor-form"
           tone="dominant"
           title="1) 장면 기록"
           description="짧게 시작해도 괜찮습니다. 필요한 항목부터 채워 주세요."
         >
           <div className="grid gap-5">
-            <div className="rounded-[1.5rem] border border-stone-200 bg-stone-50 px-4 py-4 text-sm leading-6 text-slate-700">
+            <div className="rounded-[1.5rem] border border-primary/10 bg-background-light px-4 py-4 text-sm leading-6 text-slate-700">
               <p className="font-semibold text-slate-900">부담 줄이기 안내</p>
               <p className="mt-1">
                 완성된 글처럼 쓰지 않아도 됩니다. 아이가 했던 말이나 기억나는 장면 한 줄부터 시작해 보세요.
@@ -475,7 +492,7 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
                 type="date"
                 value={record.performedOn}
                 onChange={(event) => setPerformedOn(event.target.value)}
-                className="rounded-2xl border border-stone-300 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-slate-500"
+                className="rounded-2xl border border-primary/15 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-primary/40"
               />
               <span className="text-xs font-normal text-slate-500">제출할 때 꼭 필요한 항목입니다.</span>
             </label>
@@ -485,7 +502,7 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
               <select
                 value={record.childGradeBand ?? ''}
                 onChange={(event) => setChildGradeBand((event.target.value as GradeBand) || null)}
-                className="rounded-2xl border border-stone-300 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-slate-500"
+                className="rounded-2xl border border-primary/15 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-primary/40"
               >
                 <option value="">선택 안 함</option>
                 <option value="g1_2">초1-2</option>
@@ -501,7 +518,7 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
                 onChange={(event) => setChildReflection(event.target.value)}
                 rows={5}
                 placeholder="아이가 한 말, 표정, 다시 해 보고 싶다고 한 장면 등을 짧게 적어 보세요."
-                className="rounded-[1.5rem] border border-stone-300 bg-white px-4 py-3 text-base leading-7 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-500"
+                className="rounded-[1.5rem] border border-primary/15 bg-white px-4 py-3 text-base leading-7 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-primary/40"
               />
               <span className="text-xs font-normal text-slate-500">
                 기억나는 문장 하나만 있어도 충분합니다.
@@ -515,7 +532,7 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
                 onChange={(event) => setParentMemo(event.target.value)}
                 rows={5}
                 placeholder="다음에 다시 해 보고 싶은 점이나 준비물 메모를 남겨 두세요."
-                className="rounded-[1.5rem] border border-stone-300 bg-white px-4 py-3 text-base leading-7 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-500"
+                className="rounded-[1.5rem] border border-primary/15 bg-white px-4 py-3 text-base leading-7 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-primary/40"
               />
             </label>
           </div>
@@ -527,7 +544,7 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
           description="현재 상태를 확인하고 필요한 항목을 채워 주세요."
         >
           <div className="grid gap-4">
-            <div className="rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4">
+            <div className="rounded-[1.5rem] border border-primary/10 bg-background-light p-4">
               <p className="text-sm font-medium text-slate-900">현재 상태</p>
               <div className="mt-3 grid gap-3 text-sm text-slate-700 sm:grid-cols-2">
                 <p>
@@ -545,13 +562,13 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
               </div>
             </div>
 
-            <div className="rounded-[1.5rem] border border-stone-200 bg-white p-4">
+            <div className="rounded-[1.5rem] border border-primary/10 bg-white/95 p-4">
               <p className="text-sm font-medium text-slate-900">체크리스트</p>
               <div className="mt-4 grid gap-3">
                 {Object.entries(record.checklistState).map(([item, checked]) => (
                   <label
                     key={item}
-                    className="flex items-start gap-3 rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-slate-700"
+                    className="flex items-start gap-3 rounded-2xl border border-primary/10 bg-background-light px-4 py-3 text-sm text-slate-700"
                   >
                     <input
                       type="checkbox"
@@ -609,7 +626,7 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
                   void saveDraft();
                 }}
                 disabled={isWritePending}
-                className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+                className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {mutationStatus === 'saving' ? '초안 저장 중...' : '초안 저장'}
               </button>
@@ -620,7 +637,7 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
                 void submitRecord();
               }}
               disabled={isWritePending}
-              className="inline-flex items-center justify-center rounded-full border border-stone-200 bg-stone-100 px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-300 hover:bg-stone-200 disabled:cursor-not-allowed disabled:text-slate-500"
+              className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-primary/50"
             >
               {mutationStatus === 'submitting'
                 ? record.status === 'submitted'
@@ -632,7 +649,7 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
             </button>
             <Link
               href="/my/records"
-              className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
+              className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
             >
               기록 목록으로 가기
             </Link>
@@ -640,7 +657,7 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
               type="button"
               onClick={resetLocalChanges}
               disabled={!loadedRecord || !isDirty || isWritePending}
-              className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-50"
             >
               입력 되돌리기
             </button>

@@ -250,20 +250,23 @@ Do not overwrite earlier phase briefs once they become part of the decision chai
 ### Phase 3 brief
 
 Phase 3 target:
-- public-to-locked brand continuity across `/`, `/templates`, `/templates/[slug]`, and the authenticated `/my` workspace entry routes
+- shift the authenticated `/my` workspace visual language toward the public discovery baseline defined by `/`, `/templates`, and `/templates/[slug]`
 
 Phase 3 objective:
-- reduce the visual and tonal disconnect between the warm parent-facing public journey and the calmer authenticated workspace so IBNote feels like one product before and after sign-in
+- make `/my/records`, `/my/records/[id]`, and `/my/summary` feel like a continuation of the warm parent-facing discovery journey instead of a separate calmer subsystem
+- treat `/`, `/templates`, and `/templates/[slug]` as the visual baseline for color, surface warmth, and top-level tone unless a Phase 2 clarity gain would be lost
 
 Phase 3 planned scope:
-- shared color-language alignment between public-route hero surfaces and the `/my` workspace shell
-- tighten typography, surface treatment, and section framing so the public and locked route families feel intentionally related
-- preserve the stronger workspace coherence achieved in Phase 2 while improving cross-journey brand recognition
+- restore a coherent top-of-page brand/navigation anchor across the public discovery routes and the locked `/my` workspace routes where header absence currently makes the journey feel broken
+- restyle `/my/records`, `/my/records/[id]`, and `/my/summary` so their shells, hero surfaces, and panel framing inherit the warmer color-language already established on `/`, `/templates`, and `/templates/[slug]`
+- tighten typography, surface treatment, and section framing so the locked workspace reads as a continuation of the public journey rather than a parallel design system
+- preserve the stronger workspace coherence achieved in Phase 2 while replacing the remaining stone/slate heaviness that now makes the handoff feel abrupt
 
 Phase 3 allowed changes:
+- bounded top-bar/header treatment adjustments on `/`, `/templates`, `/templates/[slug]`, `/my/records`, `/my/records/[id]`, and `/my/summary` where needed to restore brand and navigation continuity without changing route purpose
 - route-level color tokens, gradients, panel backgrounds, and accent usage on `/`, `/templates`, `/templates/[slug]`, `/my/records`, `/my/records/[id]`, and `/my/summary`
-- bounded shell/hero visual treatment adjustments that improve continuity without changing route purpose
-- top-level route framing copy where minor tone adjustment is required to smooth the public-to-locked handoff
+- bounded shell/hero visual treatment adjustments on the locked `/my` routes that pull them toward the public-route baseline without changing route purpose
+- top-level route framing copy where minor tone adjustment is required to make the transition from discovery to workspace feel continuous
 
 Phase 3 non-goals:
 - no changes to authentication, data models, persistence, filtering, summary logic, or editor schema
@@ -272,14 +275,139 @@ Phase 3 non-goals:
 - no reopening of Phase 2 shell/navigation mechanics unless a fresh contradiction is directly discovered
 
 Phase 3 success checks:
-- `/`, `/templates`, and `/templates/[slug]` feel visually related to `/my/records`, `/my/records/[id]`, and `/my/summary`
-- the public-to-locked handoff no longer feels like a jump between separate products
-- shared color and surface language strengthens IBNote recognition without collapsing the distinction between exploration and workspace tasks
+- no core Phase 3 route is missing an intentional top-bar or equivalent global brand/navigation anchor
+- `/my/records`, `/my/records/[id]`, and `/my/summary` visibly inherit the warmer visual language already established on `/`, `/templates`, and `/templates/[slug]`
+- the discovery-to-workspace handoff no longer feels like a jump into a separate darker product
+- shared color and surface language strengthens IBNote recognition while preserving the route clarity gains closed in Phase 2
 - mobile readability remains acceptable on both public and locked routes after any continuity adjustments
 
 Phase 3 verification notes:
-- compare desktop and mobile first-view impressions across at least one public route and one locked route
-- verify that continuity improvements do not erase the workspace clarity gains closed in Phase 2
+- compare top-bar/header presence and continuity across `/`, `/templates`, `/templates/[slug]`, `/my/records`, `/my/records/[id]`, and `/my/summary`
+- compare desktop and mobile first-view impressions across at least one public route and each locked `/my` route to confirm the locked surfaces now read as descendants of the public baseline
+- verify that pulling the locked workspace toward the public language does not erase the workspace clarity gains closed in Phase 2
+
+### Phase 3 route audit summary
+
+Audit basis:
+- implementation review of `/`, `/templates`, `/templates/[slug]`, `/my/records`, `/my/records/[id]`, and `/my/summary`
+- stored route references under `docs/stitch_screens/`
+
+Observed public-route baseline:
+- `/` uses `bg-background-light`, orange `primary` accents, soft white cards, ambient glow, and light CTA treatment rather than dark hero framing (`src/app/page.tsx`)
+- `/templates` uses the same cream background, orange pill filters, pale guidance bands, and airy white card grid (`src/components/templates/template-library-client.tsx`, `src/components/templates/template-card.tsx`)
+- `/templates/[slug]` keeps the same warm language with image-led hero, orange metadata pills, pale utility cards, and orange-outlined secondary action (`src/components/templates/protected-template-detail.tsx`)
+
+Observed locked-route mismatches:
+- `/templates` and `/templates/[slug]` currently lack the clear sticky top navigation/brand bar that exists on `/`, while the locked `/my` routes begin directly with `RecordsWorkspaceShell`, leaving the overall journey without one consistent top-of-page anchor (`src/app/page.tsx`, `src/components/templates/template-library-client.tsx`, `src/components/templates/protected-template-detail.tsx`, `src/components/records/records-workspace-shell.tsx`)
+- `/my/records` still opens on `bg-stone-100` and a dark slate gradient hero, which makes the route read more like a dashboard than a continuation of the public discovery flow (`src/components/records/records-list-client.tsx`)
+- `/my/records/[id]` shares the same stone page frame and dark hero band in `EntryIntro`, so the editor inherits Phase 2 coherence but not public-route warmth (`src/components/records/record-editor.tsx`)
+- `/my/summary` is closer to the target because `SummaryOverview` already introduces amber tinting, but the route still sits inside the cooler `bg-stone-100` frame and keeps black primary CTA usage in empty/error branches (`src/components/summary/summary-page-client.tsx`)
+- the shared `RecordsWorkspaceShell` still uses white/slate pills and a black active state, so every locked route announces a colder subsystem before any route-specific content appears (`src/components/records/records-workspace-shell.tsx`)
+
+Concrete implementation plan:
+
+1. Top-bar continuity restore
+- decide one bounded top-bar pattern for Phase 3 routes: a public-style sticky brand bar for `/`, `/templates`, and `/templates/[slug]`, plus a compatible locked-route top anchor that coexists cleanly with `RecordsWorkspaceShell`
+- add or restore the missing public-route top bar on `/templates` and `/templates/[slug]`
+- ensure the locked `/my` routes expose a clear global IBNote anchor at the top without duplicating or fighting the workspace shell beneath it
+
+2. Shared `/my` shell and page frame rewarm
+- change the shared `/my` page backgrounds from `bg-stone-100` to the same cream family used on public routes
+- restyle `RecordsWorkspaceShell` so its container, label, and active/inactive pills inherit public-route orange/cream language instead of black/slate emphasis
+- keep the existing navigation structure and active-route clarity from Phase 2; only visual language should change
+
+3. `/my/records` hero and action hierarchy
+- replace the current dark gradient `RecordsHero` with a light hero panel that uses warm tint, lighter borders, and public-route badge styling
+- convert major actions from black-filled pills toward the public primary/orange filled CTA plus soft tinted secondary buttons
+- restyle filter and utility panels so they feel like descendants of `/templates` guidance/filter surfaces rather than neutral admin cards
+
+4. `/my/records/[id]` editor atmosphere shift
+- replace the dark `EntryIntro` band with a lighter, image-free but warm hero surface that matches the public template-detail atmosphere
+- rework top metadata blocks, guidance cards, and section wrappers from stone/slate-heavy neutrals toward cream, clay, and pale orange surfaces
+- keep the form structure, step logic, and section order intact while making the editor feel like a warm continuation of template selection
+
+5. `/my/summary` finish pass
+- pull the outer page frame and non-hero surfaces into the same cream/warm-white family so the existing amber summary hero no longer sits inside a cooler shell
+- restyle empty/error CTA pairs to use the same primary/secondary hierarchy as public routes
+- align supporting metric cards and basis panels with the softer border and fill rhythm used on template cards and detail utility blocks
+
+6. Verification pass
+- compare top-of-page continuity for `/`, `/templates`, `/templates/[slug]`, and the locked `/my` routes
+- compare desktop/mobile first view for `/templates` vs `/my/records`
+- compare desktop/mobile first view for `/templates/[slug]` vs `/my/records/[id]`
+- compare desktop/mobile first view for `/templates` vs `/my/summary`
+- verify that active navigation, route identity, and primary action discoverability remain intact after the rewarm pass
+
+Phase 3 execution status (current step):
+- completed: `P3-02` top-bar continuity restore. A shared `GlobalTopBar` now provides one product-level brand/navigation anchor across `/`, `/templates`, `/templates/[slug]`, `/my/records`, `/my/records/[id]`, and `/my/summary`, while the locked `/my` variant stays visually lighter than `RecordsWorkspaceShell` so the workspace shell remains the stronger local header.
+- completed: `npm run lint` after the top-bar implementation.
+- completed: a headed Chrome verification pass on `http://127.0.0.1:3040` with `NEXT_PUBLIC_DEV_AUTH_BYPASS_ENABLED=true`, using desktop `1440x1200` and mobile `390x844` screenshots for `/`, `/templates`, `/templates/what-changed-in-my-day`, `/my/records`, `/my/records/lUNzWkHKzC5441JlUmdQ`, and `/my/summary`, confirmed the new top-of-page anchor across the Phase 3 route set and showed authenticated content-state first views for the three locked `/my` routes without top-bar-induced header crowding.
+- completed: `P3-03` shared `/my` shell/page-frame rewarm. `/my/records`, `/my/records/[id]`, and `/my/summary` now open on a cream gradient frame, and `RecordsWorkspaceShell` plus the shared top-level non-error frames now use warmer `primary`-tinted borders/fills with an orange active pill while keeping the same layout and local nav structure.
+- completed: a headed Chrome verification pass on `http://127.0.0.1:3040` with `NEXT_PUBLIC_DEV_AUTH_BYPASS_ENABLED=true`, using desktop `1440x1200` and mobile `390x844` screenshots for `/my/records`, `/my/records/lUNzWkHKzC5441JlUmdQ`, and `/my/summary`, confirmed that the shell reads warmer, the active nav pill remains the strongest shell affordance, and the shell label/title remain readable on mobile.
+- completed: `P3-04` hero/CTA restyle. `/my/records` now carries its primary actions inside a warm hero while still naming the current summary window, and `/my/records/[id]` now uses a lighter intro band with an immediate write/edit CTA that jumps straight to the form.
+- completed: a headed Chrome verification pass on `http://127.0.0.1:3040` with `NEXT_PUBLIC_DEV_AUTH_BYPASS_ENABLED=true`, using desktop `1440x1200` and mobile `390x844` screenshots for `/my/records` and `/my/records/lUNzWkHKzC5441JlUmdQ`, confirmed that summary-window context remains visible, record-stage / write-edit intent remains immediate, and the orange primary CTA stays stronger than nearby badges or metadata.
+- completed: `P3-05` supporting-surface harmonization. The locked `/my` filters, cards, metadata panels, rating controls, summary basis cards, and metric/record modules now use the same warm border/fill rhythm as the public template routes while preserving semantic colors and strong selected states where the workflow depends on them.
+- completed: `P3-06` final verification. A headed Chrome pass on `http://127.0.0.1:3040` with `NEXT_PUBLIC_DEV_AUTH_BYPASS_ENABLED=true` captured desktop/mobile comparisons for `/`, `/templates`, `/templates/what-changed-in-my-day`, `/my/records`, `/my/records/lUNzWkHKzC5441JlUmdQ`, and `/my/summary`, plus full-page `/my/records`, `/my/records/[id]`, `/my/summary`, and representative filtered-empty `/my/records` screenshots. The evidence confirms top-bar continuity, public-vs-locked first-view warmth, authenticated content-state behavior for the locked `/my` routes, readable dense surfaces, obvious selected rating buttons, and one representative empty-state hierarchy check.
+- completed: Phase 3 success checks are now satisfied for the documented route slice.
+- next: define the next bounded Phase 4 brief from remaining epic opportunities before any further implementation work resumes.
+
+### Phase 3 red-team validation
+
+Primary ways this plan could fail:
+
+1. Warmth erases route clarity
+- risk: replacing dark shell/hero treatment too aggressively could make `/my` feel prettier but less orienting, especially if the active nav pill, current route heading, or primary action lose contrast
+- guardrail: no Phase 3 step is complete unless active route indication remains visually stronger than inactive pills and the first viewport still exposes one unmistakable route heading plus one primary action
+
+2. Public baseline gets copied too literally
+- risk: `/templates` and `/templates/[slug]` are inspiration surfaces, not direct behavioral twins of list/editor/summary workflows; blindly copying their layout patterns would create style debt or workflow regressions
+- guardrail: Phase 3 should import only the public baseline's color, surface warmth, badge language, and CTA hierarchy, not its information architecture or decorative imagery requirements
+
+2a. Top-bar fixes accidentally create double headers or route clutter
+- risk: adding a missing top bar without reconciling it with `RecordsWorkspaceShell` could stack two competing anchors and make the first viewport feel crowded
+- guardrail: any new global top anchor on locked routes must stay visually subordinate to workspace navigation and preserve first-view action density
+
+3. Dense work surfaces lose scannability
+- risk: filters, rating controls, metadata blocks, summary charts, and error states carry more operational density than public marketing/discovery cards; overusing pale fills or low-contrast borders could make these harder to parse
+- guardrail: neutral support contrast is still allowed where it carries meaningful scan structure; selected, error, submitted, and summary-related states must keep stronger contrast than surrounding decorative warmth
+
+4. Verification stays too soft
+- risk: Phase 3 could be declared done from code review or loading-state screenshots even if authenticated content states regress
+- guardrail: closeout must include direct checks on authenticated content states for `/my/records`, `/my/records/[id]`, and `/my/summary`, plus at least one loading or empty/error state where shell readability is still visible
+
+Execution constraints derived from the red-team pass:
+- resolve top-bar continuity before claiming visual-system continuity; header absence is a structural break, not a polish detail
+- sequence changes so `RecordsWorkspaceShell` and page-frame warmth land before route-specific hero work; otherwise the route hero diff will overstate improvement while the subsystem split remains
+- do not recolor status semantics into one orange family; submitted/draft/error/summary-included states need semantic differentiation beyond simple brand warmth
+- do not replace all dark emphasis with warm emphasis; a small amount of strong contrast is still needed for selected nav, primary CTA, and interactive focus
+- treat `/my/summary` as the canary route for over-softening dense information, because it contains charts, counters, and metric cards that can quickly lose hierarchy
+
+Concrete acceptance gates by step:
+
+Step 1 gate: top-bar continuity
+- `/templates` and `/templates/[slug]` are no longer header-less
+- locked `/my` routes expose a clear global brand anchor without creating a visually competing double header
+- mobile first viewport still keeps route identity and at least one primary action visible after the top-anchor change
+
+Step 2 gate: shared shell rewarm
+- the shell reads warmer than before
+- active nav remains the highest-contrast pill in the shell
+- shell title and route family label remain readable on mobile without wrapping into visual clutter
+
+Step 3 gate: hero and CTA restyle
+- `/my/records` still exposes the current summary window and one clear start/revisit action in the first viewport
+- `/my/records/[id]` still exposes record stage and write/edit intent immediately on entry
+- no first-view CTA becomes visually weaker than surrounding badges or metadata cards
+
+Step 4 gate: supporting surface harmonization
+- filters remain easy to scan and change quickly
+- selected rating buttons remain obviously selected from adjacent unselected grades
+- summary bars, counts, and error/empty branches retain stronger hierarchy than surrounding decorative surface tint
+
+Step 5 gate: validation
+- desktop and mobile first views confirm continuity against the public baseline
+- authenticated content-state checks confirm no readability or hierarchy regression
+- if only loading-state evidence is available for a route, Phase 3 cannot be closed for that route
 
 ## 6. Explicit exclusions
 

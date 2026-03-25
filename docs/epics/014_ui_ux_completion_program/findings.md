@@ -275,7 +275,7 @@ Begin the locked Phase 2 implementation slice for authenticated workspace cohere
 
 ## 8. Locked Phase 3 target
 
-- `Target`: public-to-locked brand continuity across `/`, `/templates`, `/templates/[slug]`, `/my/records`, `/my/records/[id]`, and `/my/summary`
+- `Target`: shift `/my/records`, `/my/records/[id]`, and `/my/summary` toward the warmer brand language already established on `/`, `/templates`, and `/templates/[slug]`
 - `Why this goes next`: Phase 2 closed the authenticated workspace coherence gap, which makes the next most visible product-level mismatch the jump in color language and visual tone between the public discovery routes and the locked workspace routes.
 - `Planned scope`: align color/surface language, hero and shell atmosphere, and top-level route framing so the journey into `/my` feels recognizably IBNote without broad redesign.
 - `Explicit exclusions`: no auth/data behavior work, no broad IA rewrite, no reopening of locked Phase 2 route mechanics unless a fresh contradiction is discovered, and no expansion into unrelated routes.
@@ -283,4 +283,118 @@ Begin the locked Phase 2 implementation slice for authenticated workspace cohere
 
 ## 9. Next expected update
 
-Begin the bounded Phase 3 audit and implementation slice for public-to-locked brand continuity, using the closed Phase 1 image-direction evidence and the now-verified Phase 2 workspace shell as the visual anchors.
+Begin the bounded Phase 3 audit and implementation slice by treating the public discovery routes as the visual source of truth, then selectively restyling the closed Phase 2 workspace surfaces so they inherit that warmer language without losing the verified shell/navigation clarity.
+
+## 10. Phase 3 audit findings
+
+Status: audit completed on 2026-03-25 from actual route implementation plus stored route-screen references.
+
+### `P3-F01`
+- `Finding`: The shared `/my` page frame still establishes a colder subsystem before any route-specific content appears.
+- `Affected routes`: `/my/records`, `/my/records/[id]`, `/my/summary`
+- `Evidence`: All three locked routes still wrap content in `bg-stone-100` page frames, and their shared `RecordsWorkspaceShell` uses white/slate framing with black active pills rather than the orange/cream baseline used on `/`, `/templates`, and `/templates/[slug]` ([records-list-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/records-list-client.tsx#L87), [record-editor.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/record-editor.tsx#L52), [summary-page-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/summary/summary-page-client.tsx#L31), [records-workspace-shell.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/records-workspace-shell.tsx#L19)). Public routes instead open on `bg-background-light` with orange accent borders, soft white cards, and warm pill treatment ([page.tsx](/Users/junwon/projects/esanzy87/ibnote/src/app/page.tsx#L41), [template-library-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/templates/template-library-client.tsx#L82), [protected-template-detail.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/templates/protected-template-detail.tsx#L61)).
+- `Impact`: Even before users evaluate route content, the locked workspace announces “different product” through its shell and background tone. This is now the highest-leverage continuity gap because Phase 2 already solved route identity and nav consistency.
+- `Priority`: `P0`
+- `Decision`: fix now
+- `Validation needed`: confirm that rewarming the shared shell preserves active-route contrast and keeps the nav readable on mobile.
+- `Carry-forward`: start Phase 3 with shared shell/background retheming before touching route-specific hero sections.
+
+### `P3-F02`
+- `Finding`: `/my/records` and `/my/records/[id]` still rely on dark hero bands that conflict with the public journey's lighter, warmer top-of-page atmosphere.
+- `Affected routes`: `/my/records`, `/my/records/[id]`
+- `Evidence`: `RecordsHero` uses a dark slate gradient with white stats cards, and `EntryIntro` uses a similar dark horizontal gradient plus monochrome chips ([records-list-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/records-list-client.tsx#L113), [record-editor.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/record-editor.tsx#L166)). By contrast, the public library and detail routes rely on cream backgrounds, orange badges, light cards, and image-led or pale hero surfaces ([template-library-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/templates/template-library-client.tsx#L86), [template-card.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/templates/template-card.tsx#L13), [protected-template-detail.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/templates/protected-template-detail.tsx#L61)).
+- `Impact`: These hero sections are the strongest single contributors to the “dashboard jump” when moving from template discovery into writing and revisit.
+- `Priority`: `P0`
+- `Decision`: fix now
+- `Validation needed`: compare first-view impressions after hero restyling to ensure the record list/editor still communicate route purpose immediately.
+- `Carry-forward`: Phase 3 should replace dark hero emphasis with lighter warm panels and orange-led badge/CTA hierarchy.
+
+### `P3-F03`
+- `Finding`: `/my/summary` is partially aligned but still visually cooler than the public baseline in its frame, empty/error actions, and supporting cards.
+- `Affected routes`: `/my/summary`
+- `Evidence`: `SummaryOverview` already uses `from-white via-stone-50 to-amber-50`, but the surrounding page still uses `bg-stone-100`, many supporting cards stay `border-stone-200 bg-stone-50`, and empty/error branches continue to use black or rose-heavy action treatment instead of the public primary/secondary button rhythm ([summary-page-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/summary/summary-page-client.tsx#L31), [summary-page-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/summary/summary-page-client.tsx#L195), [summary-page-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/summary/summary-page-client.tsx#L238), [summary-page-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/summary/summary-page-client.tsx#L289)).
+- `Impact`: Summary is the closest locked route to the desired tone, so it should be treated as a finish pass rather than a redesign. That makes it a good proving ground for the shared surface system after shell retheming.
+- `Priority`: `P1`
+- `Decision`: fix now
+- `Validation needed`: confirm that the lighter summary treatment still preserves emphasis for key stats and error recovery actions.
+- `Carry-forward`: apply shell retheming first, then do a smaller route-specific pass on summary cards and CTA hierarchy.
+
+### `P3-F04`
+- `Finding`: Secondary cards, filters, and metadata chips across the locked `/my` routes still read as neutral utility panels instead of warm companion surfaces.
+- `Affected routes`: `/my/records`, `/my/records/[id]`, `/my/summary`
+- `Evidence`: Filters, metadata panels, guide cards, rating cards, and summary basis cards rely heavily on `border-stone-200`, `bg-white`, and `bg-stone-50` utility styling ([records-list-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/records-list-client.tsx#L247), [record-editor.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/record-editor.tsx#L201), [record-editor.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/record-editor.tsx#L283), [record-editor.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/record-editor.tsx#L316), [summary-page-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/summary/summary-page-client.tsx#L297), [summary-page-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/summary/summary-page-client.tsx#L316)). Public surfaces instead use warm tinted backgrounds, low-contrast orange borders, and softer CTA fills for guidance and support blocks ([template-library-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/templates/template-library-client.tsx#L97), [protected-template-detail.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/templates/protected-template-detail.tsx#L91), [protected-template-detail.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/templates/protected-template-detail.tsx#L108), [protected-template-detail.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/templates/protected-template-detail.tsx#L142)).
+- `Impact`: If Phase 3 changes only the shell and heroes, the product will still feel split once users scroll into actual work. Supporting surfaces need a second-pass system cleanup to finish the illusion of one product language.
+- `Priority`: `P1`
+- `Decision`: fix now
+- `Validation needed`: verify that warmer tinted cards do not reduce scannability for dense content like filters, competency ratings, and metric grids.
+- `Carry-forward`: schedule a focused follow-up pass after shell and hero retheming to harmonize internal surfaces.
+
+### `P3-F05`
+- `Finding`: The current Phase 3 plan could still fail by importing public-route warmth too literally and accidentally weakening route clarity, selected-state contrast, or dense-data scannability.
+- `Affected routes`: `/my/records`, `/my/records/[id]`, `/my/summary`
+- `Evidence`: The shared shell currently depends on a black active pill for route emphasis ([records-workspace-shell.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/records-workspace-shell.tsx#L33)); the record list hero carries crucial summary-window context inside a dark hero block ([records-list-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/records-list-client.tsx#L121)); the editor uses strong contrast in the intro band and selected rating buttons to communicate stage and selection state ([record-editor.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/record-editor.tsx#L172), [record-editor.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/record-editor.tsx#L343)); and the summary route depends on contrast in counts, bars, and CTA pairs to keep dense information readable ([summary-page-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/summary/summary-page-client.tsx#L250), [summary-page-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/summary/summary-page-client.tsx#L315)).
+- `Impact`: Without explicit guardrails, a “warmer is better” pass could produce a superficially more coherent UI that is actually less usable in the working parts of the product.
+- `Priority`: `P0`
+- `Decision`: fix now
+- `Validation needed`: require route-specific acceptance gates for shell contrast, first-view CTA visibility, selected-state clarity, and authenticated content-state verification before Phase 3 can close.
+- `Carry-forward`: treat the red-team constraints as part of the Phase 3 execution spec, not as optional advice.
+
+### `P3-F06`
+- `Finding`: Top-bar continuity is still broken across the Phase 3 route set, and that header absence is itself a visible product-fragmentation issue.
+- `Affected routes`: `/`, `/templates`, `/templates/[slug]`, `/my/records`, `/my/records/[id]`, `/my/summary`
+- `Evidence`: `/` already renders a sticky top navigation bar with IBNote branding and a login action ([page.tsx](/Users/junwon/projects/esanzy87/ibnote/src/app/page.tsx#L43)), but `/templates` currently starts directly at page content with no matching top bar ([template-library-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/templates/template-library-client.tsx#L82)), and `/templates/[slug]` similarly starts directly at the detail hero/content stack ([protected-template-detail.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/templates/protected-template-detail.tsx#L59)). The locked `/my` routes begin with `RecordsWorkspaceShell`, which gives workspace-local navigation but not a clearly global top-of-product anchor ([records-workspace-shell.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/records-workspace-shell.tsx#L19)).
+- `Impact`: Even if colors and surfaces are aligned, users will still feel a seam if core routes inconsistently have or lack a top brand/navigation bar. This is a structural continuity issue, not just a cosmetic one.
+- `Priority`: `P0`
+- `Decision`: fix now
+- `Validation needed`: confirm that Phase 3 introduces or restores a coherent top-of-page anchor without creating double-header crowding on the locked `/my` routes.
+- `Carry-forward`: treat top-bar continuity as an explicit first implementation step in Phase 3 before shell/hero warmth refinements.
+
+### `P3-F07`
+- `Finding`: Phase 3 top-bar continuity is now restored across the public discovery and locked workspace route set without collapsing the `/my` first viewport into competing headers.
+- `Affected routes`: `/`, `/templates`, `/templates/[slug]`, `/my/records`, `/my/records/[id]`, `/my/summary`
+- `Evidence`: A new shared `GlobalTopBar` now anchors the route set, with `/` switched from its inline home-only header, `/templates` and `/templates/[slug]` wrapped in the same brand/navigation bar, and `/my/records`, `/my/records/[id]`, plus `/my/summary` placing a lighter workspace variant above `RecordsWorkspaceShell` ([global-top-bar.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/navigation/global-top-bar.tsx), [page.tsx](/Users/junwon/projects/esanzy87/ibnote/src/app/page.tsx), [template-library-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/templates/template-library-client.tsx), [protected-template-detail.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/templates/protected-template-detail.tsx), [records-list-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/records-list-client.tsx), [record-editor.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/record-editor.tsx), [summary-page-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/summary/summary-page-client.tsx)). `npm run lint` passed after the change, and a headed Chrome pass against `http://127.0.0.1:3040` with `NEXT_PUBLIC_DEV_AUTH_BYPASS_ENABLED=true` captured desktop (`1440x1200`) and mobile (`390x844`) screenshots for `/`, `/templates`, `/templates/what-changed-in-my-day`, `/my/records`, `/my/records/lUNzWkHKzC5441JlUmdQ`, and `/my/summary`, showing the restored top anchor plus authenticated content-state first views on the locked `/my` routes.
+- `Impact`: The public discovery flow and locked workspace now feel like one product family at the very top of the page, which removes the most structural continuity break before any warmer retheming work begins.
+- `Priority`: `P0`
+- `Decision`: fix now
+- `Validation needed`: keep using the headed desktop/mobile route set during `P3-03`+ so the new top anchor stays subordinate to workspace-local hierarchy while the `/my` shell warms up.
+- `Carry-forward`: move to `P3-03` next by rewarming the shared `/my` shell and page frame, using the restored top bar as the continuity baseline rather than reopening header mechanics.
+
+### `P3-F08`
+- `Finding`: The shared `/my` shell and page frame now inherit the public route warmth without giving up the stronger Phase 2 route hierarchy.
+- `Affected routes`: `/my/records`, `/my/records/[id]`, `/my/summary`
+- `Evidence`: The three locked `/my` page frames now use a cream gradient instead of `bg-stone-100`, and their top-level non-error `Surface` states plus `RecordsWorkspaceShell` now use warmer `primary`-tinted borders/fills with an orange active pill rather than white/slate framing and a black active pill ([records-list-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/records-list-client.tsx), [record-editor.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/record-editor.tsx), [summary-page-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/summary/summary-page-client.tsx), [records-workspace-shell.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/records-workspace-shell.tsx)). A headed Chrome validation pass against `http://127.0.0.1:3040` at `1440x1200` and `390x844` for `/my/records`, `/my/records/lUNzWkHKzC5441JlUmdQ`, and `/my/summary` showed a warmer shell/frame on both widths, with the active nav pill still the highest-contrast control and the shell title plus route-family label staying readable on mobile.
+- `Impact`: The locked workspace now feels materially closer to the public discovery baseline before users even reach the darker route-specific heroes, which means the remaining discontinuity is concentrated in the hero/CTA language rather than the whole subsystem frame.
+- `Priority`: `P0`
+- `Decision`: fix now
+- `Validation needed`: when restyling heroes next, keep checking that the warmed shell still outranks inactive pills and that the now-lighter shell does not get visually swallowed by route-specific hero treatment.
+- `Carry-forward`: move to `P3-04` next and replace the dark record heroes / black-primary CTA hierarchy, using the warmed shell/frame as the non-negotiable baseline.
+
+### `P3-F09`
+- `Finding`: The record-list and record-editor first views now use warmer public-descendant hero language, and their first primary actions are finally explicit in the first viewport instead of hiding below darker work surfaces.
+- `Affected routes`: `/my/records`, `/my/records/[id]`
+- `Evidence`: `RecordsHero` now uses a warm cream/orange gradient with orange primary/soft secondary CTA buttons inside the hero while still spelling out the active summary window, and the record-list top CTA blocks now follow the same orange-primary hierarchy instead of black-filled pills ([records-list-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/records-list-client.tsx)). `EntryIntro` now uses a warm hero panel with lighter stage pills plus a direct jump CTA to the writing form, and the editor's missing-record CTA pair now follows the same orange-primary / warm-secondary rhythm ([record-editor.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/record-editor.tsx)). A headed Chrome validation pass against `http://127.0.0.1:3040` at `1440x1200` and `390x844` for `/my/records` and `/my/records/lUNzWkHKzC5441JlUmdQ` confirmed that summary-window context remains visible on the record list, record-stage / write-edit intent remains immediate on the editor, and the new orange primary CTA remains stronger than the nearby status chips or metadata.
+- `Impact`: The discovery-to-workspace handoff now feels substantially less like a jump into a dashboard. The remaining mismatch is no longer the hero band itself but the neutral supporting surfaces underneath it.
+- `Priority`: `P0`
+- `Decision`: fix now
+- `Validation needed`: carry the same desktop/mobile route set into `P3-05` so warmer support cards do not overpower selected states or flatten dense information.
+- `Carry-forward`: move to `P3-05` next and harmonize filters, guidance cards, metadata panels, rating controls, and summary support surfaces while preserving scannability.
+
+### `P3-F10`
+- `Finding`: The locked `/my` supporting surfaces now follow the public route warmth more consistently while keeping dense operational states scannable.
+- `Affected routes`: `/my/records`, `/my/records/[id]`, `/my/summary`
+- `Evidence`: The records list now warms its filter shell, empty state, revisit cards, record cards, and neutral summary-window badges; the editor now warms section frames, metadata panels, guide cards, form inputs, checklist shells, rating groups, and save/submit CTA hierarchy; and the summary route now warms its basis cards, metric cards, recent-record cards, empty-state CTA pair, and bar/card surfaces without recoloring the semantic grade/status chips into one flat tone ([records-list-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/records-list-client.tsx), [record-editor.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/records/record-editor.tsx), [summary-page-client.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/summary/summary-page-client.tsx)).
+- `Impact`: After the shell and hero work landed, these supporting surfaces were the last major reason the locked workspace still felt like a parallel utility system. Their alignment now makes the whole `/my` slice read more deliberately as one product family.
+- `Priority`: `P1`
+- `Decision`: fix now
+- `Validation needed`: close Phase 3 with direct route comparison and at least one representative empty/content-state check so the warmer support tint is judged in actual use rather than code review only.
+- `Carry-forward`: run `P3-06` against the full route comparison set and only close Phase 3 if selected-state contrast, dense-data readability, and empty-state hierarchy still hold.
+
+### `P3-F11`
+- `Finding`: Phase 3 exit conditions are now satisfied for the locked route slice.
+- `Affected routes`: `/`, `/templates`, `/templates/[slug]`, `/my/records`, `/my/records/[id]`, `/my/summary`
+- `Evidence`: A final headed Chrome pass against `http://127.0.0.1:3040` with `NEXT_PUBLIC_DEV_AUTH_BYPASS_ENABLED=true` captured desktop (`1440x1200`) and mobile (`390x844`) screenshots for `/`, `/templates`, `/templates/what-changed-in-my-day`, `/my/records`, `/my/records/lUNzWkHKzC5441JlUmdQ`, and `/my/summary`, plus full-page screenshots for `/my/records`, `/my/records/lUNzWkHKzC5441JlUmdQ`, `/my/summary`, and a representative filtered-empty `/my/records` state. The screenshots confirm restored top-bar continuity across the public and locked routes, warmer public-descendant first views on the locked `/my` routes, authenticated content-state behavior for `/my/records`, `/my/records/[id]`, and `/my/summary`, visibly selected rating controls in the editor, readable summary counts/bars/cards, and a representative empty-state CTA hierarchy that stays stronger than the decorative tint. `npm run lint` also passed after the final support-surface pass.
+- `Impact`: Phase 3 can now close honestly. The public discovery flow and the locked workspace routes in scope no longer feel like separate products at the top, shell, hero, or supporting-surface layers.
+- `Priority`: `P0`
+- `Decision`: fix now
+- `Validation needed`: none for Phase 3 closeout.
+- `Carry-forward`: keep Phase 3 closed, preserve this visual baseline, and define the next bounded Phase 4 brief before any further implementation work starts.

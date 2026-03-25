@@ -18,8 +18,8 @@ const ROUTES: RouteAnchor[] = [
 
 export function RecordsWorkspaceShell({ active }: RecordsWorkspaceShellProps) {
   return (
-    <header className="rounded-[1.75rem] border border-stone-200 bg-white px-5 py-4 shadow-sm sm:px-7 sm:py-5">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">기록 워크스페이스</p>
+    <header className="rounded-[1.75rem] border border-primary/10 bg-gradient-to-r from-white via-[#fff8f1] to-white px-5 py-4 shadow-[0_24px_60px_-40px_rgba(186,93,28,0.45)] sm:px-7 sm:py-5">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/80">기록 워크스페이스</p>
       <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-xl font-semibold text-slate-900 sm:text-2xl">내 기록으로 이어가기</h1>
         <nav className="flex flex-wrap gap-2">
@@ -32,8 +32,8 @@ export function RecordsWorkspaceShell({ active }: RecordsWorkspaceShellProps) {
                 href={route.href}
                 className={
                   isActive
-                    ? 'inline-flex items-center rounded-full border border-slate-900 bg-slate-900 px-4 py-2 text-sm font-medium text-white'
-                    : 'inline-flex items-center rounded-full border border-stone-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-stone-300 hover:text-slate-900'
+                    ? 'inline-flex items-center rounded-full border border-primary bg-primary px-4 py-2 text-sm font-medium text-white shadow-lg shadow-primary/20'
+                    : 'inline-flex items-center rounded-full border border-primary/10 bg-background-light px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-primary/20 hover:text-slate-900'
                 }
               >
                 {route.label}

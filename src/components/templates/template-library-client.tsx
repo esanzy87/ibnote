@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
+import { GlobalTopBar } from '@/components/navigation/global-top-bar';
 import { TemplateCard } from '@/components/templates/template-card';
 import {
   TemplateLibraryFilters,
@@ -18,6 +19,18 @@ import { DEFAULT_TEMPLATE_FILTERS, filterTemplates, type TemplateFilters } from 
 
 interface TemplateLibraryClientProps {
   templates: EnrichedWorksheetTemplate[];
+}
+
+function TemplateLibraryFrame({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex min-h-screen flex-col bg-background-light">
+      <GlobalTopBar
+        active="templates"
+        action={{ href: '/my/records', icon: 'edit_note', label: '내 기록 보기', tone: 'secondary' }}
+      />
+      <div className="flex-1">{children}</div>
+    </div>
+  );
 }
 
 function AuthLoadingState() {
@@ -76,11 +89,24 @@ export function TemplateLibraryClient({ templates }: TemplateLibraryClientProps)
     [filteredTemplates],
   );
 
-  if (status === 'loading') return <AuthLoadingState />;
-  if (status === 'unauthenticated') return <RedirectingState />;
+  if (status === 'loading') {
+    return (
+      <TemplateLibraryFrame>
+        <AuthLoadingState />
+      </TemplateLibraryFrame>
+    );
+  }
+
+  if (status === 'unauthenticated') {
+    return (
+      <TemplateLibraryFrame>
+        <RedirectingState />
+      </TemplateLibraryFrame>
+    );
+  }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background-light">
+    <TemplateLibraryFrame>
       <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 md:py-12">
         {/* Hero Section */}
         <div className="mb-10">
@@ -130,6 +156,6 @@ export function TemplateLibraryClient({ templates }: TemplateLibraryClientProps)
           )}
         </div>
       </main>
-    </div>
+    </TemplateLibraryFrame>
   );
 }

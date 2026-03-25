@@ -12,6 +12,10 @@ Date: 2026-03-24
 | R-03 | Scope sprawl | A UI/UX completion program can accidentally become a whole-product redesign. | Keep per-phase exclusions explicit and write them into the active phase brief. |
 | R-04 | Weak rollover discipline | Findings may be forgotten, causing the next phase to start from vague intuition again. | Require findings and next-phase brief updates in the 014 docpack before phase rollover. |
 | R-05 | False completion claims | The product may feel improved in code review but not in real usage. | Keep validation claims narrow and honest, and verify the affected flows directly when possible. |
+| R-06 | Warmth-over-clarity regression | Phase 3 could improve tonal continuity while degrading route identity, active state contrast, or primary action discoverability. | Add route-level acceptance gates that explicitly preserve shell contrast, route headings, and first-viewport CTA visibility. |
+| R-07 | Dense-surface readability loss | Filters, rating controls, metric cards, and summary bars may become harder to scan if public-route warmth is copied too literally. | Allow stronger neutral/semantic contrast where operational scannability matters, and verify selected/error/data-heavy states separately from hero polish. |
+| R-08 | Baseline overfitting | The public discovery routes are inspiration surfaces, not behavioral twins of the `/my` workflows. | Reuse only the public color/surface/CTA language, not public-route information architecture or decorative requirements. |
+| R-09 | Header continuity break | Some core routes currently lack a top bar while others have one, so the product can still feel stitched together even after surface re-theming. | Make top-bar continuity an explicit Phase 3 scope item and verify that any fix does not create double-header crowding on locked routes. |
 
 ## 2. Current risk posture
 
@@ -19,3 +23,6 @@ No blocker is currently confirmed.
 
 The main operational challenge for 014 is not technical feasibility.
 It is maintaining disciplined phase boundaries while still allowing the epic to continue forward over time.
+
+For Phase 3 specifically, the main danger is now not under-design but misapplied design:
+making the locked workspace warmer in a way that weakens the clarity gains closed in Phase 2.
