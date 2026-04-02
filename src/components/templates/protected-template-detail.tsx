@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { GlobalTopBar } from '@/components/navigation/global-top-bar';
+import { getTemplatePhase4Asset } from '@/lib/assets/phase4-route-images';
 import { buildLoginHref } from '@/lib/auth/ensure-auth';
 import { useAuthUser } from '@/lib/auth/use-auth-user';
 import {
@@ -77,23 +79,42 @@ function InvalidTemplateState() {
 
 function TemplateDetailContent({ template }: { template: EnrichedWorksheetTemplate }) {
   const clusterLabel = ACTIVITY_CLUSTER_LABELS[template.activityCluster];
-  
+  const imageAsset = getTemplatePhase4Asset(template.slug);
+
   return (
     <TemplateDetailFrame>
       <div className="layout-content-container mx-auto flex max-w-[800px] flex-1 flex-col px-4 py-5 pb-32">
         {/* Hero Section */}
         <div className="mb-8">
           <div className="relative mb-6 flex h-48 w-full items-center justify-center overflow-hidden rounded-xl bg-primary/5 md:h-64">
-            <span className="material-symbols-outlined text-7xl text-primary/20">
-              {template.activityCluster === 'conversational_check_ins' ? 'chat' :
-                template.activityCluster === 'notice_pattern_sort' ? 'visibility' : 'extension'}
-            </span>
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/10 to-transparent" />
+            {imageAsset ? (
+              <>
+                <Image
+                  src={imageAsset.src}
+                  alt={imageAsset.alt}
+                  fill
+                  priority
+                  sizes="(min-width: 768px) 800px, 100vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-slate-900/15 to-transparent" />
+              </>
+            ) : (
+              <>
+                <span className="material-symbols-outlined text-7xl text-primary/20">
+                  {template.activityCluster === 'conversational_check_ins' ? 'chat' :
+                    template.activityCluster === 'notice_pattern_sort' ? 'visibility' : 'extension'}
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/10 to-transparent" />
+              </>
+            )}
             <div className="absolute bottom-6 left-6">
               <span className="mb-2 inline-block rounded-full bg-primary px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">
                 {clusterLabel}
               </span>
-              <h1 className="text-3xl font-black leading-tight tracking-tighter text-slate-900 md:text-4xl">{template.title}</h1>
+              <h1 className={`text-3xl font-black leading-tight tracking-tighter md:text-4xl ${imageAsset ? 'text-white' : 'text-slate-900'}`}>
+                {template.title}
+              </h1>
             </div>
           </div>
 

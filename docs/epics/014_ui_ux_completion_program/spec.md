@@ -349,7 +349,52 @@ Phase 3 execution status (current step):
 - completed: `P3-05` supporting-surface harmonization. The locked `/my` filters, cards, metadata panels, rating controls, summary basis cards, and metric/record modules now use the same warm border/fill rhythm as the public template routes while preserving semantic colors and strong selected states where the workflow depends on them.
 - completed: `P3-06` final verification. A headed Chrome pass on `http://127.0.0.1:3040` with `NEXT_PUBLIC_DEV_AUTH_BYPASS_ENABLED=true` captured desktop/mobile comparisons for `/`, `/templates`, `/templates/what-changed-in-my-day`, `/my/records`, `/my/records/lUNzWkHKzC5441JlUmdQ`, and `/my/summary`, plus full-page `/my/records`, `/my/records/[id]`, `/my/summary`, and representative filtered-empty `/my/records` screenshots. The evidence confirms top-bar continuity, public-vs-locked first-view warmth, authenticated content-state behavior for the locked `/my` routes, readable dense surfaces, obvious selected rating buttons, and one representative empty-state hierarchy check.
 - completed: Phase 3 success checks are now satisfied for the documented route slice.
-- next: define the next bounded Phase 4 brief from remaining epic opportunities before any further implementation work resumes.
+- next: execute the bounded Phase 4 image-realization slice for `/`, `/templates`, and `/templates/[slug]`.
+
+### Phase 4 brief
+
+Phase 4 target:
+- replace the remaining placeholder-grade imagery on the public discovery/template routes with secured real image assets
+
+Phase 4 objective:
+- make `/`, `/templates`, and `/templates/[slug]` consume finished route-appropriate imagery instead of oversized icon blocks or other placeholder stand-ins
+- carry the validated Gate B warm family-reflection image thesis into the live product without widening into a broad asset program or redesign
+
+Phase 4 planned scope:
+- identify the exact image placements on `/`, `/templates`, and `/templates/[slug]` that still rely on placeholder or icon-only treatment
+- secure the bounded asset set needed to satisfy those placements inside the repo
+- wire the secured assets into the existing public-route hero/card/detail surfaces with appropriate cropping and fallback treatment
+- keep the current Phase 3 public-to-locked continuity intact while raising finish quality on the discovery/template routes
+
+Phase 4 asset procurement path:
+- first attempt to generate the needed assets from within the Codex environment using the default available image-generation path
+- if direct Codex-side generation is unavailable or fails to produce truthful usable files, write finalized prompts and filenames for an external-generation fallback
+- in the fallback path, James may generate the assets in an external tool such as Google Gemini Nano Banana and place the resulting files into the repo via inbox for final selection, integration, and verification
+- do not close Phase 4 on prompts alone; the route only counts once the actual asset files are present in the repo and wired into the live surfaces
+- the current bounded external-generation handoff artifact is `docs/epics/014_ui_ux_completion_program/artifacts/phase4_asset_handoff/014_phase4_image_asset_prompt_pack.md`
+
+Phase 4 allowed changes:
+- image asset files, image references, and bounded presentation-layer updates required to place those assets cleanly on `/`, `/templates`, and `/templates/[slug]`
+- small route-level layout or overlay adjustments required to preserve text readability, crop behavior, and CTA clarity once real imagery replaces placeholders
+- supporting docpack updates that record which assets were secured, where they were placed, and what was verified
+
+Phase 4 non-goals:
+- no authentication, data, persistence, template taxonomy, filtering, summary, or editor behavior changes
+- no widening into locked `/my` route redesign, new route creation, or a whole-site art direction rewrite
+- no open-ended batch asset generation program beyond the bounded assets needed to replace the current placeholder slots in scope
+- no claim that an image is production-ready unless the actual file is present in the repo and rendered in the route
+
+Phase 4 success checks:
+- the homepage hero and supporting public discovery image placements no longer read as placeholder icon blocks where a real image surface is intended
+- the template library and template detail routes each use secured image assets rather than placeholder-grade stand-ins for the key in-scope surfaces
+- desktop and mobile first views keep route labels, CTA hierarchy, and text readability after the new imagery is applied
+- no in-scope route closes with only prompt-pack or planning evidence; the actual asset files must be present and consumed by the route
+- the bounded Phase 4 asset set is complete only when all nineteen expected files from the external prompt pack have been returned into `docs/inbox/`
+
+Phase 4 verification notes:
+- verify desktop and mobile first views for `/`, `/templates`, and `/templates/[slug]` after the new assets are wired in
+- verify that image crops, overlays, and fallback behavior remain stable on the actual rendered routes
+- compare the final in-scope public surfaces against the pre-Phase 4 placeholder state so finish-quality improvement is based on real route evidence rather than asset review alone
 
 ### Phase 3 red-team validation
 

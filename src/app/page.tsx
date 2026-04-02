@@ -1,6 +1,8 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { GlobalTopBar } from '@/components/navigation/global-top-bar';
+import { HOME_ROUTE_IMAGES } from '@/lib/assets/phase4-route-images';
 
 const HOW_IT_WORKS_STEPS = [
   {
@@ -25,16 +27,19 @@ const TEMPLATE_EXAMPLES = [
     title: '내 생각 말해 보기',
     summary: '하나의 의견을 말하고 이유를 붙여 보며 대화를 시작하는 템플릿입니다.',
     icon: 'chat',
+    image: HOME_ROUTE_IMAGES.examples.opinionTalk,
   },
   {
     title: '오늘 달라진 점 찾기',
     summary: '생활 속 변화를 함께 관찰하고 전후를 설명해 보는 템플릿입니다.',
     icon: 'visibility',
+    image: HOME_ROUTE_IMAGES.examples.noticingChange,
   },
   {
     title: '이번 주 작은 실천 정하기',
     summary: '지금 할 수 있는 작은 행동 하나를 고르고 왜 중요한지 남기는 템플릿입니다.',
     icon: 'assignment',
+    image: HOME_ROUTE_IMAGES.examples.smallAction,
   },
 ] as const;
 
@@ -79,10 +84,16 @@ export default function HomePage() {
             <div className="relative">
               <div className="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-primary/10 blur-3xl"></div>
               <div className="relative rotate-3 rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl">
-                <div className="aspect-video overflow-hidden rounded-xl bg-primary/5">
-                  <div className="flex h-full items-center justify-center text-primary/20">
-                    <span className="material-symbols-outlined text-8xl">auto_stories</span>
-                  </div>
+                <div className="relative aspect-video overflow-hidden rounded-xl bg-primary/5">
+                  <Image
+                    src={HOME_ROUTE_IMAGES.hero.src}
+                    alt={HOME_ROUTE_IMAGES.hero.alt}
+                    fill
+                    priority
+                    sizes="(min-width: 768px) 40vw, 90vw"
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-slate-900/10 via-transparent to-white/10" />
                 </div>
                 <div className="mt-6 flex items-center gap-3">
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary">
@@ -129,19 +140,31 @@ export default function HomePage() {
               {TEMPLATE_EXAMPLES.map((example) => (
                 <div
                   key={example.title}
-                  className="group rounded-xl border border-slate-100 bg-white p-8 shadow-md transition-all hover:shadow-xl"
+                  className="group overflow-hidden rounded-xl border border-slate-100 bg-white shadow-md transition-all hover:shadow-xl"
                 >
-                  <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <span className="material-symbols-outlined">{example.icon}</span>
+                  <div className="relative aspect-video overflow-hidden bg-primary/5">
+                    <Image
+                      src={example.image.src}
+                      alt={example.image.alt}
+                      fill
+                      sizes="(min-width: 1024px) 22vw, (min-width: 768px) 30vw, 100vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-900/30 to-transparent" />
                   </div>
-                  <h3 className="mb-3 text-2xl font-bold">{example.title}</h3>
-                  <p className="text-slate-600">{example.summary}</p>
-                  <Link
-                    href="/login"
-                    className="mt-6 flex items-center gap-2 font-bold text-primary transition-all group-hover:gap-3"
-                  >
-                    지금 시작 <span className="material-symbols-outlined text-sm">arrow_forward_ios</span>
-                  </Link>
+                  <div className="p-8">
+                    <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <span className="material-symbols-outlined">{example.icon}</span>
+                    </div>
+                    <h3 className="mb-3 text-2xl font-bold">{example.title}</h3>
+                    <p className="text-slate-600">{example.summary}</p>
+                    <Link
+                      href="/login"
+                      className="mt-6 flex items-center gap-2 font-bold text-primary transition-all group-hover:gap-3"
+                    >
+                      지금 시작 <span className="material-symbols-outlined text-sm">arrow_forward_ios</span>
+                    </Link>
+                  </div>
                 </div>
               ))}
             </div>

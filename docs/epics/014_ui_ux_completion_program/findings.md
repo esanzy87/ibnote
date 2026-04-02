@@ -397,4 +397,14 @@ Status: audit completed on 2026-03-25 from actual route implementation plus stor
 - `Priority`: `P0`
 - `Decision`: fix now
 - `Validation needed`: none for Phase 3 closeout.
-- `Carry-forward`: keep Phase 3 closed, preserve this visual baseline, and define the next bounded Phase 4 brief before any further implementation work starts.
+- `Carry-forward`: keep Phase 3 closed, preserve this visual baseline, and use Phase 4 to secure the missing public-route image assets and replace the remaining placeholder/icon-only imagery on `/`, `/templates`, and `/templates/[slug]`, first by attempting Codex-side generation in the default environment and then by falling back to user-generated external outputs delivered back into the repo when direct generation is unavailable.
+
+### `P4-F01`
+- `Finding`: Phase 4 asset procurement can now proceed through a concrete bounded external-generation handoff even without `OPENAI_API_KEY` in the current Codex environment.
+- `Affected routes`: `/`, `/templates`, `/templates/[slug]`
+- `Evidence`: The current public routes still rely on one homepage hero placeholder, three homepage example-card icon slots, template-library card placeholders, and template-detail hero placeholders in the live code ([page.tsx](/Users/junwon/projects/esanzy87/ibnote/src/app/page.tsx#L77), [page.tsx](/Users/junwon/projects/esanzy87/ibnote/src/app/page.tsx#L128), [template-card.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/templates/template-card.tsx#L17), [protected-template-detail.tsx](/Users/junwon/projects/esanzy87/ibnote/src/components/templates/protected-template-detail.tsx#L86)). The updated handoff document at [014_phase4_image_asset_prompt_pack.md](/Users/junwon/projects/esanzy87/ibnote/docs/epics/014_ui_ux_completion_program/artifacts/phase4_asset_handoff/014_phase4_image_asset_prompt_pack.md) now defines the bounded asset set as nineteen files: one homepage hero image, three homepage example-card images, and fifteen slug-specific template images that can be reused between `/templates` cards and their matching `/templates/[slug]` heroes without making the library grid feel repetitive.
+- `Impact`: Phase 4 no longer depends on in-session image generation to move forward, and the asset strategy now better matches the template-library browsing experience by avoiding repeated cluster imagery across many cards. James can generate the exact bounded asset set externally and return only the selected final files into `docs/inbox/` for implementation.
+- `Priority`: `P0`
+- `Decision`: fix now
+- `Validation needed`: Confirm that all nineteen expected filenames appear in `docs/inbox/` before wiring assets into the routes.
+- `Carry-forward`: once the inbox files exist, move directly into `P4-03` route integration without reopening the bounded asset list.
