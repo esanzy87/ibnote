@@ -57,7 +57,7 @@ export default function HomePage() {
           <div className="mx-auto grid max-w-6xl items-center gap-16 px-6 md:grid-cols-2">
             <div className="z-10 flex flex-col gap-8">
               <div className="inline-flex items-center gap-2 self-start rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
-                <span className="material-symbols-outlined text-sm">colors_spark</span>
+                <span className="material-symbols-outlined text-sm">auto_awesome</span>
                 부모를 위한 따뜻한 기록
               </div>
               <h1 className="text-5xl font-extrabold leading-[1.1] tracking-tight text-slate-900 md:text-7xl">

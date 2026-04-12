@@ -23,8 +23,8 @@ type NavLink = {
 
 const NAV_LINKS: NavLink[] = [
   { href: '/', label: '홈', value: 'home' },
-  { href: '/templates', label: '템플릿', value: 'templates' },
-  { href: '/my/records', label: '내 공간', value: 'workspace' },
+  { href: '/templates', label: '활동 탐색', value: 'templates' },
+  { href: '/my/records', label: '나의 기록', value: 'workspace' },
 ];
 
 function getActionClassName(tone: TopBarAction['tone']) {

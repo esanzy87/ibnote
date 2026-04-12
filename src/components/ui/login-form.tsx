@@ -15,6 +15,14 @@ interface LoginFormProps {
   requestedNextTarget: string | null;
 }
 
+function getPathLabel(path: string): string {
+  if (path === '/') return '메인 홈';
+  if (path.startsWith('/templates')) return '활동 탐색';
+  if (path.startsWith('/my/records/new')) return '새로운 기록 시작';
+  if (path === '/my/records') return '나의 기록 보관소';
+  return '이전 활동 페이지';
+}
+
 function getSubmitLabel(mode: AuthMode, isSubmitting: boolean): string {
   if (isSubmitting) {
     return mode === 'sign_in' ? '로그인 중...' : '계정 생성 중...';
@@ -112,9 +120,9 @@ export function LoginForm({ nextTarget, requestedNextTarget }: LoginFormProps) {
               로그인하면 이전에 남긴 기록과 최근 요약을 바로 확인하고, 이어서 새로운 활동을 기록할 수 있습니다.
             </p>
 
-            <div className="border-t border-primary/10 py-6">
-              <p className="text-sm font-medium text-slate-500">
-                로그인 후 이동: <span className="text-slate-700">{nextTarget}</span>
+            <div className="border-t border-primary/5 py-4">
+              <p className="text-xs font-medium text-slate-400">
+                로그인하면 <span className="text-slate-600 font-bold">{getPathLabel(nextTarget)}</span> 화면으로 안내해 드릴게요.
               </p>
             </div>
           </div>

@@ -1,14 +1,16 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
+import { getTemplatePhase4Asset } from '@/lib/assets/phase4-route-images';
 import { buildLoginHref } from '@/lib/auth/ensure-auth';
 import { useAuthUser } from '@/lib/auth/use-auth-user';
 import { createDraftRecord } from '@/lib/records/record-repo';
+import type { EnrichedWorksheetTemplate } from '@/lib/templates/template-experience';
 import { getTemplateBySlug } from '@/lib/templates/template-repo';
-import type { WorksheetTemplate } from '@/lib/templates/template-types';
 
 interface CreateRecordTransitionProps {
   templateSlug: string | null;
@@ -35,8 +37,8 @@ function InvalidTemplateState({ templateSlug }: { templateSlug: string | null })
             <span className="material-symbols-outlined text-3xl">error</span>
           </div>
         </div>
-        <h1 className="mb-2 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">템플릿을 찾을 수 없습니다</h1>
-        <p className="font-medium text-slate-600">템플릿 식별자: {templateSlug}</p>
+        <h1 className="mb-2 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">등록된 활동을 찾을 수 없습니다</h1>
+        <p className="font-medium text-slate-600">주소가 잘못되었거나 현재 준비 중인 활동입니다.</p>
       </div>
       <Link
         href="/templates"
@@ -80,13 +82,30 @@ function StartGuidance() {
   );
 }
 
-function TemplatePreview({ template }: { template: WorksheetTemplate }) {
+function TemplatePreview({ template }: { template: EnrichedWorksheetTemplate }) {
+  const imageAsset = getTemplatePhase4Asset(template.slug);
+
   return (
     <div className="w-full">
-      <div className="flex flex-col items-stretch overflow-hidden rounded-xl border border-slate-100 bg-white shadow-md">
+      <div className="flex flex-col items-stretch overflow-hidden rounded-xl border border-slate-100 bg-white shadow-md md:flex-row">
+        {imageAsset && (
+          <div className="relative min-h-[140px] bg-slate-50 md:w-1/3">
+            <Image
+              src={imageAsset.src}
+              alt={imageAsset.alt}
+              fill
+              sizes="(min-width: 768px) 180px, 100vw"
+              className="object-cover"
+            />
+          </div>
+        )}
         <div className="flex flex-1 flex-col justify-center gap-2 p-6 text-left">
-          <p className="text-xs font-bold uppercase tracking-widest text-primary">선택한 템플릿</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-primary">선택한 활동 템플릿</p>
           <h3 className="text-xl font-bold text-slate-900">{template.title}</h3>
+          <div className="mt-2 border-t border-slate-100 pt-2">
+            <p className="mb-1 text-[10px] font-medium uppercase text-slate-400">Preview Question</p>
+            <p className="text-sm leading-snug text-slate-700">{template.recordFocus[0] || '어떤 점을 느끼셨나요?'}</p>
+          </div>
         </div>
       </div>
     </div>

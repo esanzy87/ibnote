@@ -133,12 +133,27 @@ function TemplateDetailContent({ template }: { template: EnrichedWorksheetTempla
 
         {/* Quick Decision Card */}
         <section className="mb-10">
-          <div className="flex flex-col overflow-hidden rounded-xl border border-primary/5 bg-white shadow-sm">
+          <div className="flex flex-col overflow-hidden rounded-xl border border-primary/5 bg-white shadow-sm md:flex-row">
+            {imageAsset && (
+              <div className="relative min-h-[160px] bg-slate-100 md:w-1/3">
+                <Image
+                  src={imageAsset.src}
+                  alt={imageAsset.alt}
+                  fill
+                  sizes="(min-width: 768px) 260px, 100vw"
+                  className="object-cover"
+                />
+              </div>
+            )}
             <div className="flex-1 p-6">
-              <h3 className="mb-2 text-lg font-bold text-slate-900">활동의 시작</h3>
+              <h3 className="mb-2 text-lg font-bold text-slate-900">우리에게 맞는 활동일까요?</h3>
               <p className="mb-4 text-sm leading-relaxed text-slate-600">
                 {template.quickStart}
               </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">집중력</span>
+                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">함께 대화</span>
+              </div>
             </div>
           </div>
         </section>

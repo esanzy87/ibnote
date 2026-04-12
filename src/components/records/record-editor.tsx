@@ -7,25 +7,8 @@ import { useEffect } from 'react';
 import { buildLoginHref } from '@/lib/auth/ensure-auth';
 import { useAuthUser } from '@/lib/auth/use-auth-user';
 import { useRecord } from '@/lib/records/use-record';
-import { GlobalTopBar } from '@/components/navigation/global-top-bar';
-import { RecordsWorkspaceShell } from '@/components/records/records-workspace-shell';
 import type { AbsoluteGrade, WorksheetRecord } from '@/lib/records/record-types';
-import type { Competency, GradeBand, PypTheme } from '@/lib/templates/template-types';
-
-const GRADE_BAND_LABELS = {
-  g1_2: '초1-2',
-  g3_4: '초3-4',
-  g5_6: '초5-6',
-} satisfies Record<GradeBand, string>;
-
-const PYP_THEME_LABELS = {
-  who_we_are: '우리는 누구인가',
-  where_we_are_in_place_and_time: '우리는 시공간 속에서 어디에 있는가',
-  how_we_express_ourselves: '우리는 자신을 어떻게 표현하는가',
-  how_the_world_works: '세상은 어떻게 작동하는가',
-  how_we_organize_ourselves: '우리는 어떻게 조직하는가',
-  sharing_the_planet: '지구를 함께 나누기',
-} satisfies Record<PypTheme, string>;
+import type { Competency, GradeBand } from '@/lib/templates/template-types';
 
 const COMPETENCY_LABELS = {
   literacy: '문해',
@@ -35,12 +18,18 @@ const COMPETENCY_LABELS = {
   digital_literacy: '디지털 문해',
 } satisfies Record<Competency, string>;
 
-const ABSOLUTE_GRADE_LABELS = {
-  A: 'A',
-  B: 'B',
-  C: 'C',
-  D: 'D',
-  E: 'E',
+const GRADE_BAND_LABELS = {
+  g1_2: '초1-2 (Early Explorers)',
+  g3_4: '초3-4 (Discovery Stage)',
+  g5_6: '초5-6 (Junior Mastery)',
+} satisfies Record<GradeBand, string>;
+
+const RATING_LABELS = {
+  A: 'Watching',
+  B: 'Exploring',
+  C: 'Connecting',
+  D: 'Deepening',
+  E: 'Mastering'
 } satisfies Record<AbsoluteGrade, string>;
 
 const RECORD_PRIVACY_NOTE =
@@ -50,326 +39,257 @@ interface RecordEditorProps {
   recordId: string;
 }
 
-function EditorPage({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="min-h-screen bg-background-light text-slate-800">
-      <GlobalTopBar
-        active="workspace"
-        variant="workspace"
-        action={{ href: '/templates', icon: 'filter_vintage', label: '템플릿 둘러보기', tone: 'secondary' }}
-      />
-      <main className="bg-gradient-to-b from-background-light via-[#fff8ef] to-[#f6ecdf] px-6 py-12 sm:py-16">
-        <div className="mx-auto flex max-w-6xl flex-col gap-6">{children}</div>
-      </main>
-    </div>
-  );
-}
-
-function RecordEditorFrame({ children }: { children: React.ReactNode }) {
-  return (
-    <EditorPage>
-      <RecordsWorkspaceShell active="records" />
-      {children}
-    </EditorPage>
-  );
-}
-
-function Surface({ children, tone = 'default' }: { children: React.ReactNode; tone?: 'default' | 'error' }) {
-  const className =
-    tone === 'error'
-      ? 'rounded-[1.9rem] border border-rose-200 bg-rose-50 p-8 shadow-sm sm:p-10'
-      : 'rounded-[1.9rem] border border-primary/10 bg-white/90 p-8 shadow-[0_24px_60px_-40px_rgba(186,93,28,0.38)] sm:p-10';
-
-  return <section className={className}>{children}</section>;
-}
-
-function RecordLoadingState() {
-  return (
-    <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">기록 편집</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        기록을 불러오는 중입니다.
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        로그인 상태와 저장된 기록을 확인한 뒤 편집 화면을 준비하고 있습니다.
-      </p>
-      <div className="mt-8 space-y-4">
-        <div className="h-24 animate-pulse rounded-[1.75rem] border border-primary/10 bg-background-light" />
-        <div className="h-56 animate-pulse rounded-[1.75rem] border border-primary/10 bg-background-light" />
-        <div className="h-56 animate-pulse rounded-[1.75rem] border border-primary/10 bg-background-light" />
-      </div>
-    </Surface>
-  );
-}
-
-function RecordRedirectingState() {
-  return (
-    <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">로그인 이동</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        로그인 화면으로 이동하고 있습니다.
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        내 기록은 로그인한 계정에서만 열 수 있어요. 잠시 후 로그인 화면으로 이동합니다.
-      </p>
-    </Surface>
-  );
-}
-
-function RecordErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
-  return (
-    <Surface tone="error">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">기록 오류</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-rose-950 sm:text-4xl">
-        기록 편집 화면을 열지 못했습니다.
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-rose-900 sm:text-base">{message}</p>
-      <div className="mt-6 flex flex-wrap gap-3">
-        <button
-          type="button"
-          onClick={onRetry}
-          className="inline-flex items-center justify-center rounded-full bg-rose-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-rose-800"
-        >
-          다시 시도
-        </button>
-        <Link
-          href="/my/records"
-          className="inline-flex items-center justify-center rounded-full border border-rose-200 bg-white px-5 py-3 text-sm font-medium text-rose-900 transition hover:border-rose-300"
-        >
-          기록 목록으로 가기
-        </Link>
-      </div>
-    </Surface>
-  );
-}
-
-function MissingRecordState({ recordId }: { recordId: string }) {
-  return (
-    <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">기록 없음</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        이 기록을 찾을 수 없습니다.
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        `{recordId}` 기록이 없거나 현재 로그인한 계정에서 열 수 없는 기록입니다.
-      </p>
-      <div className="mt-6 flex flex-wrap gap-3">
-        <Link
-          href="/templates"
-          className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
-        >
-          템플릿 보러 가기
-        </Link>
-        <Link
-          href="/my/records"
-          className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
-        >
-          기록 목록으로 가기
-        </Link>
-      </div>
-    </Surface>
-  );
-}
-
-function EntryIntro({ record }: { record: WorksheetRecord }) {
-  const isSubmitted = record.status === 'submitted';
-  const labelClassName =
-    'inline-flex items-center rounded-full bg-primary px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-white';
+function EditorHeader({ record, isDirty }: { record: WorksheetRecord, isDirty: boolean }) {
+  const lastSavedFormatted = new Date(record.updatedAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <section className="rounded-[1.9rem] border border-primary/10 bg-gradient-to-br from-white via-[#fff5ea] to-[#f7dcc7] p-7 text-slate-900 shadow-[0_28px_80px_-48px_rgba(186,93,28,0.52)] sm:p-8">
-      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/80">기록 에디터</p>
-      <h1 className="mt-4 text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">
-        {isSubmitted ? '돌아보며 다듬는 기록' : '지금의 장면부터 이어 적는 기록'}
-      </h1>
-      <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-600 sm:text-base">
-        초안이든 제출본이든, 기록은 한 번에 완성되지 않아도 괜찮습니다. 지금 필요한 것부터 채워 다음으로 넘어가면 돼요.
-      </p>
-      <div className="mt-6 flex flex-wrap gap-3">
-        <span className={labelClassName}>현재 단계</span>
-        <span className="inline-flex items-center rounded-full border border-primary/15 bg-white/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-primary/90">
-          {isSubmitted ? '제출 후 재정리' : '초안 계속 작성'}
-        </span>
-        <Link
-          href="#record-editor-form"
-          className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/25 transition hover:bg-primary/90"
-        >
-          {isSubmitted ? '아래에서 기록 다듬기' : '아래에서 이어 적기'}
-        </Link>
-      </div>
-    </section>
-  );
-}
-
-function Section({
-  anchorId,
-  description,
-  title,
-  children,
-  tone = 'neutral',
-}: {
-  anchorId?: string;
-  children: React.ReactNode;
-  description?: string;
-  title: string;
-  tone?: 'dominant' | 'neutral' | 'quiet';
-}) {
-  const frameClass =
-    tone === 'dominant'
-      ? 'rounded-[1.9rem] border border-primary/10 bg-white/92 p-7 shadow-[0_24px_60px_-40px_rgba(186,93,28,0.38)] sm:p-8'
-      : tone === 'quiet'
-        ? 'rounded-[1.9rem] border border-primary/10 bg-background-light p-6 sm:p-7'
-        : 'rounded-[1.75rem] border border-primary/10 bg-white/92 p-6 shadow-[0_24px_60px_-40px_rgba(186,93,28,0.34)] sm:p-8';
-
-  return (
-    <section id={anchorId} className={frameClass}>
-      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-        <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">기록 단계</span>
-        <h2 className="text-2xl font-semibold tracking-tight text-slate-900">{title}</h2>
-        {description ? <p className="text-sm text-slate-500">{description}</p> : null}
-      </div>
-      <div className="mt-5">{children}</div>
-    </section>
-  );
-}
-
-function HeaderSummary({ record }: { record: WorksheetRecord }) {
-  const isSubmitted = record.status === 'submitted';
-  const hasWritingStarted = Boolean(
-    record.performedOn || record.childReflection.trim() || record.parentMemo.trim() || Object.values(record.competencyRatings).some(Boolean),
-  );
-
-  const statusHeadline = isSubmitted ? '이미 제출한 기록을 다시 읽고 다듬는 화면입니다.' : '멈춘 곳에서 바로 다시 적을 수 있는 초안입니다.';
-  const statusBody = isSubmitted
-    ? '이 기록은 이미 요약에 반영된 제출본입니다. 수정 후 저장하면 제출 상태가 유지되면서 내용만 갱신됩니다.'
-    : hasWritingStarted
-      ? '이전에 적어 둔 내용이 남아 있습니다. 날짜, 메모, 평정을 차례로 보며 이어서 정리해 보세요.'
-      : '아직 비어 있는 초안입니다. 오늘 떠오르는 장면 한 줄부터 가볍게 시작해 보세요.';
-
-  return (
-    <Surface>
-      <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
-        <div className="max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">기록 편집</p>
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
-              {record.templateTitleSnapshot}
-            </h1>
-            <span
-              className={
-                isSubmitted
-                  ? 'rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-950'
-                  : 'rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-950'
-              }
-            >
-              {isSubmitted ? '제출 완료' : '초안'}
-            </span>
+    <header className="sticky top-0 z-50 border-b border-[#e5dfdc] bg-[#fdfcfb]/80 px-4 py-4 backdrop-blur-md md:px-10">
+      <div className="mx-auto flex max-w-4xl items-center justify-between">
+        <div className="flex flex-col gap-1">
+          <nav className="flex items-center gap-2 text-sm font-medium text-[#886f63]">
+            <Link href="/my/records" className="flex items-center gap-1 hover:text-primary transition-colors">
+              <span className="material-symbols-outlined text-sm">arrow_back</span>
+              내 기록
+            </Link>
+            <span>/</span>
+            <span className="font-semibold text-slate-900">에디터</span>
+          </nav>
+          <h1 className="text-xl font-bold tracking-tight">{record.templateTitleSnapshot}</h1>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="mr-2 hidden flex-col items-end md:flex">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#886f63]">상태</span>
+            <div className="flex items-center gap-1.5">
+              <span className={`h-2 w-2 rounded-full ${record.status === 'draft' ? 'bg-amber-400' : 'bg-emerald-400'}`} />
+              <span className="text-xs font-bold">{record.status === 'draft' ? '초안' : '제출 완료'}</span>
+            </div>
           </div>
-          <p className="mt-4 text-lg font-medium leading-7 text-slate-900">{statusHeadline}</p>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">{statusBody}</p>
+          <div className="rounded-lg border border-[#e5dfdc] bg-[#f4f2f0] px-4 py-2">
+            <p className="mb-1 text-[10px] font-bold uppercase leading-none tracking-tight text-[#886f63]">저장 상태</p>
+            <p className="text-xs font-bold leading-none">{isDirty ? '저장 필요' : `${lastSavedFormatted} 저장됨`}</p>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function SectionGuidance() {
+  return (
+    <section className="mb-8">
+      <div className="flex items-start gap-4 rounded-xl border border-primary/10 bg-primary/5 p-5">
+        <span className="material-symbols-outlined mt-0.5 text-primary">auto_awesome</span>
+        <div>
+          <h3 className="mb-1 text-sm font-bold text-primary">천천히 적어보세요.</h3>
+          <p className="text-sm leading-relaxed text-[#886f63]">
+            이 기록은 오직 부모님과 아이를 위한 노트입니다. 완성된 문장이 아니어도 괜찮습니다. 지금 떠오르는 가장 인상 깊은 장면 조각부터 정리해 보세요.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SceneCapture({ 
+  record, 
+  setPerformedOn, 
+  setChildGradeBand, 
+  setChildReflection, 
+  setParentMemo 
+}: { 
+  record: WorksheetRecord;
+  setPerformedOn: (val: string) => void;
+  setChildGradeBand: (val: GradeBand | null) => void;
+  setChildReflection: (val: string) => void;
+  setParentMemo: (val: string) => void;
+}) {
+  return (
+    <section className="mb-10 space-y-6">
+      <div className="mb-2 flex items-center gap-2">
+        <span className="material-symbols-outlined text-primary">filter_vintage</span>
+        <h2 className="text-lg font-bold">장면 기록</h2>
+      </div>
+      
+      <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50 px-4 py-4 text-xs leading-6 text-amber-950 mb-6">
+        <p className="font-semibold">{RECORD_PRIVACY_NOTE}</p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="flex flex-col justify-end">
+          <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#886f63]">활동 날짜</label>
+          <div className="relative">
+            <input
+              type="date"
+              value={record.performedOn || ''}
+              onChange={(e) => setPerformedOn(e.target.value)}
+              className="w-full appearance-none rounded-xl border border-[#e5dfdc] bg-white px-4 py-3 text-sm shadow-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+            />
+          </div>
         </div>
 
-        <div className="grid gap-3 rounded-[1.75rem] border border-primary/10 bg-background-light p-4 text-sm text-slate-700 sm:min-w-80">
-          <p className="font-medium text-slate-900">기록 정보</p>
-          <p>원본 템플릿 학년: {GRADE_BAND_LABELS[record.gradeBandSnapshot]}</p>
-          <p>PYP 주제: {PYP_THEME_LABELS[record.pypThemeSnapshot]}</p>
-          <p>활동 날짜: {record.performedOn || '아직 입력 전'}</p>
-          <p>마지막 수정: {new Date(record.updatedAt).toLocaleString('ko-KR')}</p>
+        <div className="flex flex-col justify-end">
+          <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#886f63]">아이 학년 / 연령대</label>
+          <div className="relative">
+            <select
+              value={record.childGradeBand || ''}
+              onChange={(e) => setChildGradeBand((e.target.value as GradeBand) || null)}
+              className="w-full appearance-none rounded-xl border border-[#e5dfdc] bg-white px-4 py-3 pr-10 text-sm shadow-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+            >
+              <option value="">선택 안 함</option>
+              {(Object.keys(GRADE_BAND_LABELS) as GradeBand[]).map(band => (
+                <option key={band} value={band}>{GRADE_BAND_LABELS[band]}</option>
+              ))}
+            </select>
+            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#886f63] material-symbols-outlined">unfold_more</span>
+          </div>
         </div>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-2">
-        {record.competenciesSnapshot.map((competency) => (
-          <span
-            key={competency}
-            className="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sm font-medium text-sky-950"
-          >
-            {COMPETENCY_LABELS[competency]}
-          </span>
+      <div className="space-y-4 pt-2">
+        <div>
+          <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#886f63]">아이 반응 메모</label>
+          <textarea
+            value={record.childReflection || ''}
+            onChange={(e) => setChildReflection(e.target.value)}
+            className="min-h-[100px] w-full resize-none rounded-xl border border-[#e5dfdc] bg-white px-4 py-3 text-sm shadow-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+            placeholder="아이가 무엇을 처음으로 깨달았나요? (예: 모래의 촉감이 차갑다고 말했어요)"
+          />
+        </div>
+        <div>
+          <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#886f63]">부모 메모 / 감상</label>
+          <textarea
+            value={record.parentMemo || ''}
+            onChange={(e) => setParentMemo(e.target.value)}
+            className="min-h-[100px] w-full resize-none rounded-xl border border-[#e5dfdc] bg-white px-4 py-3 text-sm shadow-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+            placeholder="아이를 지켜보며 부모님은 어떤 감정을 느꼈나요?"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ReflectionTips() {
+  return (
+    <section className="mb-10">
+      <div className="rounded-xl border border-[#e5dfdc] bg-[#f4f2f0] p-6">
+        <div className="mb-4 flex items-center gap-2">
+          <span className="material-symbols-outlined text-primary">lightbulb</span>
+          <h3 className="text-sm font-bold">작성 팁 (Reflection Tips)</h3>
+        </div>
+        <ul className="space-y-3">
+          <li className="flex items-center gap-3 text-sm text-[#886f63]">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary/40" />
+            아이의 시선이 얼마나 오랫동안 머물렀는지 적어보세요. (Focus & Stillness)
+          </li>
+          <li className="flex items-center gap-3 text-sm text-[#886f63]">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary/40" />
+            활동 중 뜻밖의 어려움을 마주했을 때의 반응을 남겨두는 것도 좋습니다.
+          </li>
+          <li className="flex items-center gap-3 text-sm text-[#886f63]">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary/40" />
+            아이가 부모님을 그 순간에 어떻게 초대했는지 떠올려 보세요.
+          </li>
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+function GrowthObservation({ record, setCompetencyRating }: { record: WorksheetRecord, setCompetencyRating: (comp: Competency, val: AbsoluteGrade | null) => void }) {
+  if (!record.competenciesSnapshot || record.competenciesSnapshot.length === 0) return null;
+
+  return (
+    <section className="mb-10">
+      <div className="mb-4 flex items-center gap-2">
+        <span className="material-symbols-outlined text-primary">psychology_alt</span>
+        <h2 className="text-lg font-bold">성장 관찰 (Growth Observation)</h2>
+      </div>
+      <p className="mb-6 text-sm text-[#886f63]">오늘 이 활동에서 아이는 어떤 발달 과정을 거쳤나요? 각 역량마다 가장 알맞은 성취도를 선택하세요.</p>
+      
+      <div className="grid gap-10">
+        {record.competenciesSnapshot.map(comp => (
+          <div key={comp} className="border-t border-[#e5dfdc]/60 pt-6 first:border-0 first:pt-0">
+            <h3 className="mb-5 font-bold text-sm uppercase text-slate-800 tracking-wider flex items-center justify-between">
+              {COMPETENCY_LABELS[comp]}
+              {record.competencyRatings[comp] ? (
+                <button type="button" onClick={() => setCompetencyRating(comp, null)} className="text-xs text-[#886f63] font-medium hover:text-primary transition-colors">
+                  선택 초기화
+                </button>
+              ) : null}
+            </h3>
+            <div className="flex flex-wrap gap-4 justify-between">
+              {(['A', 'B', 'C', 'D', 'E'] as const).map(grade => {
+                const isSelected = record.competencyRatings[comp] === grade;
+                return (
+                  <button
+                    key={grade}
+                    type="button"
+                    onClick={() => setCompetencyRating(comp, grade)}
+                    className="group flex min-w-[50px] flex-1 flex-col items-center gap-2 md:min-w-[80px]"
+                  >
+                    <div className={`flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-full border-2 transition-all text-base md:text-lg font-bold ${
+                      isSelected ? 'border-primary bg-primary/10 text-primary shadow-sm scale-110' : 'border-[#e5dfdc] bg-white text-[#886f63] group-hover:border-primary/40 group-hover:text-primary'
+                    }`}>
+                      {grade}
+                    </div>
+                    <span className={`text-[9px] md:text-[10px] font-bold uppercase tracking-tight ${isSelected ? 'text-primary' : 'text-[#886f63] group-hover:text-primary'}`}>
+                      {RATING_LABELS[grade]}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
         ))}
       </div>
-    </Surface>
+    </section>
   );
 }
 
-function WritingGuide({ record }: { record: WorksheetRecord }) {
-  const isSubmitted = record.status === 'submitted';
+function ReviewChecklist({ record, toggleChecklistItem }: { record: WorksheetRecord, toggleChecklistItem: (val: string) => void }) {
+  if (!record.checklistState || Object.keys(record.checklistState).length === 0) return null;
 
   return (
-    <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">기록 가이드</p>
-      <h2 className="mt-4 text-2xl font-semibold tracking-tight text-slate-900">
-        {isSubmitted ? '기억이 더 또렷해졌다면 차분히 다시 다듬어 보세요.' : '길게 쓰기보다, 지금 떠오르는 장면부터 이어 적어 보세요.'}
-      </h2>
-      <div className="mt-5 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-[1.25rem] border border-primary/10 bg-background-light p-4 text-sm leading-6 text-slate-700">
-          <p className="font-medium text-slate-900">1. 날짜와 메모</p>
-          <p className="mt-1">{record.performedOn ? '날짜를 확인하고,' : '날짜와'} 아이 반응 한두 문장부터 적습니다.</p>
-        </div>
-        <div className="rounded-[1.25rem] border border-primary/10 bg-background-light p-4 text-sm leading-6 text-slate-700">
-          <p className="font-medium text-slate-900">2. 체크와 평정</p>
-          <p className="mt-1">체크리스트를 훑어보고, 역량 평정을 하나 이상 선택합니다.</p>
-        </div>
-        <div className="rounded-[1.25rem] border border-primary/10 bg-background-light p-4 text-sm leading-6 text-slate-700">
-          <p className="font-medium text-slate-900">3. 저장 또는 제출</p>
-          <p className="mt-1">{isSubmitted ? '변경 저장으로 마칩니다.' : '초안으로 저장하거나 제출해 요약에 반영합니다.'}</p>
-        </div>
+    <section className="mb-12">
+      <div className="mb-4 flex items-center gap-2">
+        <span className="material-symbols-outlined text-primary">task_alt</span>
+        <h2 className="text-lg font-bold">Review (점검하기)</h2>
       </div>
-    </Surface>
+      <div className="space-y-3">
+        {Object.entries(record.checklistState).map(([item, checked]) => (
+          <label key={item} className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#e5dfdc] bg-white p-4 shadow-sm transition-all hover:border-primary/30">
+            <input 
+              type="checkbox"
+              checked={checked}
+              onChange={() => toggleChecklistItem(item)}
+              className="h-5 w-5 rounded border-[#e5dfdc] text-primary focus:ring-primary/20"
+            />
+            <span className="text-sm font-medium">{item}</span>
+          </label>
+        ))}
+      </div>
+    </section>
   );
 }
 
-function RatingGroup({
-  competency,
-  selectedGrade,
-  onSelect,
-}: {
-  competency: Competency;
-  onSelect: (value: AbsoluteGrade | null) => void;
-  selectedGrade: AbsoluteGrade | undefined;
-}) {
+function AuthStateDisplay({ message, onRetry, isError }: { message: string; onRetry?: () => void; isError?: boolean }) {
   return (
-    <article className="rounded-[1.5rem] border border-primary/10 bg-background-light p-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h3 className="text-lg font-semibold text-slate-900">{COMPETENCY_LABELS[competency]}</h3>
-          <p className="mt-1 text-sm text-slate-600">가장 가까운 수준 하나를 선택해 주세요.</p>
-        </div>
-        {selectedGrade ? (
-          <button
-            type="button"
-            onClick={() => onSelect(null)}
-            className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-4 py-2 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
-          >
-            선택 지우기
-          </button>
-        ) : null}
-      </div>
-
-      <div className="mt-4 grid gap-3 sm:grid-cols-5">
-        {(['A', 'B', 'C', 'D', 'E'] as const).map((grade) => {
-          const isSelected = selectedGrade === grade;
-
-          return (
-            <button
-              key={grade}
-              type="button"
-              onClick={() => onSelect(grade)}
-              className={
-                isSelected
-                  ? 'rounded-2xl border border-primary bg-primary px-4 py-4 text-left text-white shadow-lg shadow-primary/25'
-                  : 'rounded-2xl border border-primary/10 bg-white px-4 py-4 text-left text-slate-800 transition hover:border-primary/25 hover:bg-background-light'
-              }
-            >
-              <p className="text-xs font-medium uppercase tracking-[0.22em] opacity-80">
-                {ABSOLUTE_GRADE_LABELS[grade]}
-              </p>
-              <p className="mt-2 text-sm font-medium">{grade} 수준</p>
-            </button>
-          );
-        })}
-      </div>
-    </article>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[#fdfcfb] font-sans">
+      {isError ? <span className="material-symbols-outlined text-4xl text-rose-400 mb-4">error</span> : <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary/30 border-t-primary mb-4" />}
+      <h3 className="text-xl font-bold text-slate-800 mb-2">{isError ? '오류가 발생했습니다' : '기록 편집기를 여는 중...'}</h3>
+      <p className="text-slate-500 mb-6">{message}</p>
+      {onRetry && (
+        <button type="button" onClick={onRetry} className="rounded-full bg-primary px-6 py-2 text-white font-bold transition-all hover:bg-primary/90">
+          다시 실행하기
+        </button>
+      )}
+      {isError && (
+        <Link href="/my/records" className="mt-4 text-sm text-[#886f63] hover:text-primary transition-colors">
+          목록으로 돌아가기
+        </Link>
+      )}
+    </div>
   );
 }
 
@@ -405,265 +325,89 @@ export function RecordEditor({ recordId }: RecordEditorProps) {
     }
   }, [authStatus, recordId, router]);
 
-  if (authStatus === 'loading') {
-    return (
-      <RecordEditorFrame>
-        <RecordLoadingState />
-      </RecordEditorFrame>
-    );
+  if (authStatus === 'loading' || (recordStatus === 'loading' && authStatus === 'authenticated')) {
+    return <AuthStateDisplay message="로그인 상태와 기록을 확인하고 있습니다." />;
   }
 
   if (authStatus === 'error') {
-    return (
-      <RecordEditorFrame>
-        <RecordErrorState
-          message={authError?.message ?? '인증 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.'}
-          onRetry={retryAuth}
-        />
-      </RecordEditorFrame>
-    );
-  }
-
-  if (authStatus === 'unauthenticated') {
-    return (
-      <RecordEditorFrame>
-        <RecordRedirectingState />
-      </RecordEditorFrame>
-    );
-  }
-
-  if (recordStatus === 'loading' || recordStatus === 'idle') {
-    return (
-      <RecordEditorFrame>
-        <RecordLoadingState />
-      </RecordEditorFrame>
-    );
+    return <AuthStateDisplay message={authError?.message ?? '인증 상태를 확인하지 못했습니다.'} onRetry={retryAuth} isError />;
   }
 
   if (recordStatus === 'error') {
-    return (
-      <RecordEditorFrame>
-        <RecordErrorState
-          message={recordError?.message ?? '기록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'}
-          onRetry={retryRecord}
-        />
-      </RecordEditorFrame>
-    );
+    return <AuthStateDisplay message={recordError?.message ?? '기록 데이터를 찾을 수 없습니다.'} onRetry={retryRecord} isError />;
   }
 
-  if (recordStatus === 'missing' || !record) {
-    return (
-      <RecordEditorFrame>
-        <MissingRecordState recordId={recordId} />
-      </RecordEditorFrame>
-    );
+  if (authStatus === 'unauthenticated' || recordStatus === 'missing' || !record) {
+    return <AuthStateDisplay message={recordStatus === 'missing' ? '해당 기록을 찾을 수 없습니다.' : '로그인 화면으로 이동합니다.'} isError />;
   }
 
   return (
-    <EditorPage>
-      <RecordsWorkspaceShell active="records" />
-      <EntryIntro record={record} />
-      <HeaderSummary record={record} />
-      <WritingGuide record={record} />
+    <div className="flex min-h-screen flex-col bg-[#fdfcfb] font-sans text-slate-900 pb-32">
+      <EditorHeader record={record} isDirty={isDirty} />
+      
+      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
+        <SectionGuidance />
+        <SceneCapture 
+          record={record} 
+          setPerformedOn={setPerformedOn}
+          setChildGradeBand={setChildGradeBand}
+          setChildReflection={setChildReflection}
+          setParentMemo={setParentMemo}
+        />
+        <ReflectionTips />
+        <GrowthObservation record={record} setCompetencyRating={setCompetencyRating} />
+        <ReviewChecklist record={record} toggleChecklistItem={toggleChecklistItem} />
 
-      <section className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
-        <Section
-          anchorId="record-editor-form"
-          tone="dominant"
-          title="1) 장면 기록"
-          description="짧게 시작해도 괜찮습니다. 필요한 항목부터 채워 주세요."
-        >
-          <div className="grid gap-5">
-            <div className="rounded-[1.5rem] border border-primary/10 bg-background-light px-4 py-4 text-sm leading-6 text-slate-700">
-              <p className="font-semibold text-slate-900">부담 줄이기 안내</p>
-              <p className="mt-1">
-                완성된 글처럼 쓰지 않아도 됩니다. 아이가 했던 말이나 기억나는 장면 한 줄부터 시작해 보세요.
-              </p>
-            </div>
-
-            <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-950">
-              <p className="font-semibold text-amber-950">개인정보 안내</p>
-              <p className="mt-1">{RECORD_PRIVACY_NOTE}</p>
-            </div>
-
-            <label className="grid gap-2 text-sm font-medium text-slate-800">
-              활동한 날짜
-              <input
-                type="date"
-                value={record.performedOn}
-                onChange={(event) => setPerformedOn(event.target.value)}
-                className="rounded-2xl border border-primary/15 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-primary/40"
-              />
-              <span className="text-xs font-normal text-slate-500">제출할 때 꼭 필요한 항목입니다.</span>
-            </label>
-
-            <label className="grid gap-2 text-sm font-medium text-slate-800">
-              아이 학년 (선택)
-              <select
-                value={record.childGradeBand ?? ''}
-                onChange={(event) => setChildGradeBand((event.target.value as GradeBand) || null)}
-                className="rounded-2xl border border-primary/15 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-primary/40"
-              >
-                <option value="">선택 안 함</option>
-                <option value="g1_2">초1-2</option>
-                <option value="g3_4">초3-4</option>
-                <option value="g5_6">초5-6</option>
-              </select>
-            </label>
-
-            <label className="grid gap-2 text-sm font-medium text-slate-800">
-              아이 반응 메모
-              <textarea
-                value={record.childReflection}
-                onChange={(event) => setChildReflection(event.target.value)}
-                rows={5}
-                placeholder="아이가 한 말, 표정, 다시 해 보고 싶다고 한 장면 등을 짧게 적어 보세요."
-                className="rounded-[1.5rem] border border-primary/15 bg-white px-4 py-3 text-base leading-7 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-primary/40"
-              />
-              <span className="text-xs font-normal text-slate-500">
-                기억나는 문장 하나만 있어도 충분합니다.
-              </span>
-            </label>
-
-            <label className="grid gap-2 text-sm font-medium text-slate-800">
-              부모 메모
-              <textarea
-                value={record.parentMemo}
-                onChange={(event) => setParentMemo(event.target.value)}
-                rows={5}
-                placeholder="다음에 다시 해 보고 싶은 점이나 준비물 메모를 남겨 두세요."
-                className="rounded-[1.5rem] border border-primary/15 bg-white px-4 py-3 text-base leading-7 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-primary/40"
-              />
-            </label>
+        {mutationMessage && (
+          <div className={`mt-6 rounded-xl border p-4 text-sm font-medium ${mutationStatus === 'error' ? 'border-rose-200 bg-rose-50 text-rose-900' : 'border-emerald-200 bg-emerald-50 text-emerald-950'}`}>
+            {mutationMessage}
           </div>
-        </Section>
+        )}
+      </main>
 
-        <Section
-          tone="neutral"
-          title="2) 제출 전 점검"
-          description="현재 상태를 확인하고 필요한 항목을 채워 주세요."
-        >
-          <div className="grid gap-4">
-            <div className="rounded-[1.5rem] border border-primary/10 bg-background-light p-4">
-              <p className="text-sm font-medium text-slate-900">현재 상태</p>
-              <div className="mt-3 grid gap-3 text-sm text-slate-700 sm:grid-cols-2">
-                <p>
-                  기록 상태: <span className="font-medium text-slate-900">{record.status === 'submitted' ? '제출 완료' : '초안'}</span>
-                </p>
-                <p>
-                  평정 선택: <span className="font-medium text-slate-900">{hasAtLeastOneRating ? '1개 이상 선택됨' : '아직 없음'}</span>
-                </p>
-                <p>
-                  날짜 입력: <span className="font-medium text-slate-900">{record.performedOn ? '완료' : '필요'}</span>
-                </p>
-                <p>
-                  로컬 변경: <span className="font-medium text-slate-900">{isDirty ? '있음' : '없음'}</span>
-                </p>
-              </div>
-            </div>
-
-            <div className="rounded-[1.5rem] border border-primary/10 bg-white/95 p-4">
-              <p className="text-sm font-medium text-slate-900">체크리스트</p>
-              <div className="mt-4 grid gap-3">
-                {Object.entries(record.checklistState).map(([item, checked]) => (
-                  <label
-                    key={item}
-                    className="flex items-start gap-3 rounded-2xl border border-primary/10 bg-background-light px-4 py-3 text-sm text-slate-700"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => toggleChecklistItem(item)}
-                      className="mt-1 h-4 w-4 rounded border-stone-300 text-slate-900"
-                    />
-                    <span>{item}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
+      {/* Sticky Bottom Action Bar */}
+      <footer className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#e5dfdc] bg-white/90 px-4 py-4 backdrop-blur-lg md:px-10">
+        <div className="mx-auto flex max-w-3xl items-center gap-4">
+          <div className="hidden sm:block text-xs text-[#886f63] font-medium min-w-max mr-auto">
+            {isDirty ? (
+              <span className="text-amber-600">저장되지 않은 변경사항이 있습니다</span>
+            ) : (
+              <span>필수 항목: <span className={record.performedOn ? 'text-emerald-600' : 'text-amber-600'}>날짜 {record.performedOn ? '입력됨' : '필요'}</span> / <span className={hasAtLeastOneRating ? 'text-emerald-600' : 'text-amber-600'}>역량 {hasAtLeastOneRating ? '평가됨' : '필요'}</span></span>
+            )}
           </div>
-        </Section>
-      </section>
-
-      <Section tone="dominant" title="3) 역량 체크" description="이 활동과 연결된 역량만 표시됩니다.">
-        <div className="grid gap-4">
-          {record.competenciesSnapshot.map((competency) => (
-            <RatingGroup
-              key={competency}
-              competency={competency}
-              selectedGrade={record.competencyRatings[competency]}
-              onSelect={(value) => setCompetencyRating(competency, value)}
-            />
-          ))}
-        </div>
-      </Section>
-
-      <Section tone="neutral" title="4) 저장 또는 제출" description="지금 상태에 맞게 저장 또는 제출을 선택하세요.">
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-          <div className="max-w-2xl text-sm leading-6 text-slate-600">
-            <p>자동 저장은 하지 않습니다. 버튼을 눌렀을 때만 현재 입력값이 저장됩니다.</p>
-            <p className="mt-2 font-medium text-slate-900">
-              제출 조건: 활동 날짜와 역량 평정 하나 이상이 필요합니다.
-            </p>
-            {mutationMessage ? (
-              <p
-                className={
-                  mutationStatus === 'error'
-                    ? 'mt-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-rose-900'
-                    : 'mt-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-950'
-                }
-              >
-                {mutationMessage}
-              </p>
-            ) : null}
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            {record.status === 'draft' ? (
-              <button
-                type="button"
-                onClick={() => {
-                  void saveDraft();
-                }}
-                disabled={isWritePending}
-                className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {mutationStatus === 'saving' ? '초안 저장 중...' : '초안 저장'}
-              </button>
-            ) : null}
+          
+          <button
+            type="button"
+            onClick={resetLocalChanges}
+            disabled={!loadedRecord || !isDirty || isWritePending}
+            className="flex-1 rounded-xl border border-[#e5dfdc] bg-transparent py-3.5 text-sm font-bold tracking-wide text-slate-500 hover:text-slate-900 transition-all disabled:opacity-30 disabled:hover:text-slate-500 sm:flex-none sm:px-6 hidden sm:block"
+          >
+            되돌리기
+          </button>
+          
+          {record.status === 'draft' && (
             <button
               type="button"
-              onClick={() => {
-                void submitRecord();
-              }}
+              onClick={() => { void saveDraft(); }}
               disabled={isWritePending}
-              className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-primary/50"
+              className="flex-1 rounded-xl border border-[#e5dfdc] bg-[#f4f2f0] py-3.5 text-sm font-bold tracking-wide text-slate-900 transition-all hover:bg-[#e5dfdc] disabled:opacity-50"
             >
-              {mutationStatus === 'submitting'
-                ? record.status === 'submitted'
-                  ? '변경 저장 중...'
-                  : '제출 중...'
-                : record.status === 'submitted'
-                  ? '제출 상태로 변경 저장'
-                  : '제출'}
+              {mutationStatus === 'saving' ? '저장 중...' : '임시 저장'}
             </button>
-            <Link
-              href="/my/records"
-              className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
-            >
-              기록 목록으로 가기
-            </Link>
-            <button
-              type="button"
-              onClick={resetLocalChanges}
-              disabled={!loadedRecord || !isDirty || isWritePending}
-              className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              입력 되돌리기
-            </button>
-          </div>
+          )}
+
+          <button
+            type="button"
+            onClick={() => { void submitRecord(); }}
+            disabled={isWritePending}
+            className="flex-[2] sm:flex-[1.5] rounded-xl bg-primary py-3.5 text-sm font-bold tracking-wide text-white shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 disabled:bg-primary/50"
+          >
+            {mutationStatus === 'submitting' 
+              ? (record.status === 'submitted' ? '저장 중...' : '제출 중...') 
+              : (record.status === 'submitted' ? '최종 기록 업데이트' : '기록 완료하기')}
+          </button>
         </div>
-      </Section>
-    </EditorPage>
+      </footer>
+    </div>
   );
 }

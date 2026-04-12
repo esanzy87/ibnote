@@ -95,15 +95,58 @@ export function PasswordResetRequestForm({ returnToLoginHref }: PasswordResetReq
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-background-light">
-      <main className="flex flex-1 flex-col items-center justify-center px-6 py-12 md:px-20 lg:px-40">
-        <div className="w-full max-w-[440px]">
-          <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <span className="material-symbols-outlined text-3xl">lock_reset</span>
+    <div className="flex min-h-screen w-full flex-col lg:flex-row bg-background-light font-display">
+      {/* Left Panel: Brand & Narrative */}
+      <div className="relative hidden w-full lg:flex lg:w-1/2 flex-col justify-between p-12 overflow-hidden bg-primary/5">
+        <div className="z-10">
+          <Link href="/" className="flex items-center gap-3 text-primary">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white">
+              <span className="material-symbols-outlined">auto_stories</span>
+            </span>
+            <span className="text-2xl font-bold tracking-tight text-slate-900">IBNote</span>
+          </Link>
+        </div>
+        
+        <div className="z-10 max-w-lg space-y-6">
+          <h1 className="text-5xl font-extrabold tracking-tight text-slate-900">
+            소중한 연결을 위해<br />다시 안내해 드릴게요.
+          </h1>
+          <p className="text-lg leading-relaxed text-slate-600">
+            비밀번호를 잊으셔도 괜찮습니다. 차분히 이메일을 입력해 주시면 안전하게 다시 로그인할 수 있는 링크를 보내드립니다. 아이와의 순간을 계속해서 기록해 나갈 수 있도록 도와드릴게요.
+          </p>
+          <div className="pt-8">
+            <div className="w-full h-64 rounded-xl overflow-hidden shadow-sm bg-white p-2">
+              <img 
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH_lcEr14NagON8yO6aCTKI3-bVzNSErMxkSCNgZ_wrTEjdaePVetYxXt4LV1tT8WS35yngRwMmPAveaxEz-d-bLSy3nCbXtZ-Dvwu9hzkMmYIjJfYAjxTB1jZT5JD3945GsE-Ka1--UO3aRAigyPI_Hqr87BO6n0sYjbKHC2vPdfCLmywQpVtm8I6vRNTIkIguvbpg7SM-ZqwZz_5TgvQWWqV_SpPolEo6veksnQx_W_rvGP1OXlXpVaKL5eY7KKD7H5xehMYRc0" 
+                alt="아이와 함께하는 평온한 순간" 
+                className="w-full h-full object-cover rounded-lg"
+              />
             </div>
-            <h1 className="mb-2 text-3xl font-black tracking-tight text-slate-900">비밀번호 재설정</h1>
-            <p className="text-slate-600">가입하신 이메일 주소를 입력하시면<br />다시 로그인하실 수 있게 링크를 보내드립니다.</p>
+          </div>
+        </div>
+        
+        <div className="z-10">
+          <p className="text-sm text-slate-400">© 2026 IBNote. 모든 가족의 순간을 소중히 여깁니다.</p>
+        </div>
+
+        {/* Background soft glow elements */}
+        <div className="absolute top-0 right-0 -mr-20 -mt-20 size-96 rounded-full bg-primary/10 blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 size-96 rounded-full bg-primary/5 blur-3xl"></div>
+      </div>
+
+      {/* Right Panel: Password Reset Form */}
+      <main className="flex w-full flex-col justify-center items-center p-6 sm:p-12 lg:w-1/2">
+        <div className="w-full max-w-md space-y-8">
+          <div className="lg:hidden mb-12 flex items-center gap-3 text-primary">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white">
+              <span className="material-symbols-outlined">auto_stories</span>
+            </span>
+            <span className="text-xl font-bold tracking-tight text-slate-900">IBNote</span>
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="text-3xl font-black tracking-tight text-slate-900">비밀번호 재설정</h2>
+            <p className="text-slate-500">가입하신 이메일 주소를 입력해 주세요.</p>
           </div>
 
           <div className="rounded-2xl border border-slate-100 bg-white p-8 shadow-xl">
@@ -160,11 +203,14 @@ export function PasswordResetRequestForm({ returnToLoginHref }: PasswordResetReq
             )}
           </div>
 
-          <div className="mt-8 text-center">
-            <p className="text-sm text-slate-400">
-              보안을 위해 계정의 존재 여부를 별도로 확인해 드리지 않습니다.<br />
-              메일이 오지 않는다면 스팸 메일함을 확인해 주세요.
-            </p>
+          <div className="flex flex-col items-center gap-4 pt-4">
+            <Link 
+              href={returnToLoginHref}
+              className="flex items-center gap-1 text-sm font-medium text-slate-500 transition-colors hover:text-primary"
+            >
+              <span className="material-symbols-outlined text-sm">arrow_back</span>
+              로그인 화면으로 돌아가기
+            </Link>
           </div>
         </div>
       </main>
