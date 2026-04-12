@@ -7,6 +7,8 @@ import type { AuthUserStatus } from '../auth/use-auth-user';
 import { listUserRecords } from './record-repo';
 import type { RecordStatus, WorksheetRecord } from './record-types';
 
+import { useTranslations } from 'next-intl';
+
 export type RecordsFilterStatus = 'all' | RecordStatus;
 export type RecordsLoadStatus = 'idle' | 'loading' | 'error' | 'ready';
 
@@ -68,6 +70,7 @@ function withTimeout<T>(promise: Promise<T>, timeoutMs: number, message: string)
 }
 
 export function useRecords({ authStatus, user }: UseRecordsOptions): UseRecordsResult {
+  const t = useTranslations('errors');
   const [status, setStatus] = useState<RecordsLoadStatus>('idle');
   const [error, setError] = useState<Error | null>(null);
   const [records, setRecords] = useState<WorksheetRecord[]>([]);
@@ -97,7 +100,7 @@ export function useRecords({ authStatus, user }: UseRecordsOptions): UseRecordsR
         const nextRecords = await withTimeout(
           listUserRecords(currentUser.uid),
           8000,
-          '기록 목록 응답이 지연되고 있습니다. 잠시 후 다시 시도해 주세요.',
+          t('timeout', { module: '기록' }),
         );
 
         if (!isActive) {
@@ -112,9 +115,9 @@ export function useRecords({ authStatus, user }: UseRecordsOptions): UseRecordsR
         }
 
         const resolvedError =
-          nextError instanceof Error && nextError.message.startsWith('기록 목록 응답이 지연되고 있습니다.')
+          nextError instanceof Error && nextError.message.includes('지연')
             ? nextError
-            : new Error('기록 목록을 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+            : new Error(t('fetch', { module: '기록' }));
 
         setError(resolvedError);
         setStatus('error');

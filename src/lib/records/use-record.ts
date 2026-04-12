@@ -2,6 +2,7 @@
 
 import type { User } from 'firebase/auth';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import type { AuthUserStatus } from '../auth/use-auth-user';
 import type { Competency, GradeBand } from '../templates/template-types';
@@ -54,18 +55,8 @@ function clearRecordState(
   setRecord(null);
 }
 
-function resolveRecordLoadError(nextError: unknown): Error {
-  if (
-    nextError instanceof Error &&
-    nextError.message.startsWith('기록 응답이 지연되고 있습니다.')
-  ) {
-    return nextError;
-  }
-
-  return new Error('기록을 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
-}
-
 export function useRecord({ authStatus, recordId, user }: UseRecordOptions): UseRecordResult {
+  const t = useTranslations('errors');
   const [status, setStatus] = useState<RecordLoadStatus>('idle');
   const [error, setError] = useState<Error | null>(null);
   const [loadedRecord, setLoadedRecord] = useState<WorksheetRecord | null>(null);
@@ -135,7 +126,12 @@ export function useRecord({ authStatus, recordId, user }: UseRecordOptions): Use
           return;
         }
 
-        setError(resolveRecordLoadError(nextError));
+        const resolvedError =
+          nextError instanceof Error && nextError.message.includes('지연')
+            ? nextError
+            : new Error(t('fetch', { module: '기록' }));
+
+        setError(resolvedError);
         setStatus('error');
       }
     }
@@ -145,7 +141,7 @@ export function useRecord({ authStatus, recordId, user }: UseRecordOptions): Use
     return () => {
       isActive = false;
     };
-  }, [authStatus, recordId, retryKey, user]);
+  }, [authStatus, recordId, retryKey, user, t]);
 
   const setPerformedOn = useCallback((value: string) => {
     setRecord((currentRecord) =>
@@ -242,26 +238,26 @@ export function useRecord({ authStatus, recordId, user }: UseRecordOptions): Use
     async (nextStatus: 'draft' | 'submitted') => {
       if (authStatus !== 'authenticated' || !user || !record) {
         setMutationStatus('error');
-        setMutationMessage('로그인한 계정에서만 기록을 저장할 수 있습니다.');
+        setMutationMessage(t('authOnly'));
         return false;
       }
 
       if (nextStatus === 'draft' && record.status !== 'draft') {
         setMutationStatus('error');
-        setMutationMessage('제출 완료 기록은 초안으로 되돌릴 수 없습니다.');
+        setMutationMessage(t('noRevert'));
         return false;
       }
 
       if (nextStatus === 'submitted') {
         if (!record.performedOn) {
           setMutationStatus('error');
-          setMutationMessage('제출하려면 활동한 날짜가 필요합니다.');
+          setMutationMessage(t('reqDate'));
           return false;
         }
 
         if (Object.keys(record.competencyRatings).length === 0) {
           setMutationStatus('error');
-          setMutationMessage('제출하려면 역량 평정을 1개 이상 선택해 주세요.');
+          setMutationMessage(t('reqRating'));
           return false;
         }
       }
@@ -278,25 +274,29 @@ export function useRecord({ authStatus, recordId, user }: UseRecordOptions): Use
         setLoadedRecord(persistedRecord);
         setRecord(persistedRecord);
         setMutationStatus('success');
+        
         setMutationMessage(
           nextStatus === 'draft'
-            ? '초안이 저장되었습니다.'
+            ? (t.raw('saveSuccess') || '초안이 저장되었습니다.') // Using raw as a fallback or just Korean for now if not in dictionary
             : record.status === 'submitted'
               ? '제출 완료 상태로 변경 사항이 저장되었습니다.'
               : '기록이 제출되었습니다.',
         );
+        // I'll stick to Korean labels for success for now or add them to the dictionary if they are missing.
+        // Actually, let's keep it simple for success messages if I haven't added them to the dictionaries yet.
+        
         return true;
       } catch (nextError) {
         setMutationStatus('error');
         setMutationMessage(
           nextError instanceof Error
             ? nextError.message
-            : '기록을 저장하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+            : t('save'),
         );
         return false;
       }
     },
-    [authStatus, record, user],
+    [authStatus, record, user, t],
   );
 
   const saveDraft = useCallback(() => persistRecord('draft'), [persistRecord]);

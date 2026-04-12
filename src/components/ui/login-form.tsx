@@ -8,6 +8,8 @@ import { useState } from 'react';
 import { buildPasswordResetHref } from '@/lib/auth/ensure-auth';
 import { getFirebaseAuth } from '@/lib/firebase/auth';
 
+import { useTranslations } from 'next-intl';
+
 type AuthMode = 'sign_in' | 'create_account';
 
 interface LoginFormProps {
@@ -15,48 +17,8 @@ interface LoginFormProps {
   requestedNextTarget: string | null;
 }
 
-function getPathLabel(path: string): string {
-  if (path === '/') return '메인 홈';
-  if (path.startsWith('/templates')) return '활동 탐색';
-  if (path.startsWith('/my/records/new')) return '새로운 기록 시작';
-  if (path === '/my/records') return '나의 기록 보관소';
-  return '이전 활동 페이지';
-}
-
-function getSubmitLabel(mode: AuthMode, isSubmitting: boolean): string {
-  if (isSubmitting) {
-    return mode === 'sign_in' ? '로그인 중...' : '계정 생성 중...';
-  }
-
-  return mode === 'sign_in' ? '로그인하고 기록 보기' : '계정 만들고 시작하기';
-}
-
-function resolveAuthErrorMessage(submissionError: unknown): string {
-  const errorCode =
-    typeof submissionError === 'object' && submissionError !== null && 'code' in submissionError
-      ? String(submissionError.code)
-      : null;
-
-  if (errorCode === 'auth/invalid-email') {
-    return '이메일 형식을 확인해 주세요.';
-  }
-
-  if (errorCode === 'auth/user-not-found' || errorCode === 'auth/wrong-password') {
-    return '이메일 또는 비밀번호가 맞지 않습니다. 다시 확인해 주세요.';
-  }
-
-  if (errorCode === 'auth/email-already-in-use') {
-    return '이미 사용 중인 이메일입니다. 로그인으로 전환하거나 다른 이메일을 입력해 주세요.';
-  }
-
-  if (errorCode === 'auth/weak-password') {
-    return '비밀번호는 6자 이상으로 입력해 주세요.';
-  }
-
-  return '문제가 생겼습니다. 잠시 후 다시 시도해 주세요.';
-}
-
 export function LoginForm({ nextTarget, requestedNextTarget }: LoginFormProps) {
+  const t = useTranslations('auth');
   const router = useRouter();
   const [mode, setMode] = useState<AuthMode>('sign_in');
   const [email, setEmail] = useState('');
@@ -66,6 +28,35 @@ export function LoginForm({ nextTarget, requestedNextTarget }: LoginFormProps) {
   const [formError, setFormError] = useState<string | null>(null);
   const passwordResetHref = buildPasswordResetHref(requestedNextTarget);
 
+  function getPathLabel(path: string): string {
+    if (path === '/') return t('pathHome');
+    if (path.startsWith('/templates')) return t('pathExplore');
+    if (path.startsWith('/my/records/new')) return t('pathNewRecord');
+    if (path === '/my/records') return t('pathMyRecords');
+    return t('pathPrevious');
+  }
+
+  function getSubmitLabel(mode: AuthMode, isSubmitting: boolean): string {
+    if (isSubmitting) {
+      return mode === 'sign_in' ? t('signInSubmitting') : t('createAccountSubmitting');
+    }
+    return mode === 'sign_in' ? t('signInSubmit') : t('createAccountSubmit');
+  }
+
+  function resolveAuthErrorMessage(submissionError: unknown): string {
+    const errorCode =
+      typeof submissionError === 'object' && submissionError !== null && 'code' in submissionError
+        ? String(submissionError.code)
+        : null;
+
+    if (errorCode === 'auth/invalid-email') return t('errors.invalidEmail');
+    if (errorCode === 'auth/user-not-found' || errorCode === 'auth/wrong-password') return t('errors.wrongCredentials');
+    if (errorCode === 'auth/email-already-in-use') return t('errors.emailInUse');
+    if (errorCode === 'auth/weak-password') return t('errors.weakPassword');
+
+    return t('errors.default');
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     setFormError(null);
@@ -73,7 +64,7 @@ export function LoginForm({ nextTarget, requestedNextTarget }: LoginFormProps) {
     const normalizedEmail = email.trim();
 
     if (!normalizedEmail || !password) {
-      setFormError('이메일과 비밀번호를 모두 입력해 주세요.');
+      setFormError(t('errors.emptyFields'));
       return;
     }
 
@@ -113,16 +104,19 @@ export function LoginForm({ nextTarget, requestedNextTarget }: LoginFormProps) {
             </Link>
 
             <h1 className="mb-6 text-4xl font-bold leading-[1.15] text-slate-900 lg:text-5xl">
-              우리 아이의 기록을 위해 다시 오신 것을 환영합니다.
+              {t('welcomeTitle')}
             </h1>
 
             <p className="mb-8 max-w-md text-lg leading-relaxed text-slate-600">
-              로그인하면 이전에 남긴 기록과 최근 요약을 바로 확인하고, 이어서 새로운 활동을 기록할 수 있습니다.
+              {t('welcomeDesc')}
             </p>
 
             <div className="border-t border-primary/5 py-4">
               <p className="text-xs font-medium text-slate-400">
-                로그인하면 <span className="text-slate-600 font-bold">{getPathLabel(nextTarget)}</span> 화면으로 안내해 드릴게요.
+                {t.rich('welcomeNote', {
+                  pathName: getPathLabel(nextTarget),
+                  highlight: (chunks) => <span className="text-slate-600 font-bold">{chunks}</span>
+                })}
               </p>
             </div>
           </div>
@@ -145,7 +139,7 @@ export function LoginForm({ nextTarget, requestedNextTarget }: LoginFormProps) {
                     : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
-                로그인
+                {t('signInTab')}
               </button>
               <button
                 type="button"
@@ -159,14 +153,14 @@ export function LoginForm({ nextTarget, requestedNextTarget }: LoginFormProps) {
                     : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
-                계정 만들기
+                {t('createAccountTab')}
               </button>
             </div>
 
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700" htmlFor="email">
-                  이메일 주소
+                  {t('emailLabel')}
                 </label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
@@ -178,7 +172,7 @@ export function LoginForm({ nextTarget, requestedNextTarget }: LoginFormProps) {
                     autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="parent@example.com"
+                    placeholder={t('emailPlaceholder')}
                     disabled={isSubmitting}
                     className="block w-full rounded-xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-4 text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:opacity-60"
                   />
@@ -188,13 +182,13 @@ export function LoginForm({ nextTarget, requestedNextTarget }: LoginFormProps) {
               <div>
                 <div className="mb-2 flex items-center justify-between">
                   <label className="block text-sm font-semibold text-slate-700" htmlFor="password">
-                    비밀번호
+                    {t('passwordLabel')}
                   </label>
                   <Link
                     href={passwordResetHref}
                     className="text-xs font-semibold text-primary transition-colors hover:text-primary/80"
                   >
-                    비밀번호를 잊으셨나요?
+                    {t('forgotPassword')}
                   </Link>
                 </div>
                 <div className="relative">
@@ -242,7 +236,7 @@ export function LoginForm({ nextTarget, requestedNextTarget }: LoginFormProps) {
 
             <div className="mt-10 text-center">
               <Link href="/" className="text-sm font-medium text-slate-500 underline decoration-slate-300 underline-offset-4 hover:text-slate-700">
-                처음 화면으로 돌아가기
+                {t('backToHome')}
               </Link>
             </div>
           </div>
@@ -251,3 +245,4 @@ export function LoginForm({ nextTarget, requestedNextTarget }: LoginFormProps) {
     </div>
   );
 }
+

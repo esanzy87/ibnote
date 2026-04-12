@@ -1,11 +1,13 @@
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
+import { LocaleSwitcher } from '@/components/ui/locale-switcher';
 
 type GlobalSection = 'home' | 'templates' | 'workspace';
 
 type TopBarAction = {
-  href: string;
+  href: any; // Using any for flexible routing hrefs
   icon: string;
-  label: string;
+  label: string; // Will pass translation key or translated string
   tone?: 'primary' | 'secondary';
 };
 
@@ -14,18 +16,6 @@ type GlobalTopBarProps = {
   action?: TopBarAction;
   variant?: 'public' | 'workspace';
 };
-
-type NavLink = {
-  href: string;
-  label: string;
-  value: GlobalSection;
-};
-
-const NAV_LINKS: NavLink[] = [
-  { href: '/', label: '홈', value: 'home' },
-  { href: '/templates', label: '활동 탐색', value: 'templates' },
-  { href: '/my/records', label: '나의 기록', value: 'workspace' },
-];
 
 function getActionClassName(tone: TopBarAction['tone']) {
   if (tone === 'secondary') {
@@ -40,6 +30,14 @@ export function GlobalTopBar({
   action,
   variant = 'public',
 }: GlobalTopBarProps) {
+  const t = useTranslations('common');
+
+  const NAV_LINKS = [
+    { href: '/', label: t('home'), value: 'home' },
+    { href: '/templates', label: t('templateExplore'), value: 'templates' },
+    { href: '/my/records', label: t('myRecords'), value: 'workspace' },
+  ];
+
   const activeLinkClassName =
     variant === 'workspace'
       ? 'inline-flex items-center rounded-full border border-primary/25 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary'
@@ -67,7 +65,7 @@ export function GlobalTopBar({
           ) : null}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+        <div className="flex flex-wrap items-center gap-4 sm:justify-end">
           <nav aria-label="전역 탐색" className="flex flex-wrap items-center gap-2">
             {NAV_LINKS.map((link) => {
               const isActive = link.value === active;
@@ -75,7 +73,7 @@ export function GlobalTopBar({
               return (
                 <Link
                   key={link.href}
-                  href={link.href}
+                  href={link.href as any}
                   aria-current={isActive ? 'page' : undefined}
                   className={isActive ? activeLinkClassName : inactiveLinkClassName}
                 >
@@ -84,6 +82,8 @@ export function GlobalTopBar({
               );
             })}
           </nav>
+          
+          <LocaleSwitcher />
 
           {action ? (
             <Link href={action.href} className={`hidden ${getActionClassName(action.tone)} sm:inline-flex`}>

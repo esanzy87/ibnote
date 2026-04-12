@@ -2,9 +2,10 @@
 
 import type { User } from 'firebase/auth';
 import { signOut } from 'firebase/auth';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { Link } from '@/i18n/routing';
+import { useRouter } from '@/i18n/routing';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { buildLoginHref } from '@/lib/auth/ensure-auth';
 import { useAuthUser } from '@/lib/auth/use-auth-user';
@@ -29,14 +30,15 @@ function Surface({ children, tone = 'default' }: { children: React.ReactNode; to
 }
 
 function AuthLoadingState() {
+  const t = useTranslations('settings');
   return (
     <Surface>
       <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">내 설정</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        설정 화면을 준비하고 있습니다.
+        {t('loadingTitle')}
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        로그인 상태를 확인한 뒤 이 계정에 연결된 데이터 안내와 계정 작업 버튼을 보여 드립니다.
+        {t('loadingDesc')}
       </p>
       <div className="mt-8 grid gap-4 lg:grid-cols-2">
         <div className="h-40 animate-pulse rounded-[1.75rem] border border-stone-200 bg-stone-50" />
@@ -47,6 +49,7 @@ function AuthLoadingState() {
 }
 
 function RedirectingState() {
+  const t = useTranslations('settings');
   return (
     <Surface>
       <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">로그인 필요</p>
@@ -81,15 +84,12 @@ function AuthErrorState({ message, onRetry }: { message: string; onRetry: () => 
 
 function getAuthTypeLabel(user: User): string {
   const providerIds = user.providerData.map((provider) => provider.providerId);
-
-  if (providerIds.includes('password')) {
-    return '이메일 / 비밀번호';
-  }
-
+  if (providerIds.includes('password')) return '이메일 / 비밀번호';
   return '확인되지 않음';
 }
 
 function AccountOwnershipCard({ user }: { user: User }) {
+  const t = useTranslations('settings');
   const email = user.email?.trim() || '이메일 정보를 불러오지 못했습니다.';
   const authType = useMemo(() => getAuthTypeLabel(user), [user]);
 
@@ -97,72 +97,41 @@ function AccountOwnershipCard({ user }: { user: User }) {
     <Surface>
       <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">계정 정보</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        현재 로그인한 계정 정보
+        {t('accountInfoTitle')}
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        IBNote는 이메일/비밀번호 로그인만 지원합니다. 아래 계정에 연결된 기록만 이 설정에서
-        확인하고 관리할 수 있습니다.
+        {t('accountInfoDesc')}
       </p>
 
       <dl className="mt-8 grid gap-4 sm:grid-cols-2">
         <div className="rounded-[1.5rem] border border-stone-200 bg-stone-50 p-5">
-          <dt className="text-sm font-medium text-slate-500">인증 방식</dt>
+          <dt className="text-sm font-medium text-slate-500">{t('authMethod')}</dt>
           <dd className="mt-2 text-xl font-semibold tracking-tight text-slate-900">{authType}</dd>
         </div>
 
         <div className="rounded-[1.5rem] border border-stone-200 bg-stone-50 p-5">
-          <dt className="text-sm font-medium text-slate-500">로그인 계정</dt>
+          <dt className="text-sm font-medium text-slate-500">{t('loginAccount')}</dt>
           <dd className="mt-2 break-all text-xl font-semibold tracking-tight text-slate-900">{email}</dd>
         </div>
       </dl>
 
       <div className="mt-6 rounded-[1.5rem] border border-sky-200 bg-sky-50 p-5 text-sm leading-6 text-sky-950">
-        <p className="font-medium">데이터 소유 안내</p>
-        <p className="mt-2">
-          저장된 기록과 요약 데이터는 현재 로그인한 계정에만 연결됩니다. 다른 계정으로 로그인하면 이 계정의
-          기록은 보이지 않고, 다른 계정의 기록도 현재 계정에서 열 수 없습니다.
-        </p>
+        <p className="font-medium">{t('dataOwnershipTitle')}</p>
+        <p className="mt-2">{t('dataOwnershipDesc')}</p>
       </div>
     </Surface>
   );
 }
 
 function SettingsActionCard({
-  body,
-  buttonLabel,
-  buttonTone = 'default',
-  confirmationMessage,
-  disabled = false,
-  helper,
-  isWorking = false,
-  message,
-  messageTone = 'default',
-  onClick,
-  title,
+  body, buttonLabel, buttonTone = 'default', confirmationMessage, disabled = false, helper, isWorking = false, message, messageTone = 'default', onClick, title,
 }: {
-  body: string;
-  buttonLabel: string;
-  buttonTone?: 'default' | 'danger';
-  confirmationMessage?: string;
-  disabled?: boolean;
-  helper: string;
-  isWorking?: boolean;
-  message: string | null;
-  messageTone?: 'default' | 'error' | 'success';
-  onClick: () => Promise<void> | void;
-  title: string;
+  body: string; buttonLabel: string; buttonTone?: 'default' | 'danger'; confirmationMessage?: string; disabled?: boolean; helper: string; isWorking?: boolean; message: string | null; messageTone?: 'default' | 'error' | 'success'; onClick: () => Promise<void> | void; title: string;
 }) {
-  const buttonClassName =
-    buttonTone === 'danger'
-      ? 'inline-flex items-center justify-center rounded-full bg-rose-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-rose-800 disabled:cursor-not-allowed disabled:bg-rose-300'
-      : 'inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400';
-
-  const messageClassName =
-    messageTone === 'error'
-      ? 'text-rose-700'
-      : messageTone === 'success'
-        ? 'text-emerald-700'
-        : 'text-slate-700';
+  const buttonClassName = buttonTone === 'danger'
+    ? 'inline-flex items-center justify-center rounded-full bg-rose-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-rose-800 disabled:cursor-not-allowed disabled:bg-rose-300'
+    : 'inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400';
+  const messageClassName = messageTone === 'error' ? 'text-rose-700' : messageTone === 'success' ? 'text-emerald-700' : 'text-slate-700';
 
   return (
     <article className="rounded-[1.75rem] border border-stone-200 bg-white p-6 shadow-sm sm:p-7">
@@ -172,10 +141,7 @@ function SettingsActionCard({
         type="button"
         disabled={disabled || isWorking}
         onClick={async () => {
-          if (confirmationMessage && !window.confirm(confirmationMessage)) {
-            return;
-          }
-
+          if (confirmationMessage && !window.confirm(confirmationMessage)) return;
           await onClick();
         }}
         className={`mt-6 ${buttonClassName}`}
@@ -189,6 +155,7 @@ function SettingsActionCard({
 }
 
 export function SettingsPageClient() {
+  const t = useTranslations('settings');
   const router = useRouter();
   const { error: authError, retry: retryAuth, status: authStatus, user } = useAuthUser();
   const [deleteStatus, setDeleteStatus] = useState<'idle' | 'working' | 'success' | 'error'>('idle');
@@ -199,127 +166,92 @@ export function SettingsPageClient() {
 
   useEffect(() => {
     if (authStatus === 'unauthenticated' && !isSigningOut) {
-      router.replace(buildLoginHref('/my/settings'));
+      router.replace(buildLoginHref('/my/settings') as any);
     }
   }, [authStatus, isSigningOut, router]);
 
   async function handleDeleteStoredData() {
-    if (!user) {
-      return;
-    }
-
+    if (!user) return;
     setDeleteStatus('working');
     setDeleteMessage(null);
-
     try {
       await deleteUserStoredData(user.uid);
       setDeleteStatus('success');
-      setDeleteMessage('현재 계정에 저장된 기록 데이터를 삭제했습니다. 이제 내 기록과 최근 요약에서 빈 상태가 보여야 합니다.');
+      setDeleteMessage(t('deleteRecordsSuccess'));
       router.refresh();
     } catch {
       setDeleteStatus('error');
-      setDeleteMessage('기록 데이터를 삭제하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+      setDeleteMessage(t('deleteRecordsError'));
     }
   }
 
   async function handleSignOut() {
-    if (!user) {
-      return;
-    }
-
+    if (!user) return;
     setSignOutStatus('working');
     setSignOutMessage(null);
     setIsSigningOut(true);
-
     try {
       await signOut(getFirebaseAuth());
       router.replace('/');
     } catch {
       setIsSigningOut(false);
       setSignOutStatus('error');
-      setSignOutMessage('로그아웃하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+      setSignOutMessage(t('logoutError'));
     }
   }
 
-  if (authStatus === 'loading') {
-    return (
-      <PageFrame>
-        <AuthLoadingState />
-      </PageFrame>
-    );
-  }
-
-  if (authStatus === 'error') {
-    return (
-      <PageFrame>
-        <AuthErrorState
-          message={authError?.message ?? '인증 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.'}
-          onRetry={retryAuth}
-        />
-      </PageFrame>
-    );
-  }
-
-  if (authStatus === 'unauthenticated' || !user) {
-    return (
-      <PageFrame>
-        <RedirectingState />
-      </PageFrame>
-    );
-  }
+  if (authStatus === 'loading') return <PageFrame><AuthLoadingState /></PageFrame>;
+  if (authStatus === 'error') return <PageFrame><AuthErrorState message={authError?.message ?? '인증 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.'} onRetry={retryAuth} /></PageFrame>;
+  if (authStatus === 'unauthenticated' || !user) return <PageFrame><RedirectingState /></PageFrame>;
 
   return (
     <PageFrame>
       <AccountOwnershipCard user={user} />
-
       <section className="grid gap-4 lg:grid-cols-2">
         <SettingsActionCard
-          title="모든 내 기록 삭제"
-          body="현재 로그인한 계정에 저장된 기록 데이터를 삭제합니다. 이 작업은 데이터 삭제만 수행하며 계정 로그인 상태는 유지됩니다."
-          buttonLabel="모든 내 기록 삭제"
-          confirmationMessage="현재 계정에 저장된 모든 기록을 삭제할까요? 이 작업은 되돌릴 수 없습니다."
-          helper="삭제 후 내 기록/최근 요약은 빈 상태로 보일 수 있으며, 언제든 새 기록을 다시 만들 수 있습니다."
+          title={t('deleteRecordsTitle')}
+          body={t('deleteRecordsDesc')}
+          buttonLabel={t('deleteRecordsBtn')}
+          confirmationMessage={t('deleteRecordsConfirm')}
+          helper={t('deleteRecordsHelper')}
           isWorking={deleteStatus === 'working'}
           message={deleteMessage}
           messageTone={deleteStatus === 'error' ? 'error' : deleteStatus === 'success' ? 'success' : 'default'}
           onClick={handleDeleteStoredData}
           buttonTone="danger"
         />
-
         <SettingsActionCard
-          title="로그아웃"
-          body="현재 세션만 종료하고 공개 첫 화면으로 돌아갑니다. 로그아웃은 데이터 삭제를 수행하지 않으며, 다시 로그인하면 기존 기록을 확인할 수 있습니다."
-          buttonLabel="로그아웃"
-          confirmationMessage="현재 계정에서 로그아웃할까요? 저장된 기록 데이터는 삭제되지 않습니다."
-          helper="로그아웃 후 보호 화면에 접근하면 로그인 화면으로 이동합니다."
+          title={t('logoutTitle')}
+          body={t('logoutDesc')}
+          buttonLabel={t('logoutBtn')}
+          confirmationMessage={t('logoutConfirm')}
+          helper={t('logoutHelper')}
           isWorking={signOutStatus === 'working'}
           message={signOutMessage}
           messageTone={signOutStatus === 'error' ? 'error' : 'default'}
           onClick={handleSignOut}
         />
       </section>
-
       <Surface>
         <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">다음 이동</p>
         <h2 className="mt-4 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
-          설정 이후 바로 확인할 수 있는 화면
+          {t('nextMoveTitle')}
         </h2>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-          기록과 요약 화면은 현재 로그인한 계정 기준으로만 동작합니다. 아래 화면으로 이동해도
-          같은 계정 범위 안에서만 내용을 확인합니다.
+          {t('nextMoveDesc')}
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href="/my/records"
             className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-stone-400 hover:text-slate-900"
           >
-            내 기록 보기
+            {t('linkMyRecords')}
           </Link>
           <Link
             href="/my/summary"
             className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
           >
-            최근 요약 보기
+            {t('linkMySummary')}
           </Link>
         </div>
       </Surface>

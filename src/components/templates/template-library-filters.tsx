@@ -1,37 +1,18 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import type { TemplateLibraryFilter } from '@/lib/templates/template-experience';
 import type { TemplateFilters } from '@/lib/utils/filters';
 
-const FILTER_OPTIONS = [
-  {
-    value: 'all',
-    label: '전체 활동',
-    icon: 'auto_awesome',
-  },
-  {
-    value: 'conversational_check_ins',
-    label: '대화로 시작하기',
-    icon: 'self_improvement',
-  },
-  {
-    value: 'notice_pattern_sort',
-    label: '알아차리고 분류하기',
-    icon: 'visibility',
-  },
-  {
-    value: 'supporting',
-    label: '조금 더 넓게 둘러보기',
-    icon: 'palette',
-  },
-] satisfies Array<{
-  label: string;
-  value: TemplateLibraryFilter;
-  icon: string;
-}>;
+const FILTER_OPTIONS_BASE = [
+  { value: 'all', icon: 'auto_awesome' },
+  { value: 'conversational_check_ins', icon: 'self_improvement' },
+  { value: 'notice_pattern_sort', icon: 'visibility' },
+  { value: 'supporting', icon: 'palette' },
+] as const;
 
 export function getTemplateLibraryFilterOption(value: TemplateLibraryFilter) {
-  return FILTER_OPTIONS.find((option) => option.value === value) ?? FILTER_OPTIONS[0];
+  return FILTER_OPTIONS_BASE.find((option) => option.value === value) ?? FILTER_OPTIONS_BASE[0];
 }
 
 interface TemplateLibraryFiltersProps {
@@ -45,6 +26,9 @@ export function TemplateLibraryFilters({
   onChange,
   onReset,
 }: TemplateLibraryFiltersProps) {
+  const t = useTranslations('templates.filters');
+  const tCluster = useTranslations('activityCluster');
+
   return (
     <div className="mb-12 space-y-6">
       <div className="relative max-w-2xl">
@@ -55,13 +39,13 @@ export function TemplateLibraryFilters({
           type="text"
           value={filters.search}
           onChange={(event) => onChange({ ...filters, search: event.target.value })}
-          placeholder="활동 검색 (예: '대화', '산책')..."
+          placeholder={t('searchPlaceholder')}
           className="w-full rounded-xl border-none bg-white py-4 pl-12 pr-4 text-slate-900 shadow-sm transition-all focus:ring-2 focus:ring-primary/40"
         />
       </div>
       
       <div className="flex flex-wrap gap-2">
-        {FILTER_OPTIONS.map((option) => {
+        {FILTER_OPTIONS_BASE.map((option) => {
           const isSelected = option.value === filters.cluster;
           return (
             <button
@@ -77,7 +61,7 @@ export function TemplateLibraryFilters({
               {option.value !== 'all' && (
                 <span className="material-symbols-outlined text-sm">{option.icon}</span>
               )}
-              {option.label}
+              {tCluster(option.value as any)}
             </button>
           );
         })}

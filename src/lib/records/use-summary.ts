@@ -14,6 +14,8 @@ import {
 } from './summary-utils';
 import type { WorksheetRecord } from './record-types';
 
+import { useTranslations } from 'next-intl';
+
 export type SummaryLoadStatus = 'idle' | 'loading' | 'error' | 'ready';
 
 interface UseSummaryOptions {
@@ -67,6 +69,7 @@ async function loadSummaryRecords(uid: string, today: Date): Promise<WorksheetRe
 }
 
 export function useSummary({ authStatus, today, user }: UseSummaryOptions): UseSummaryResult {
+  const t = useTranslations('errors');
   const [status, setStatus] = useState<SummaryLoadStatus>('idle');
   const [error, setError] = useState<Error | null>(null);
   const [records, setRecords] = useState<WorksheetRecord[]>([]);
@@ -97,7 +100,7 @@ export function useSummary({ authStatus, today, user }: UseSummaryOptions): UseS
         const nextRecords = await withTimeout(
           loadSummaryRecords(currentUser.uid, currentDate),
           8000,
-          '요약 데이터를 불러오는 응답이 지연되고 있습니다. 잠시 후 다시 시도해 주세요.',
+          t('timeout', { module: '요약' }),
         );
 
         if (!isActive) {
@@ -113,9 +116,9 @@ export function useSummary({ authStatus, today, user }: UseSummaryOptions): UseS
 
         const resolvedError =
           nextError instanceof Error &&
-          nextError.message.startsWith('요약 데이터를 불러오는 응답이 지연되고 있습니다.')
+          nextError.message.includes('지연')
             ? nextError
-            : new Error('요약 데이터를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+            : new Error(t('fetch', { module: '요약' }));
 
         setError(resolvedError);
         setStatus('error');

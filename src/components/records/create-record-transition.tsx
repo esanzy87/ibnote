@@ -1,9 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { Link } from '@/i18n/routing';
+import { useRouter } from '@/i18n/routing';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { getTemplatePhase4Asset } from '@/lib/assets/phase4-route-images';
 import { buildLoginHref } from '@/lib/auth/ensure-auth';
@@ -29,6 +30,7 @@ function TransitionLayout({ children }: { children: React.ReactNode }) {
 }
 
 function InvalidTemplateState({ templateSlug }: { templateSlug: string | null }) {
+  const t = useTranslations('transition');
   return (
     <TransitionLayout>
       <div className="mb-10 flex flex-col items-center">
@@ -37,14 +39,14 @@ function InvalidTemplateState({ templateSlug }: { templateSlug: string | null })
             <span className="material-symbols-outlined text-3xl">error</span>
           </div>
         </div>
-        <h1 className="mb-2 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">등록된 활동을 찾을 수 없습니다</h1>
-        <p className="font-medium text-slate-600">주소가 잘못되었거나 현재 준비 중인 활동입니다.</p>
+        <h1 className="mb-2 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">{t('invalidTitle')}</h1>
+        <p className="font-medium text-slate-600">{t('invalidDesc')}</p>
       </div>
       <Link
         href="/templates"
         className="inline-flex items-center justify-center rounded-xl bg-primary px-8 py-4 text-sm font-bold text-white transition hover:bg-primary/90"
       >
-        템플릿 목록으로 돌아가기
+        {t('backToTemplates')}
       </Link>
     </TransitionLayout>
   );
@@ -73,16 +75,18 @@ function TransitionLoadingState({ title, subtitle }: { title: string; subtitle: 
 }
 
 function StartGuidance() {
+  const t = useTranslations('transition');
   return (
     <div className="mb-8 w-full rounded-xl border border-primary/5 bg-white p-6 shadow-sm">
       <p className="text-lg leading-relaxed text-slate-800">
-        "기록보다 오늘 있었던 장면에 집중해 보세요. 느낀 그대로를 짧게 남기는 것만으로도 충분합니다."
+        "{t('guidance')}"
       </p>
     </div>
   );
 }
 
 function TemplatePreview({ template }: { template: EnrichedWorksheetTemplate }) {
+  const t = useTranslations('transition');
   const imageAsset = getTemplatePhase4Asset(template.slug);
 
   return (
@@ -100,11 +104,11 @@ function TemplatePreview({ template }: { template: EnrichedWorksheetTemplate }) 
           </div>
         )}
         <div className="flex flex-1 flex-col justify-center gap-2 p-6 text-left">
-          <p className="text-xs font-bold uppercase tracking-widest text-primary">선택한 활동 템플릿</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-primary">{t('previewTag')}</p>
           <h3 className="text-xl font-bold text-slate-900">{template.title}</h3>
           <div className="mt-2 border-t border-slate-100 pt-2">
-            <p className="mb-1 text-[10px] font-medium uppercase text-slate-400">Preview Question</p>
-            <p className="text-sm leading-snug text-slate-700">{template.recordFocus[0] || '어떤 점을 느끼셨나요?'}</p>
+            <p className="mb-1 text-[10px] font-medium uppercase text-slate-400">{t('previewQ')}</p>
+            <p className="text-sm leading-snug text-slate-700">{template.recordFocus[0] || t('previewQFallback')}</p>
           </div>
         </div>
       </div>
@@ -113,6 +117,7 @@ function TemplatePreview({ template }: { template: EnrichedWorksheetTemplate }) 
 }
 
 function TransitionErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
+  const t = useTranslations('transition');
   return (
     <TransitionLayout>
       <div className="mb-10 flex flex-col items-center">
@@ -121,7 +126,7 @@ function TransitionErrorState({ message, onRetry }: { message: string; onRetry: 
             <span className="material-symbols-outlined text-3xl">warning</span>
           </div>
         </div>
-        <h1 className="mb-2 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">오류가 발생했습니다</h1>
+        <h1 className="mb-2 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">{t('errorTitle')}</h1>
         <p className="font-medium text-slate-600">{message}</p>
       </div>
       <div className="flex flex-col gap-3 w-full">
@@ -129,13 +134,13 @@ function TransitionErrorState({ message, onRetry }: { message: string; onRetry: 
           onClick={onRetry}
           className="inline-flex items-center justify-center rounded-xl bg-primary px-8 py-4 text-sm font-bold text-white transition hover:bg-primary/90"
         >
-          다시 시도하기
+          {t('btnRetry')}
         </button>
         <Link
           href="/templates"
           className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-8 py-4 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
         >
-          템플릿 목록으로 돌아가기
+          {t('backToTemplates')}
         </Link>
       </div>
     </TransitionLayout>
@@ -143,6 +148,7 @@ function TransitionErrorState({ message, onRetry }: { message: string; onRetry: 
 }
 
 export function CreateRecordTransition({ templateSlug }: CreateRecordTransitionProps) {
+  const t = useTranslations('transition');
   const router = useRouter();
   const { user, status } = useAuthUser();
   const template = templateSlug ? getTemplateBySlug(templateSlug) : null;
@@ -154,7 +160,7 @@ export function CreateRecordTransition({ templateSlug }: CreateRecordTransitionP
   useEffect(() => {
     if (status === 'unauthenticated') {
       const loginHref = buildLoginHref(`/my/records/new?template=${templateSlug}`);
-      router.replace(loginHref);
+      router.replace(loginHref as any);
       return;
     }
 
@@ -170,19 +176,19 @@ export function CreateRecordTransition({ templateSlug }: CreateRecordTransitionP
           const draftRecord = await createDraftRecord(uid, currentTemplate);
           // Small delay to let the transition feel intentional
           await new Promise((resolve) => setTimeout(resolve, 800));
-          router.replace(`/my/records/${draftRecord.id}`);
+          router.replace(`/my/records/${draftRecord.id}` as any);
         } catch (err) {
           console.error('Failed to create draft:', err);
           setCreationStatus('error');
           setCreationError(
-            err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.',
+            err instanceof Error ? err.message : t('errorDefault'),
           );
         }
       }
 
       void runTransition();
     }
-  }, [creationStatus, status, template, user, templateSlug, router]);
+  }, [creationStatus, status, template, user, templateSlug, router, t]);
 
   if (!template) {
     return <InvalidTemplateState templateSlug={templateSlug} />;
@@ -191,7 +197,7 @@ export function CreateRecordTransition({ templateSlug }: CreateRecordTransitionP
   if (creationStatus === 'error') {
     return (
       <TransitionErrorState
-        message={creationError ?? '기록 공간을 준비하는 중 오류가 발생했습니다.'}
+        message={creationError ?? t('errorDefault')}
         onRetry={() => {
           hasStartedCreationRef.current = false;
           setCreationStatus('idle');
@@ -200,15 +206,15 @@ export function CreateRecordTransition({ templateSlug }: CreateRecordTransitionP
     );
   }
 
-  let title = '기록 공간을 준비하고 있습니다...';
-  let subtitle = '아이와의 소중한 성장을 남길 공간을 준비합니다';
+  let title = t('prepareSpace');
+  let subtitle = t('prepareSpaceDesc');
 
   if (status === 'loading') {
-    title = '사용자 정보를 확인하고 있습니다...';
-    subtitle = '잠시만 기다려 주세요';
+    title = t('checkAuth');
+    subtitle = t('checkAuthDesc');
   } else if (status === 'unauthenticated') {
-    title = '로그인 상태를 확인하고 있습니다...';
-    subtitle = '로그인 후 기록 공간으로 이동합니다';
+    title = t('checkLogin');
+    subtitle = t('checkLoginDesc');
   }
 
   return (

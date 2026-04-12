@@ -1,18 +1,16 @@
 'use client';
 
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { GlobalTopBar } from '@/components/navigation/global-top-bar';
 import { getTemplatePhase4Asset } from '@/lib/assets/phase4-route-images';
 import { buildLoginHref } from '@/lib/auth/ensure-auth';
 import { useAuthUser } from '@/lib/auth/use-auth-user';
-import {
-  ACTIVITY_CLUSTER_LABELS,
-  type EnrichedWorksheetTemplate,
-} from '@/lib/templates/template-experience';
+import { type EnrichedWorksheetTemplate } from '@/lib/templates/template-experience';
 
 interface ProtectedTemplateDetailProps {
   slug: string;
@@ -20,11 +18,12 @@ interface ProtectedTemplateDetailProps {
 }
 
 function TemplateDetailFrame({ children }: { children: React.ReactNode }) {
+  const t = useTranslations('templates.topBar');
   return (
     <div className="flex min-h-screen flex-col bg-background-light">
       <GlobalTopBar
         active="templates"
-        action={{ href: '/my/records', icon: 'edit_note', label: '내 기록 보기', tone: 'secondary' }}
+        action={{ href: '/my/records', icon: 'edit_note', label: t('btnMyRecords'), tone: 'secondary' }}
       />
       <div className="flex-1">{children}</div>
     </div>
@@ -32,45 +31,48 @@ function TemplateDetailFrame({ children }: { children: React.ReactNode }) {
 }
 
 function DetailLoadingState() {
+  const t = useTranslations('templates.detail');
   return (
     <TemplateDetailFrame>
       <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
         <div className="animate-pulse text-primary">
           <span className="material-symbols-outlined text-5xl">nest_eco_leaf</span>
         </div>
-        <h1 className="mt-4 text-2xl font-bold text-slate-900">템플릿을 준비하고 있습니다...</h1>
+        <h1 className="mt-4 text-2xl font-bold text-slate-900">{t('loadingTitle')}</h1>
       </div>
     </TemplateDetailFrame>
   );
 }
 
 function DetailRedirectingState() {
+  const t = useTranslations('templates.detail');
   return (
     <TemplateDetailFrame>
       <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
         <div className="text-primary">
           <span className="material-symbols-outlined text-5xl">lock</span>
         </div>
-        <h1 className="mt-4 text-2xl font-bold text-slate-900">로그인하고 있습니다...</h1>
-        <p className="mt-2 text-slate-600">선택한 활동의 상세 화면으로 돌아옵니다.</p>
+        <h1 className="mt-4 text-2xl font-bold text-slate-900">{t('redirectTitle')}</h1>
+        <p className="mt-2 text-slate-600">{t('redirectDesc')}</p>
       </div>
     </TemplateDetailFrame>
   );
 }
 
 function InvalidTemplateState() {
+  const t = useTranslations('templates.detail');
   return (
     <TemplateDetailFrame>
       <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
         <div className="text-slate-400">
           <span className="material-symbols-outlined text-5xl">error</span>
         </div>
-        <h1 className="mt-4 text-2xl font-bold text-slate-900">템플릿을 찾을 수 없습니다.</h1>
+        <h1 className="mt-4 text-2xl font-bold text-slate-900">{t('invalidTitle')}</h1>
         <Link
           href="/templates"
           className="mt-6 inline-flex items-center justify-center rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white transition hover:bg-primary/90"
         >
-          템플릿 목록으로 돌아가기
+          {t('btnBack')}
         </Link>
       </div>
     </TemplateDetailFrame>
@@ -78,7 +80,9 @@ function InvalidTemplateState() {
 }
 
 function TemplateDetailContent({ template }: { template: EnrichedWorksheetTemplate }) {
-  const clusterLabel = ACTIVITY_CLUSTER_LABELS[template.activityCluster];
+  const t = useTranslations('templates.detail');
+  const tCluster = useTranslations('activityCluster');
+  const clusterLabel = tCluster(template.activityCluster as any);
   const imageAsset = getTemplatePhase4Asset(template.slug);
 
   return (
@@ -126,7 +130,7 @@ function TemplateDetailContent({ template }: { template: EnrichedWorksheetTempla
             <div className="h-1 w-1 rounded-full bg-primary/30" />
             <div className="flex items-center gap-1.5 text-slate-500">
               <span className="material-symbols-outlined text-[20px]">schedule</span>
-              <span className="text-sm font-medium">{template.durationMinutes}분 내외</span>
+              <span className="text-sm font-medium">{t('durationSuffix', { minutes: template.durationMinutes })}</span>
             </div>
           </div>
         </div>
@@ -146,13 +150,13 @@ function TemplateDetailContent({ template }: { template: EnrichedWorksheetTempla
               </div>
             )}
             <div className="flex-1 p-6">
-              <h3 className="mb-2 text-lg font-bold text-slate-900">우리에게 맞는 활동일까요?</h3>
+              <h3 className="mb-2 text-lg font-bold text-slate-900">{t('quickDecisionTitle')}</h3>
               <p className="mb-4 text-sm leading-relaxed text-slate-600">
                 {template.quickStart}
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">집중력</span>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">함께 대화</span>
+                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{t('tagFocus')}</span>
+                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{t('tagConversation')}</span>
               </div>
             </div>
           </div>
@@ -162,7 +166,7 @@ function TemplateDetailContent({ template }: { template: EnrichedWorksheetTempla
         <section className="mb-10">
           <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
             <span className="material-symbols-outlined text-primary">shopping_basket</span>
-            간단한 준비물
+            {t('materialsTitle')}
           </h2>
           <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {template.materials.map((material, idx) => (
@@ -174,7 +178,7 @@ function TemplateDetailContent({ template }: { template: EnrichedWorksheetTempla
             {template.materials.length === 0 && (
               <li className="flex items-center gap-3 rounded-lg border border-primary/10 bg-primary/5 p-3">
                 <span className="material-symbols-outlined text-sm text-primary">check_circle</span>
-                <span className="text-sm font-medium text-slate-700">특별한 준비물이 필요 없어요</span>
+                <span className="text-sm font-medium text-slate-700">{t('materialsEmpty')}</span>
               </li>
             )}
           </ul>
@@ -184,7 +188,7 @@ function TemplateDetailContent({ template }: { template: EnrichedWorksheetTempla
         <section className="mb-10">
           <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
             <span className="material-symbols-outlined text-primary">footprint</span>
-            함께하는 순서
+            {t('stepsTitle')}
           </h2>
           <div className="relative space-y-6 before:absolute before:bottom-2 before:left-[11px] before:top-2 before:w-[2px] before:bg-primary/10">
             {template.steps.map((step, idx) => (
@@ -204,7 +208,7 @@ function TemplateDetailContent({ template }: { template: EnrichedWorksheetTempla
         <section className="mb-10 rounded-xl border-l-4 border-primary bg-primary/5 p-6">
           <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-900">
             <span className="material-symbols-outlined text-primary">visibility</span>
-            차분히 관찰해 보세요
+            {t('noticeTitle')}
           </h2>
           <div className="space-y-3">
             <ul className="space-y-2">
@@ -222,7 +226,7 @@ function TemplateDetailContent({ template }: { template: EnrichedWorksheetTempla
         <section className="mb-12">
           <h2 className="mb-3 flex items-center gap-2 text-xl font-bold text-slate-900">
             <span className="material-symbols-outlined text-primary">history_toggle_off</span>
-            나중에 다시 읽어 보면 좋은 점
+            {t('revisitTitle')}
           </h2>
           <p className="text-sm leading-relaxed text-slate-600">
             {template.revisitReason}
@@ -233,18 +237,18 @@ function TemplateDetailContent({ template }: { template: EnrichedWorksheetTempla
         <div className="fixed bottom-6 left-1/2 w-full max-w-[400px] -translate-x-1/2 px-4 md:max-w-[600px]">
           <div className="flex flex-col gap-3 rounded-2xl border border-primary/10 bg-white/90 p-4 shadow-lg backdrop-blur-sm sm:flex-row">
             <Link
-              href={`/my/records/new?template=${encodeURIComponent(template.slug)}`}
+              href={`/my/records/new?template=${encodeURIComponent(template.slug)}` as any}
               className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary py-4 font-bold text-white transition-transform active:scale-95 hover:bg-primary/90"
             >
               <span className="material-symbols-outlined">edit_note</span>
-              가볍게 기록하기
+              {t('btnWrite')}
             </Link>
             <button
               onClick={() => window.print()}
               className="flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-primary/20 bg-transparent py-4 font-bold text-primary transition-colors hover:border-primary/40"
             >
               <span className="material-symbols-outlined">print</span>
-              활동 인쇄하기
+              {t('btnPrint')}
             </button>
           </div>
         </div>
@@ -260,7 +264,7 @@ export function ProtectedTemplateDetail({ slug, template }: ProtectedTemplateDet
   useEffect(() => {
     if (status === 'unauthenticated') {
       const loginHref = buildLoginHref(`/templates/${slug}`);
-      router.replace(loginHref);
+      router.replace(loginHref as any);
     }
   }, [status, slug, router]);
 

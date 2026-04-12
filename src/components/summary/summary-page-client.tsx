@@ -1,8 +1,9 @@
 'use client';
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { Link } from '@/i18n/routing';
+import { useRouter } from '@/i18n/routing';
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { buildLoginHref } from '@/lib/auth/ensure-auth';
 import { useAuthUser } from '@/lib/auth/use-auth-user';
@@ -13,14 +14,6 @@ import { RecordsWorkspaceShell } from '@/components/records/records-workspace-sh
 import type { AbsoluteGrade, WorksheetRecord } from '@/lib/records/record-types';
 import { COMPETENCIES, type Competency } from '@/lib/templates/template-types';
 
-const COMPETENCY_LABELS = {
-  literacy: '문해',
-  thinking: '사고력',
-  expression: '표현',
-  collaboration: '협력',
-  digital_literacy: '디지털 문해',
-} satisfies Record<Competency, string>;
-
 const GRADE_TONE_CLASSES = {
   A: 'border-emerald-200 bg-emerald-50 text-emerald-950',
   B: 'border-sky-200 bg-sky-50 text-sky-950',
@@ -30,12 +23,13 @@ const GRADE_TONE_CLASSES = {
 } satisfies Record<AbsoluteGrade, string>;
 
 function PageFrame({ children }: { children: React.ReactNode }) {
+  const t = useTranslations('common');
   return (
     <div className="min-h-screen bg-background-light text-slate-800">
       <GlobalTopBar
         active="workspace"
         variant="workspace"
-        action={{ href: '/templates', icon: 'filter_vintage', label: '템플릿 둘러보기', tone: 'secondary' }}
+        action={{ href: '/templates', icon: 'filter_vintage', label: t('templateExplore'), tone: 'secondary' }}
       />
       <main className="bg-gradient-to-b from-background-light via-[#fff8ef] to-[#f6ecdf] px-6 py-12 sm:py-16">
         <div className="mx-auto flex max-w-6xl flex-col gap-6">{children}</div>
@@ -54,8 +48,7 @@ function SummaryWorkspaceFrame({ children }: { children: React.ReactNode }) {
 }
 
 function Surface({ children, tone = 'default' }: { children: React.ReactNode; tone?: 'default' | 'error' }) {
-  const className =
-    tone === 'error'
+  const className = tone === 'error'
       ? 'rounded-[1.9rem] border border-rose-200 bg-rose-50 p-8 shadow-sm sm:p-10'
       : 'rounded-[1.9rem] border border-primary/10 bg-white/90 p-8 shadow-[0_24px_60px_-40px_rgba(186,93,28,0.38)] sm:p-10';
 
@@ -63,12 +56,7 @@ function Surface({ children, tone = 'default' }: { children: React.ReactNode; to
 }
 
 function formatDateStamp(dateStamp: string): string {
-  return new Intl.DateTimeFormat('ko-KR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    weekday: 'short',
-  }).format(new Date(`${dateStamp}T00:00:00`));
+  return new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' }).format(new Date(`${dateStamp}T00:00:00`));
 }
 
 function formatDateRange(startDate: string, endDate: string): string {
@@ -76,43 +64,31 @@ function formatDateRange(startDate: string, endDate: string): string {
 }
 
 function formatTimestamp(timestamp: number): string {
-  return new Intl.DateTimeFormat('ko-KR', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(timestamp));
+  return new Intl.DateTimeFormat('ko-KR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(timestamp));
 }
 
-function getRecordPreview(record: WorksheetRecord): string {
+function getRecordPreview(record: WorksheetRecord, placeholder: string): string {
   const childReflection = record.childReflection.trim();
   const parentMemo = record.parentMemo.trim();
-
-  if (childReflection) {
-    return childReflection;
-  }
-
-  if (parentMemo) {
-    return parentMemo;
-  }
-
-  return '짧은 메모는 비어 있지만 제출된 평가 결과는 요약에 반영되어 있어요.';
+  if (childReflection) return childReflection;
+  if (parentMemo) return parentMemo;
+  return placeholder;
 }
 
 function AuthLoadingState() {
+  const t = useTranslations('summary');
   return (
     <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">내 요약</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">{t('labels.mySummary')}</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        최근 기록 요약 화면을 준비하고 있습니다.
+        {t('loadingTitle')}
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        로그인 상태를 확인한 뒤 최근 14일 안에 제출한 기록만 모아 보여 드립니다.
+        {t('loadingDesc')}
       </p>
       <div className="mt-8 grid gap-4 lg:grid-cols-3">
         {Array.from({ length: 3 }, (_, index) => `summary-loading-card-${index}`).map((placeholderId) => (
-          <div
-            key={placeholderId}
-            className="h-36 animate-pulse rounded-[1.75rem] border border-primary/10 bg-background-light"
-          />
+          <div key={placeholderId} className="h-36 animate-pulse rounded-[1.75rem] border border-primary/10 bg-background-light" />
         ))}
       </div>
     </Surface>
@@ -120,14 +96,15 @@ function AuthLoadingState() {
 }
 
 function SummaryLoadingState() {
+  const t = useTranslations('summary');
   return (
     <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">요약 데이터</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">{t('labels.summaryData')}</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        요약 데이터를 계산하고 있습니다.
+        {t('calcTitle')}
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        활동 날짜와 역량 평가를 정리해 이해하기 쉬운 14일 요약으로 변환하고 있습니다.
+        {t('calcDesc')}
       </p>
       <div className="mt-8 grid gap-4 lg:grid-cols-2">
         <div className="h-72 animate-pulse rounded-[1.75rem] border border-primary/10 bg-background-light" />
@@ -137,296 +114,153 @@ function SummaryLoadingState() {
   );
 }
 
-function RedirectingState() {
-  return (
-    <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">로그인 필요</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        로그인 화면으로 이동하고 있습니다.
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        내 요약은 로그인한 계정에서만 볼 수 있어요. 로그인 후에는 이 화면으로 다시 돌아옵니다.
-      </p>
-    </Surface>
-  );
-}
-
-function AuthErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
-  return (
-    <Surface tone="error">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">인증 오류</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-rose-950 sm:text-4xl">
-        로그인 상태를 확인하지 못했습니다.
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-rose-900 sm:text-base">{message}</p>
-      <button
-        type="button"
-        onClick={onRetry}
-        className="mt-6 inline-flex items-center justify-center rounded-full bg-rose-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-rose-800"
-      >
-        다시 시도
-      </button>
-    </Surface>
-  );
-}
-
-function SummaryErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
-  return (
-    <Surface tone="error">
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-rose-700">요약 오류</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-rose-950 sm:text-4xl">
-        최근 14일 요약을 불러오지 못했습니다.
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-rose-900 sm:text-base">{message}</p>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-rose-900 sm:text-base">
-        잠깐 뒤 다시 시도하거나, 내 기록에서 이미 남겨 둔 기록을 먼저 확인할 수 있습니다.
-      </p>
-      <div className="mt-6 flex flex-wrap gap-3">
-        <button
-          type="button"
-          onClick={onRetry}
-          className="inline-flex items-center justify-center rounded-full bg-rose-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-rose-800"
-        >
-          다시 시도
-        </button>
-        <Link
-          href="/my/records"
-          className="inline-flex items-center justify-center rounded-full border border-rose-200 bg-white px-5 py-3 text-sm font-medium text-rose-900 transition hover:border-rose-300"
-        >
-          내 기록 먼저 보기
-        </Link>
-      </div>
-    </Surface>
-  );
-}
-
 function EmptyState({ startDate, endDate }: { startDate: string; endDate: string }) {
+  const t = useTranslations('summary');
   return (
     <Surface>
-      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">빈 요약</p>
+      <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">{t('labels.emptySummary')}</p>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-        최근 14일에 제출한 기록이 아직 없습니다.
+        {t('emptyTitle')}
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-        현재 요약 기간은 {formatDateRange(startDate, endDate)}입니다. 이 기간 안에 제출 완료한 기록이
-        생기면 이곳에 역량별 횟수와 평균 등급이 자동으로 정리됩니다.
+        {t('emptyDesc', { range: formatDateRange(startDate, endDate) })}
       </p>
       <div className="mt-6 grid gap-3 rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4 text-left text-sm text-slate-700 sm:grid-cols-2">
         <div className="rounded-[1.25rem] border border-primary/10 bg-white px-4 py-3">
-          <p className="font-medium text-slate-900">이미 초안이 있다면</p>
-          <p className="mt-2 leading-6 text-slate-600">
-            내 기록에서 이어서 제출해 주세요. 초안은 제출되기 전까지 요약에 포함되지 않습니다.
-          </p>
+          <p className="font-medium text-slate-900">{t('emptyHint1Title')}</p>
+          <p className="mt-2 leading-6 text-slate-600">{t('emptyHint1Desc')}</p>
         </div>
         <div className="rounded-[1.25rem] border border-primary/10 bg-white px-4 py-3">
-          <p className="font-medium text-slate-900">처음이라면</p>
-          <p className="mt-2 leading-6 text-slate-600">
-            템플릿에서 활동을 하나 고르고 기록해 보세요. 제출하면 이 화면에 자동으로 반영됩니다.
-          </p>
+          <p className="font-medium text-slate-900">{t('emptyHint2Title')}</p>
+          <p className="mt-2 leading-6 text-slate-600">{t('emptyHint2Desc')}</p>
         </div>
       </div>
       <div className="mt-6 flex flex-wrap gap-3">
-        <Link
-          href="/my/records"
-          className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
-        >
-          초안/기록 보러 가기
+        <Link href="/my/records" className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5">
+          {t('linkGoRecords')}
         </Link>
-        <Link
-          href="/templates"
-          className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
-        >
-          템플릿에서 시작하기
+        <Link href="/templates" className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90">
+          {t('linkGoTemplates')}
         </Link>
       </div>
     </Surface>
   );
 }
 
-function SummaryOverview({
-  averageCount,
-  endDate,
-  startDate,
-  totalSubmittedRecords,
-}: {
-  averageCount: number;
-  endDate: string;
-  startDate: string;
-  totalSubmittedRecords: number;
-}) {
+function SummaryOverview({ averageCount, endDate, startDate, totalSubmittedRecords }: { averageCount: number; endDate: string; startDate: string; totalSubmittedRecords: number; }) {
+  const t = useTranslations('summary');
   return (
     <section className="grid gap-4 rounded-[1.9rem] border border-primary/10 bg-gradient-to-br from-white via-[#fff6ed] to-[#f7e2cf] p-6 shadow-[0_24px_60px_-40px_rgba(186,93,28,0.38)] sm:p-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
       <div>
-         <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">내 요약</p>
+         <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">{t('labels.mySummary')}</p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-          최근 14일의 제출 기록을 간단히 돌아보세요.
+          {t('overviewTitle')}
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-          오늘을 포함한 {formatDateRange(startDate, endDate)} 기간 안에서 제출 완료한 기록만 집계합니다.
-          활동 수와 역량별 평가 흐름을 한 화면에서 확인하고, 필요하면 개별 기록으로 바로 이동할 수 있어요.
+          {t('overviewDesc', { range: formatDateRange(startDate, endDate) })}
         </p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
         <div className="rounded-[1.5rem] border border-primary/10 bg-white/90 p-4">
-          <p className="text-sm font-medium text-slate-500">제출 기록 수</p>
-          <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">
-            {totalSubmittedRecords}개
-          </p>
-          <p className="mt-2 text-sm leading-6 text-slate-600">최근 14일 안에 제출된 기록만 셉니다.</p>
+          <p className="text-sm font-medium text-slate-500">{t('statTotalRecords')}</p>
+          <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">{t('statTotalRecordsVal', { count: totalSubmittedRecords })}</p>
+          <p className="mt-2 text-sm leading-6 text-slate-600">{t('statTotalRecordsDesc')}</p>
         </div>
-
         <div className="rounded-[1.5rem] border border-primary/10 bg-white/90 p-4">
-          <p className="text-sm font-medium text-slate-500">평균 집계 역량</p>
-          <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">{averageCount}개</p>
-          <p className="mt-2 text-sm leading-6 text-slate-600">평가값이 있는 역량만 평균 등급을 계산합니다.</p>
+          <p className="text-sm font-medium text-slate-500">{t('statAvgComps')}</p>
+          <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">{t('statAvgCompsVal', { count: averageCount })}</p>
+          <p className="mt-2 text-sm leading-6 text-slate-600">{t('statAvgCompsDesc')}</p>
         </div>
-
         <div className="rounded-[1.5rem] border border-primary/10 bg-white/90 p-4">
-          <p className="text-sm font-medium text-slate-500">요약에 연결된 기록</p>
-          <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">최대 5개</p>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            활동 날짜 최신순으로 가장 최근 제출된 흐름을 보여 드립니다.
-          </p>
+          <p className="text-sm font-medium text-slate-500">{t('statRecentSummary')}</p>
+          <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">{t('statRecentSummaryVal')}</p>
+          <p className="mt-2 text-sm leading-6 text-slate-600">{t('statRecentSummaryDesc')}</p>
         </div>
       </div>
     </section>
   );
 }
 
-function SummaryBasisCard({
-  description,
-  title,
-}: {
-  description: string;
-  title: string;
-}) {
-  return (
-    <article className="rounded-[1.5rem] border border-primary/10 bg-background-light p-4">
-      <p className="text-sm font-medium text-slate-900">{title}</p>
-      <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
-    </article>
-  );
-}
-
-function CompetencyCountCard({
-  count,
-  competency,
-  maxCount,
-}: {
-  count: number;
-  competency: Competency;
-  maxCount: number;
-}) {
+function CompetencyCountCard({ count, competency, maxCount }: { count: number; competency: Competency; maxCount: number; }) {
+  const t = useTranslations('summary');
+  const tComp = useTranslations('competencies');
   const widthPercent = maxCount === 0 ? 0 : Math.max((count / maxCount) * 100, count > 0 ? 18 : 0);
-
   return (
     <article className="rounded-[1.5rem] border border-primary/10 bg-background-light p-5">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-sm font-medium text-slate-500">역량</p>
-          <h3 className="mt-2 text-xl font-semibold text-slate-900">{COMPETENCY_LABELS[competency]}</h3>
+          <p className="text-sm font-medium text-slate-500">{t('labelCompetency')}</p>
+          <h3 className="mt-2 text-xl font-semibold text-slate-900">{tComp(competency)}</h3>
         </div>
         <p className="text-3xl font-semibold tracking-tight text-slate-900">{count}</p>
       </div>
       <div className="mt-5 h-3 rounded-full bg-white/95">
-        <div
-          className="h-full rounded-full bg-gradient-to-r from-primary to-[#cc6a24] transition-all"
-          style={{ width: `${widthPercent}%` }}
-        />
+        <div className="h-full rounded-full bg-gradient-to-r from-primary to-[#cc6a24] transition-all" style={{ width: `${widthPercent}%` }} />
       </div>
-      <p className="mt-3 text-sm leading-6 text-slate-600">
-        최근 14일 제출 기록 중 이 역량이 평가된 횟수입니다.
-      </p>
     </article>
   );
 }
 
-function AverageGradeCard({
-  competency,
-  gradeLabel,
-  ratingCount,
-  roundedAverage,
-}: {
-  competency: Competency;
-  gradeLabel: AbsoluteGrade | null;
-  ratingCount: number;
-  roundedAverage: number | null;
-}) {
+function AverageGradeCard({ competency, gradeLabel, ratingCount, roundedAverage }: { competency: Competency; gradeLabel: AbsoluteGrade | null; ratingCount: number; roundedAverage: number | null; }) {
+  const t = useTranslations('summary');
+  const tComp = useTranslations('competencies');
   const toneClassName = gradeLabel ? GRADE_TONE_CLASSES[gradeLabel] : 'border-primary/10 bg-background-light text-slate-500';
-
   return (
     <article className={`rounded-[1.5rem] border p-5 ${toneClassName}`}>
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-medium opacity-80">역량</p>
-          <h3 className="mt-2 text-xl font-semibold">{COMPETENCY_LABELS[competency]}</h3>
+          <p className="text-sm font-medium opacity-80">{t('labelCompetency')}</p>
+          <h3 className="mt-2 text-xl font-semibold">{tComp(competency)}</h3>
         </div>
         <p className="text-3xl font-semibold tracking-tight">{gradeLabel ?? '-'}</p>
       </div>
       <p className="mt-4 text-sm leading-6 opacity-90">
-        {gradeLabel
-          ? `평균 ${roundedAverage?.toFixed(1)}점, ${ratingCount}개의 평가에서 계산했습니다.`
-          : '최근 14일 안에 이 역량에 대한 제출 평가가 아직 없습니다.'}
+        {gradeLabel ? t('avgGradeInfo', { score: (roundedAverage ?? 0).toFixed(1), count: ratingCount }) : t('avgGradeEmpty')}
       </p>
     </article>
   );
 }
 
 function RecentRecordCard({ record }: { record: WorksheetRecord }) {
-  const ratedCompetencies = record.competenciesSnapshot.filter(
-    (competency) => record.competencyRatings[competency],
-  );
+  const t = useTranslations('summary');
+  const tComp = useTranslations('competencies');
+  const ratedCompetencies = record.competenciesSnapshot.filter((competency) => record.competencyRatings[competency]);
 
   return (
     <article className="rounded-[1.6rem] border border-primary/10 bg-white/92 p-6 shadow-[0_22px_56px_-42px_rgba(148,73,22,0.28)]">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="max-w-2xl">
-          <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">다시 볼 기록</p>
-          <h3 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
-            {record.templateTitleSnapshot}
-          </h3>
+          <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">{t('labelRecentRecordBadge')}</p>
+          <h3 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">{record.templateTitleSnapshot}</h3>
           <p className="mt-3 text-sm leading-6 text-slate-600">
-            활동 날짜 {formatDateStamp(record.performedOn)} · 마지막 수정 {formatTimestamp(record.updatedAt)}
+            {t('recordDateAndUpdated', { date: formatDateStamp(record.performedOn), time: formatTimestamp(record.updatedAt) })}
           </p>
         </div>
-
-        <Link
-          href={`/my/records/${record.id}`}
-          className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
-        >
-          기록 다시 보기
+        <Link href={`/my/records/${record.id}`} className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5">
+          {t('btnRevisit')}
         </Link>
       </div>
-
       <p className="mt-5 rounded-[1.25rem] border border-primary/10 bg-background-light px-4 py-3 text-sm leading-6 text-slate-600">
-        {getRecordPreview(record)}
+        {getRecordPreview(record, t('emptyPreview'))}
       </p>
-
       <div className="mt-5 flex flex-wrap gap-2">
         <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-950">
-          현재 요약에 반영됨
+          {t('badgeInSummary')}
         </span>
         {ratedCompetencies.length > 0 ? (
           ratedCompetencies.map((competency) => {
             const grade = record.competencyRatings[competency];
-
-            if (!grade) {
-              return null;
-            }
-
+            if (!grade) return null;
             return (
-              <span
-                key={competency}
-                className={`rounded-full border px-3 py-1 text-sm font-medium ${GRADE_TONE_CLASSES[grade]}`}
-              >
-                {COMPETENCY_LABELS[competency]} {grade}
+              <span key={competency} className={`rounded-full border px-3 py-1 text-sm font-medium ${GRADE_TONE_CLASSES[grade]}`}>
+                {tComp(competency)} {grade}
               </span>
             );
           })
         ) : (
           <span className="rounded-full border border-primary/10 bg-background-light px-3 py-1 text-sm font-medium text-slate-600">
-            표시할 평가가 없습니다.
+            {t('badgeNoGrade')}
           </span>
         )}
       </div>
@@ -435,77 +269,24 @@ function RecentRecordCard({ record }: { record: WorksheetRecord }) {
 }
 
 export function SummaryPageClient() {
+  const t = useTranslations('summary');
   const router = useRouter();
   const { error: authError, retry: retryAuth, status: authStatus, user } = useAuthUser();
-  const { error: summaryError, retry: retrySummary, status: summaryStatus, summary } = useSummary({
-    authStatus,
-    user,
-  });
+  const { error: summaryError, retry: retrySummary, status: summaryStatus, summary } = useSummary({ authStatus, user });
   const emptyWindow = getSummaryDateRange();
 
   useEffect(() => {
-    if (authStatus === 'unauthenticated') {
-      router.replace(buildLoginHref('/my/summary'));
-    }
+    if (authStatus === 'unauthenticated') router.replace(buildLoginHref('/my/summary') as any);
   }, [authStatus, router]);
 
-  if (authStatus === 'loading') {
-    return (
-      <SummaryWorkspaceFrame>
-        <AuthLoadingState />
-      </SummaryWorkspaceFrame>
-    );
-  }
+  if (authStatus === 'loading') return <SummaryWorkspaceFrame><AuthLoadingState /></SummaryWorkspaceFrame>;
+  if (authStatus === 'error') return <SummaryWorkspaceFrame><Surface tone="error"><p>{authError?.message ?? '인증 상태 확인 실패'}</p></Surface></SummaryWorkspaceFrame>;
+  if (authStatus === 'unauthenticated') return <SummaryWorkspaceFrame><Surface>Redirecting...</Surface></SummaryWorkspaceFrame>;
+  if (summaryStatus === 'idle' || summaryStatus === 'loading') return <SummaryWorkspaceFrame><SummaryLoadingState /></SummaryWorkspaceFrame>;
+  if (summaryStatus === 'error') return <SummaryWorkspaceFrame><Surface tone="error"><p>{summaryError?.message ?? '오류'}</p><button onClick={retrySummary}>재시도</button></Surface></SummaryWorkspaceFrame>;
+  if (!summary) return <SummaryWorkspaceFrame><EmptyState startDate={emptyWindow.startDate} endDate={emptyWindow.endDate} /></SummaryWorkspaceFrame>;
 
-  if (authStatus === 'error') {
-    return (
-      <SummaryWorkspaceFrame>
-        <AuthErrorState
-          message={authError?.message ?? '인증 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.'}
-          onRetry={retryAuth}
-        />
-      </SummaryWorkspaceFrame>
-    );
-  }
-
-  if (authStatus === 'unauthenticated') {
-    return (
-      <SummaryWorkspaceFrame>
-        <RedirectingState />
-      </SummaryWorkspaceFrame>
-    );
-  }
-
-  if (summaryStatus === 'idle' || summaryStatus === 'loading') {
-    return (
-      <SummaryWorkspaceFrame>
-        <SummaryLoadingState />
-      </SummaryWorkspaceFrame>
-    );
-  }
-
-  if (summaryStatus === 'error') {
-    return (
-      <SummaryWorkspaceFrame>
-        <SummaryErrorState
-          message={summaryError?.message ?? '요약 데이터를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'}
-          onRetry={retrySummary}
-        />
-      </SummaryWorkspaceFrame>
-    );
-  }
-
-  if (!summary) {
-    return (
-      <SummaryWorkspaceFrame>
-        <EmptyState startDate={emptyWindow.startDate} endDate={emptyWindow.endDate} />
-      </SummaryWorkspaceFrame>
-    );
-  }
-
-  const averageEntriesByCompetency = Object.fromEntries(
-    summary.averageGradesByCompetency.map((entry) => [entry.competency, entry]),
-  ) as Partial<Record<Competency, (typeof summary.averageGradesByCompetency)[number]>>;
+  const averageEntriesByCompetency = Object.fromEntries(summary.averageGradesByCompetency.map((entry) => [entry.competency, entry])) as Partial<Record<Competency, (typeof summary.averageGradesByCompetency)[number]>>;
   const maxCount = Math.max(...summary.countsByCompetency.map((entry) => entry.count), 0);
 
   return (
@@ -519,44 +300,25 @@ export function SummaryPageClient() {
 
       <section className="grid gap-4 rounded-[1.9rem] border border-primary/10 bg-white/92 p-6 shadow-[0_24px_60px_-40px_rgba(186,93,28,0.34)] sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]">
         <div>
-          <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">요약 기준</p>
-          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
-            이 화면이 어떤 기록을 묶어 보여 주는지 확인해 보세요.
-          </h2>
+          <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">{t('labels.basisCriteria')}</p>
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">{t('basisTitle')}</h2>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-            현재 요약은 {formatDateRange(summary.window.startDate, summary.window.endDate)} 안에 제출한 기록{' '}
-            {summary.totalSubmittedRecords}개를 바탕으로 합니다.
+            {t('basisDesc', { range: formatDateRange(summary.window.startDate, summary.window.endDate), count: summary.totalSubmittedRecords })}
           </p>
-
-          <div className="mt-5 flex flex-wrap gap-3">
-            <Link
-              href="/my/records"
-              className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
-            >
-              내 기록 확인하기
-            </Link>
-            <Link
-              href="/templates"
-              className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
-            >
-              새 활동 고르기
-            </Link>
-          </div>
         </div>
-
         <div className="grid gap-3">
-          <SummaryBasisCard
-            title="포함되는 기록"
-            description="기간 안에 제출 완료한 기록만 요약에 묶입니다."
-          />
-          <SummaryBasisCard
-            title="잠시 빠지는 기록"
-            description="초안은 제출을 마치기 전까지는 요약 수치에 들어오지 않습니다."
-          />
-          <SummaryBasisCard
-            title="다시 이어보는 방법"
-            description="아래 최근 제출 기록부터 다시 열어 본 뒤, 내 기록 화면으로 돌아가 흐름을 살펴볼 수 있습니다."
-          />
+          <article className="rounded-[1.5rem] border border-primary/10 bg-background-light p-4">
+            <p className="text-sm font-medium text-slate-900">{t('labels.basisCard1Title')}</p>
+            <p className="mt-2 text-sm leading-6 text-slate-600">{t('labels.basisCard1Desc')}</p>
+          </article>
+          <article className="rounded-[1.5rem] border border-primary/10 bg-background-light p-4">
+            <p className="text-sm font-medium text-slate-900">{t('labels.basisCard2Title')}</p>
+            <p className="mt-2 text-sm leading-6 text-slate-600">{t('labels.basisCard2Desc')}</p>
+          </article>
+          <article className="rounded-[1.5rem] border border-primary/10 bg-background-light p-4">
+            <p className="text-sm font-medium text-slate-900">{t('labels.basisCard3Title')}</p>
+            <p className="mt-2 text-sm leading-6 text-slate-600">{t('labels.basisCard3Desc')}</p>
+          </article>
         </div>
       </section>
 
@@ -564,22 +326,14 @@ export function SummaryPageClient() {
         <Surface>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">역량별 횟수</p>
-              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
-                어떤 역량을 자주 기록했는지 확인해 보세요.
-              </h2>
+              <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">{t('labels.compCount')}</p>
+              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">{t('compCountTitle')}</h2>
             </div>
-            <p className="text-sm leading-6 text-slate-600">제출 기록 1개당 역량별로 1회씩 집계합니다.</p>
+            <p className="text-sm leading-6 text-slate-600">{t('compCountDesc')}</p>
           </div>
-
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             {summary.countsByCompetency.map((entry) => (
-              <CompetencyCountCard
-                key={entry.competency}
-                competency={entry.competency}
-                count={entry.count}
-                maxCount={maxCount}
-              />
+              <CompetencyCountCard key={entry.competency} competency={entry.competency} count={entry.count} maxCount={maxCount} />
             ))}
           </div>
         </Surface>
@@ -587,18 +341,14 @@ export function SummaryPageClient() {
         <Surface>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">역량별 평균</p>
-              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
-                역량별 평균 등급을 한눈에 볼 수 있어요.
-              </h2>
+              <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">{t('labels.compAvg')}</p>
+              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">{t('compAvgTitle')}</h2>
             </div>
-            <p className="text-sm leading-6 text-slate-600">A~E 등급을 점수로 환산해 평균을 냅니다.</p>
+            <p className="text-sm leading-6 text-slate-600">{t('compAvgDesc')}</p>
           </div>
-
           <div className="mt-6 grid gap-4">
             {COMPETENCIES.map((competency) => {
               const averageEntry = averageEntriesByCompetency[competency];
-
               return (
                 <AverageGradeCard
                   key={competency}
@@ -613,25 +363,22 @@ export function SummaryPageClient() {
         </Surface>
       </section>
 
-      <Surface>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">최근 제출 5개</p>
-            <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
-              이 요약에 반영된 최근 기록을 다시 볼 수 있습니다.
-            </h2>
+      <section className="grid gap-4 xl:grid-cols-1">
+        <Surface>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">{t('labels.recentSubmitted')}</p>
+              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">{t('recentRecordsTitle')}</h2>
+            </div>
+            <p className="text-sm leading-6 text-slate-600">{t('recentRecordsDesc')}</p>
           </div>
-          <p className="text-sm leading-6 text-slate-600">
-            활동 날짜 최신순으로 최대 5개까지 보여 드립니다.
-          </p>
-        </div>
-
-        <div className="mt-6 grid gap-4">
-          {summary.recentRecords.map((record) => (
-            <RecentRecordCard key={record.id} record={record} />
-          ))}
-        </div>
-      </Surface>
+          <div className="mt-6 grid gap-4">
+            {summary.recentRecords.map((record) => (
+              <RecentRecordCard key={record.id} record={record} />
+            ))}
+          </div>
+        </Surface>
+      </section>
     </SummaryWorkspaceFrame>
   );
 }
