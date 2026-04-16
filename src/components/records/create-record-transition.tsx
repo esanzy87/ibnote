@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { Link } from '@/i18n/routing';
 import { useRouter } from '@/i18n/routing';
 import { useEffect, useRef, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { getTemplatePhase4Asset } from '@/lib/assets/phase4-route-images';
 import { buildLoginHref } from '@/lib/auth/ensure-auth';
@@ -12,6 +12,7 @@ import { useAuthUser } from '@/lib/auth/use-auth-user';
 import { createDraftRecord } from '@/lib/records/record-repo';
 import type { EnrichedWorksheetTemplate } from '@/lib/templates/template-experience';
 import { getTemplateBySlug } from '@/lib/templates/template-repo';
+import { isSupportedLocale } from '@/lib/templates/template-localization';
 
 interface CreateRecordTransitionProps {
   templateSlug: string | null;
@@ -149,9 +150,10 @@ function TransitionErrorState({ message, onRetry }: { message: string; onRetry: 
 
 export function CreateRecordTransition({ templateSlug }: CreateRecordTransitionProps) {
   const t = useTranslations('transition');
+  const locale = useLocale();
   const router = useRouter();
   const { user, status } = useAuthUser();
-  const template = templateSlug ? getTemplateBySlug(templateSlug) : null;
+  const template = templateSlug ? getTemplateBySlug(templateSlug, isSupportedLocale(locale) ? locale : 'ko') : null;
 
   const [creationStatus, setCreationStatus] = useState<'idle' | 'creating' | 'error'>('idle');
   const [creationError, setCreationError] = useState<string | null>(null);
@@ -188,7 +190,7 @@ export function CreateRecordTransition({ templateSlug }: CreateRecordTransitionP
 
       void runTransition();
     }
-  }, [creationStatus, status, template, user, templateSlug, router, t]);
+  }, [creationStatus, status, template, user, templateSlug, router, t, locale]);
 
   if (!template) {
     return <InvalidTemplateState templateSlug={templateSlug} />;

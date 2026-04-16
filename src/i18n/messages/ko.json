@@ -1,7 +1,9 @@
 {
   "common": {
     "print": "인쇄하기",
-    "templateExplore": "템플릿 둘러보기"
+    "templateExplore": "템플릿 둘러보기",
+    "home": "홈",
+    "myRecords": "내 기록"
   },
   "home": {
     "heroBadge": "부모를 위한 따뜻한 기록",
@@ -314,7 +316,7 @@
     "checkLoginDesc": "로그인 후 기록 공간으로 이동합니다",
     "guidance": "기록보다 오늘 있었던 장면에 집중해 보세요. 느낀 그대로를 짧게 남기는 것만으로도 충분합니다.",
     "previewTag": "선택한 활동 템플릿",
-    "previewQ": "Preview Question",
+    "previewQ": "기록에서 보고 싶은 질문",
     "previewQFallback": "어떤 점을 느끼셨나요?",
     "errorTitle": "오류가 발생했습니다",
     "btnRetry": "다시 시도하기",
@@ -324,6 +326,8 @@
     "all": "전체 활동",
     "conversational_check_ins": "대화로 시작하기",
     "notice_pattern_sort": "알아차리고 분류하기",
+    "choice_reason_responsibility": "선택과 이유",
+    "play_based_inquiry": "놀이처럼 탐색하기",
     "supporting": "조금 더 넓게 둘러보기"
   },
   "gradeBands": {

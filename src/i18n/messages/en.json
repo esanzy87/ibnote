@@ -1,7 +1,9 @@
 {
   "common": {
     "print": "Print",
-    "templateExplore": "Explore Templates"
+    "templateExplore": "Explore Templates",
+    "home": "Home",
+    "myRecords": "My Records"
   },
   "home": {
     "heroBadge": "Warm records for parents",
@@ -324,6 +326,8 @@
     "all": "All Activities",
     "conversational_check_ins": "Conversational Check-ins",
     "notice_pattern_sort": "Notice, Pattern, Sort",
+    "choice_reason_responsibility": "Choice, Reason, Responsibility",
+    "play_based_inquiry": "Play-based Inquiry",
     "supporting": "Broadening Perspectives"
   },
   "gradeBands": {

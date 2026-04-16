@@ -2,7 +2,7 @@
 
 import { useRouter } from '@/i18n/routing';
 import { useEffect, useMemo, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { GlobalTopBar } from '@/components/navigation/global-top-bar';
 import { TemplateCard } from '@/components/templates/template-card';
@@ -15,6 +15,7 @@ import {
   buildTemplateLibrarySections,
   type EnrichedWorksheetTemplate,
 } from '@/lib/templates/template-experience';
+import { isSupportedLocale } from '@/lib/templates/template-localization';
 import { DEFAULT_TEMPLATE_FILTERS, filterTemplates, type TemplateFilters } from '@/lib/utils/filters';
 
 interface TemplateLibraryClientProps {
@@ -81,6 +82,7 @@ export function TemplateLibraryClient({ templates }: TemplateLibraryClientProps)
   const tGuidance = useTranslations('templates.guidance');
   const tSection = useTranslations('templates.section');
   const tCluster = useTranslations('activityCluster');
+  const locale = useLocale();
 
   const router = useRouter();
   const { status } = useAuthUser();
@@ -94,8 +96,8 @@ export function TemplateLibraryClient({ templates }: TemplateLibraryClientProps)
 
   const filteredTemplates = useMemo(() => filterTemplates(templates, filters), [templates, filters]);
   const sections = useMemo(
-    () => buildTemplateLibrarySections(filteredTemplates),
-    [filteredTemplates],
+    () => buildTemplateLibrarySections(filteredTemplates, isSupportedLocale(locale) ? locale : 'ko'),
+    [filteredTemplates, locale],
   );
 
   if (status === 'loading') {

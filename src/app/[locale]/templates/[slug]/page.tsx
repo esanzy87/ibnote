@@ -1,5 +1,7 @@
 import { ProtectedTemplateDetail } from '@/components/templates/protected-template-detail';
 import { getPublishedTemplateSlugs, getTemplateBySlug } from '@/lib/templates/template-repo';
+import { getLocale } from 'next-intl/server';
+import { isSupportedLocale } from '@/lib/templates/template-localization';
 
 type TemplateDetailPageProps = {
   params: Promise<{
@@ -13,7 +15,8 @@ export function generateStaticParams() {
 
 export default async function TemplateDetailPage({ params }: TemplateDetailPageProps) {
   const { slug } = await params;
-  const template = getTemplateBySlug(slug);
+  const locale = await getLocale();
+  const template = getTemplateBySlug(slug, isSupportedLocale(locale) ? locale : 'ko');
 
   return <ProtectedTemplateDetail slug={slug} template={template} />;
 }

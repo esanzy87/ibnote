@@ -1,11 +1,15 @@
 import { Link } from '@/i18n/routing';
 import Image from 'next/image';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 
 import { GlobalTopBar } from '@/components/navigation/global-top-bar';
 import { HOME_ROUTE_IMAGES } from '@/lib/assets/phase4-route-images';
+import { getTemplateBySlug } from '@/lib/templates/template-repo';
+import { isSupportedLocale } from '@/lib/templates/template-localization';
 
 export default async function HomePage() {
+  const locale = await getLocale();
+  const templateLocale = isSupportedLocale(locale) ? locale : 'ko';
   const t = await getTranslations('home');
 
   const HOW_IT_WORKS_STEPS = [
@@ -28,24 +32,29 @@ export default async function HomePage() {
 
   const TEMPLATE_EXAMPLES = [
     {
-      title: '내 생각 말해 보기', // Still hardcoded for now, as templates might be db driven
-      summary: '하나의 의견을 말하고 이유를 붙여 보며 대화를 시작하는 템플릿입니다.',
+      slug: 'my-opinion-matters',
       icon: 'chat',
       image: HOME_ROUTE_IMAGES.examples.opinionTalk,
     },
     {
-      title: '오늘 달라진 점 찾기',
-      summary: '생활 속 변화를 함께 관찰하고 전후를 설명해 보는 템플릿입니다.',
+      slug: 'what-changed-in-my-day',
       icon: 'visibility',
       image: HOME_ROUTE_IMAGES.examples.noticingChange,
     },
     {
-      title: '이번 주 작은 실천 정하기',
-      summary: '지금 할 수 있는 작은 행동 하나를 고르고 왜 중요한지 남기는 템플릿입니다.',
+      slug: 'my-small-action-this-week',
       icon: 'assignment',
       image: HOME_ROUTE_IMAGES.examples.smallAction,
     },
-  ] as const;
+  ].flatMap((example) => {
+    const template = getTemplateBySlug(example.slug, templateLocale);
+
+    if (!template) {
+      return [];
+    }
+
+    return [{ ...example, template }];
+  });
 
   return (
     <div className="min-h-screen bg-background-light font-display text-slate-900 antialiased">
@@ -144,7 +153,7 @@ export default async function HomePage() {
             <div className="grid gap-8 md:grid-cols-3">
               {TEMPLATE_EXAMPLES.map((example) => (
                 <div
-                  key={example.title}
+                  key={example.template.slug}
                   className="group overflow-hidden rounded-xl border border-slate-100 bg-white shadow-md transition-all hover:shadow-xl"
                 >
                   <div className="relative aspect-video overflow-hidden bg-primary/5">
@@ -161,8 +170,8 @@ export default async function HomePage() {
                     <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
                       <span className="material-symbols-outlined">{example.icon}</span>
                     </div>
-                    <h3 className="mb-3 text-2xl font-bold">{example.title}</h3>
-                    <p className="text-slate-600">{example.summary}</p>
+                    <h3 className="mb-3 text-2xl font-bold">{example.template.title}</h3>
+                    <p className="text-slate-600">{example.template.summary}</p>
                     <Link
                       href="/login"
                       className="mt-6 flex items-center gap-2 font-bold text-primary transition-all group-hover:gap-3"

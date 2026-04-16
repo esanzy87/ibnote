@@ -243,13 +243,6 @@ function TemplateDetailContent({ template }: { template: EnrichedWorksheetTempla
               <span className="material-symbols-outlined">edit_note</span>
               {t('btnWrite')}
             </Link>
-            <button
-              onClick={() => window.print()}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-primary/20 bg-transparent py-4 font-bold text-primary transition-colors hover:border-primary/40"
-            >
-              <span className="material-symbols-outlined">print</span>
-              {t('btnPrint')}
-            </button>
           </div>
         </div>
       </div>

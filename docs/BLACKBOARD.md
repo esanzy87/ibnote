@@ -7,9 +7,9 @@ Do not store epic-local logs, long histories, or temporary run notes here.
 
 
 - Active epic: `014_ui_ux_completion_program`
-- Current state: `i18n-multi-language-support-fully-implemented`
-- Current blocker: none. Multi-language support (Korean/English) is fully implemented across all routes using `next-intl`. This includes metadata, core workspace components (templates, records, summary), hooks, and a language switcher.
-- Next action: finalize documentation and commit the i18n implementation.
+- Current state: `i18n-template-locale-drift-remediated`
+- Current blocker: none. The locale-aware template data pass now aligns top-bar navigation and template surfaces with the active `ko/en` setting, and the current snapshot has passed build/type verification.
+- Next action: sync the active epic docpack verification notes for the locale-drift remediation, then commit the i18n hardening pass.
 - Current expectation: run epic 014 as a rolling phase-based UI/UX completion program and keep adding new phases until James explicitly closes the epic
 - Active-epic resolution rule: the `Active epic` value must exactly match one folder name under `docs/epics/`
 

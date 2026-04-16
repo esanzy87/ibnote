@@ -1,4 +1,5 @@
 import type { WorksheetTemplate } from './template-types';
+import type { SupportedLocale } from './template-localization';
 
 export const ACTIVITY_CLUSTERS = [
   'conversational_check_ins',
@@ -36,35 +37,69 @@ export interface TemplateLibrarySection {
   templates: EnrichedWorksheetTemplate[];
 }
 
-export const ACTIVITY_CLUSTER_LABELS = {
-  conversational_check_ins: '대화로 시작하기',
-  notice_pattern_sort: '알아차리고 분류하기',
-  choice_reason_responsibility: '선택과 이유',
-  play_based_inquiry: '놀이처럼 탐색하기',
-} satisfies Record<ActivityCluster, string>;
+const ACTIVITY_CLUSTER_LABELS_BY_LOCALE: Record<SupportedLocale, Record<ActivityCluster, string>> = {
+  ko: {
+    conversational_check_ins: '대화로 시작하기',
+    notice_pattern_sort: '알아차리고 분류하기',
+    choice_reason_responsibility: '선택과 이유',
+    play_based_inquiry: '놀이처럼 탐색하기',
+  },
+  en: {
+    conversational_check_ins: 'Conversational Check-ins',
+    notice_pattern_sort: 'Notice, Pattern, Sort',
+    choice_reason_responsibility: 'Choice, Reason, Responsibility',
+    play_based_inquiry: 'Play-based Inquiry',
+  },
+};
+
+export function getActivityClusterLabels(locale: SupportedLocale) {
+  return ACTIVITY_CLUSTER_LABELS_BY_LOCALE[locale];
+}
 
 const SUPPORTING_ACTIVITY_CLUSTERS = new Set<ActivityCluster>([
   'choice_reason_responsibility',
   'play_based_inquiry',
 ]);
 
-const TEMPLATE_LIBRARY_SECTION_META = {
-  conversational_check_ins: {
-    label: '대화로 시작하기',
-    description:
-      '하루의 장면, 의견, 질문을 짧게 주고받으며 바로 기록으로 이어지기 좋은 활동입니다.',
+const TEMPLATE_LIBRARY_SECTION_META_BY_LOCALE: Record<
+  SupportedLocale,
+  Record<TemplateLibrarySectionId, Omit<TemplateLibrarySection, 'id' | 'templates'>>
+> = {
+  ko: {
+    conversational_check_ins: {
+      label: '대화로 시작하기',
+      description:
+        '하루의 장면, 의견, 질문을 짧게 주고받으며 바로 기록으로 이어지기 좋은 활동입니다.',
+    },
+    notice_pattern_sort: {
+      label: '알아차리고 분류하기',
+      description:
+        '주변에서 보이는 변화, 닮은 점, 반복, 정리 규칙을 가볍게 발견해 보는 활동입니다.',
+    },
+    supporting: {
+      label: '조금 더 넓게 둘러보기',
+      description:
+        '기본 두 흐름 밖에서 써볼 수 있는 확장 활동입니다. 중심 축은 아니지만 계속 꺼내볼 수 있습니다.',
+    },
   },
-  notice_pattern_sort: {
-    label: '알아차리고 분류하기',
-    description:
-      '주변에서 보이는 변화, 닮은 점, 반복, 정리 규칙을 가볍게 발견해 보는 활동입니다.',
+  en: {
+    conversational_check_ins: {
+      label: 'Conversational Check-ins',
+      description:
+        'Short back-and-forth about a day, opinion, or question that can flow straight into a record.',
+    },
+    notice_pattern_sort: {
+      label: 'Notice, Pattern, Sort',
+      description:
+        'Lightweight activities for spotting changes, similarities, repetition, and organizing rules.',
+    },
+    supporting: {
+      label: 'Broader Explorations',
+      description:
+        'Extension activities outside the two core flows. Not the center of this phase, but still worth revisiting.',
+    },
   },
-  supporting: {
-    label: '조금 더 넓게 둘러보기',
-    description:
-      '기본 두 흐름 밖에서 써볼 수 있는 확장 활동입니다. 004의 중심 축은 아니지만 계속 꺼내볼 수 있습니다.',
-  },
-} satisfies Record<TemplateLibrarySectionId, Omit<TemplateLibrarySection, 'id' | 'templates'>>;
+};
 
 const TEMPLATE_EXPERIENCE_MAP: Record<string, TemplateExperienceMeta> = {
   'ask-better-questions': {
@@ -279,12 +314,203 @@ const TEMPLATE_EXPERIENCE_MAP: Record<string, TemplateExperienceMeta> = {
   },
 };
 
+const TEMPLATE_EXPERIENCE_MAP_EN: Record<string, TemplateExperienceMeta> = {
+  'ask-better-questions': {
+    activityCluster: 'conversational_check_ins',
+    familyMoments: [
+      'When a child keeps repeating the same question and you want to reshape it',
+      'When short answers are making the conversation feel too brief',
+    ],
+    parentSummary: 'A home check-in that sharpens a question and deepens the conversation.',
+    quickStart: 'One photo or one recent moment is enough to get started.',
+    recordFocus: ['The difference between the first question and the revised one', 'One or two words that made the question expand'],
+    revisitReason: 'You can compare how the child widened the question when the topic comes back later.',
+    libraryOrder: 30,
+  },
+  'compare-two-ideas': {
+    activityCluster: 'notice_pattern_sort',
+    familyMoments: [
+      'When you want to compare two choices or two scenes out loud',
+      'When you want to hear why the child changed their mind',
+    ],
+    parentSummary: 'A short compare-and-contrast activity that helps children notice what matters.',
+    quickStart: 'Two different photos or two opinions are enough.',
+    recordFocus: ['One difference the child thought mattered most', 'A choice or thought that changed after comparing'],
+    revisitReason: 'You can see how the child compares things when a similar situation appears again.',
+    libraryOrder: 60,
+  },
+  'explain-what-you-noticed': {
+    activityCluster: 'notice_pattern_sort',
+    familyMoments: [
+      'When you want a child to explain an object or scene in their own words',
+      'When you want to preserve the details they noticed in a record',
+    ],
+    parentSummary: 'An activity that keeps the child’s observational language alive.',
+    quickStart: 'One object at home or one picture is enough.',
+    recordFocus: ['The detail the child noticed first', 'The wording that helped someone else picture it'],
+    revisitReason: 'When you read it again later, you can see what the child considered important and how they expanded the description.',
+    libraryOrder: 20,
+  },
+  'family-rule-builder': {
+    activityCluster: 'choice_reason_responsibility',
+    familyMoments: [
+      'When you want to work through a repeating family conflict together',
+      'When you want to build a shared agreement instead of just giving instructions',
+    ],
+    parentSummary: 'Build a family rule together and talk through why that agreement matters.',
+    quickStart: 'One problematic moment and a sheet of paper are enough.',
+    recordFocus: ['The rule sentence the child came up with', 'The reason they felt it was needed'],
+    revisitReason: 'Re-reading later helps you see which agreements stick and which ones change over time.',
+    libraryOrder: 10,
+  },
+  'high-low-next-talk': {
+    activityCluster: 'conversational_check_ins',
+    familyMoments: [
+      'When you want to summarize the day without making it too long',
+      'When you want to name what went well, what felt hard, and what comes next',
+    ],
+    parentSummary: 'A short check-in that leaves one good moment, one hard moment, and one next step.',
+    quickStart: 'No materials needed, just a few minutes at the table or before bed.',
+    recordFocus: ['One sentence for the child’s high, low, and next', 'The small next step they want to try'],
+    revisitReason: 'On similar days, you can see what gave the child energy and what they wanted to try again.',
+    libraryOrder: 10,
+  },
+  'my-opinion-matters': {
+    activityCluster: 'conversational_check_ins',
+    familyMoments: [
+      'When you want the child to speak first about what they think and why',
+      'When you want to hear their reasoning without interrupting',
+    ],
+    parentSummary: 'A basic conversation activity that draws out a child’s opinion and reason on everyday choices.',
+    quickStart: 'One real choice from home is enough to begin.',
+    recordFocus: ['One sentence of the child’s opinion', 'The reason or evidence that supported it'],
+    revisitReason: 'Repeated notes help you see which choices the child makes often and how clearly they explain why.',
+    libraryOrder: 20,
+  },
+  'my-small-action-this-week': {
+    activityCluster: 'choice_reason_responsibility',
+    familyMoments: [
+      'When you want to choose one small action to try this week together',
+      'When you want to see whether a good intention turns into a real action',
+    ],
+    parentSummary: 'Choose one small action and talk through why it feels worth trying.',
+    quickStart: 'It is fine to start by speaking, without paper or pencil.',
+    recordFocus: ['The small action the child chose', 'The reason they wanted to do it'],
+    revisitReason: 'A few days later, you can see which promises feel realistic and worth keeping.',
+    libraryOrder: 20,
+  },
+  'notice-think-wonder-about-nature': {
+    activityCluster: 'notice_pattern_sort',
+    familyMoments: [
+      'When you want to slow down and notice a nature scene instead of passing by it',
+      'When you want a child’s observation to lead into thought and wonder',
+    ],
+    parentSummary: 'A slow observation activity that moves from noticing to thinking to wondering.',
+    quickStart: 'A window view or a plant is enough, even without going outside.',
+    recordFocus: ['The first detail the child saw', 'The wonder question that came from the scene'],
+    revisitReason: 'When you revisit the same place later, you can compare what the child notices and wonders about.',
+    libraryOrder: 50,
+  },
+  'one-minute-mini-speech': {
+    activityCluster: 'conversational_check_ins',
+    familyMoments: [
+      'When you want to help a child turn a story into a short talk',
+      'When you want to practice speaking confidence in front of family',
+    ],
+    parentSummary: 'A family sharing activity that focuses on one core idea spoken briefly.',
+    quickStart: 'Pick one topic and start practicing out loud.',
+    recordFocus: ['The one core sentence the child chose', 'What they shortened or changed'],
+    revisitReason: 'You can see which topics the child speaks about at length and which ideas they keep as the core.',
+    libraryOrder: 40,
+  },
+  'pattern-hunt-at-home': {
+    activityCluster: 'notice_pattern_sort',
+    familyMoments: [
+      'When you want to look for repeated shapes, sounds, or motions at home or on the way',
+      'When you want to capture a child spotting a rule and predicting what comes next',
+    ],
+    parentSummary: 'A pattern-finding activity that helps children read the world in a new way.',
+    quickStart: 'Tiles, clothing patterns, table settings, or clapping sounds all work.',
+    recordFocus: ['The repeated rule the child noticed first', 'The reason they predicted what comes next'],
+    revisitReason: 'When you read it again later, you can see how the child’s pattern-finding and prediction change over time.',
+    libraryOrder: 40,
+  },
+  'sort-what-belongs-together': {
+    activityCluster: 'notice_pattern_sort',
+    familyMoments: [
+      'When you want a child to group things by their own criteria',
+      'When you want them to explain a sorting rule instead of chasing the right answer',
+    ],
+    parentSummary: 'Group items together and then split them again by a different rule to surface thinking.',
+    quickStart: 'Four or five small items from around the house are enough.',
+    recordFocus: ['The first sorting rule', 'The new groupings that appeared when the rule changed'],
+    revisitReason: 'Doing it again shows what the child notices first and which criteria they return to most often.',
+    libraryOrder: 30,
+  },
+  'spot-fact-vs-opinion': {
+    activityCluster: 'notice_pattern_sort',
+    familyMoments: [
+      'When you want to talk through how to read a spoken or written claim',
+      'When you want to sort confusing sentences while hearing the child’s evidence',
+    ],
+    parentSummary: 'A sorting activity that separates facts from opinions in short statements.',
+    quickStart: 'A few news headlines or short sentences are enough.',
+    recordFocus: ['The sentence that felt confusing and why', 'The clues used to sort it'],
+    revisitReason: 'When you read it again later, you can see which clues the child reaches for first when judging language.',
+    libraryOrder: 70,
+  },
+  'waste-flow-map': {
+    activityCluster: 'notice_pattern_sort',
+    familyMoments: [
+      'When you want to trace where a thrown-away item goes',
+      'When you want to map a repeating household habit as a flow',
+    ],
+    parentSummary: 'Follow a single object through its use-and-discard flow to see household patterns.',
+    quickStart: 'Even one used package is enough to start.',
+    recordFocus: ['The most surprising step in the flow', 'One place you want to change next time'],
+    revisitReason: 'When the same item comes up again, you can compare whether the family habit actually changed.',
+    libraryOrder: 90,
+  },
+  'water-use-check': {
+    activityCluster: 'notice_pattern_sort',
+    familyMoments: [
+      'When you want to look again at repeating water-use moments like washing, dishwashing, or showering',
+      'When you want to spot a clue for changing one small habit',
+    ],
+    parentSummary: 'Observe repeated water-use moments at home and choose a small change to try.',
+    quickStart: 'Pick one everyday water-use moment and observe it right away.',
+    recordFocus: ['The first waste point that stood out', 'The small change you want to try this week'],
+    revisitReason: 'A few days later, you can see whether the small action actually carried through.',
+    libraryOrder: 80,
+  },
+  'what-changed-in-my-day': {
+    activityCluster: 'notice_pattern_sort',
+    familyMoments: [
+      'When you want to hold onto one changed moment from the day',
+      'When you want to compare before and after and guess why it changed',
+    ],
+    parentSummary: 'A before-and-after activity that helps children read change inside a single day.',
+    quickStart: 'Just think of one changed moment from today.',
+    recordFocus: ['The biggest before/after difference', 'Why the change might have happened'],
+    revisitReason: 'When you meet a similar change later, you can compare what the child noticed first and what reason they gave.',
+    libraryOrder: 10,
+  },
+};
+
+const TEMPLATE_EXPERIENCE_MAP_BY_LOCALE: Record<SupportedLocale, Record<string, TemplateExperienceMeta>> = {
+  ko: TEMPLATE_EXPERIENCE_MAP,
+  en: TEMPLATE_EXPERIENCE_MAP_EN,
+};
+
 function isSupportingCluster(cluster: ActivityCluster): boolean {
   return SUPPORTING_ACTIVITY_CLUSTERS.has(cluster);
 }
 
-export function enrichTemplate(template: WorksheetTemplate): EnrichedWorksheetTemplate {
-  const metadata = TEMPLATE_EXPERIENCE_MAP[template.slug];
+export function enrichTemplate(
+  template: WorksheetTemplate,
+  locale: SupportedLocale,
+): EnrichedWorksheetTemplate {
+  const metadata = TEMPLATE_EXPERIENCE_MAP_BY_LOCALE[locale][template.slug];
 
   if (!metadata) {
     throw new Error(`Missing template experience metadata for template "${template.slug}"`);
@@ -299,19 +525,24 @@ export function enrichTemplate(template: WorksheetTemplate): EnrichedWorksheetTe
 export function compareTemplatesForLibrary(
   leftTemplate: EnrichedWorksheetTemplate,
   rightTemplate: EnrichedWorksheetTemplate,
+  locale: SupportedLocale,
 ): number {
   if (leftTemplate.libraryOrder !== rightTemplate.libraryOrder) {
     return leftTemplate.libraryOrder - rightTemplate.libraryOrder;
   }
 
-  return leftTemplate.title.localeCompare(rightTemplate.title, 'ko');
+  return leftTemplate.title.localeCompare(rightTemplate.title, locale);
 }
 
 export function buildTemplateLibrarySections(
   templates: EnrichedWorksheetTemplate[],
+  locale: SupportedLocale,
 ): TemplateLibrarySection[] {
-  const orderedTemplates = templates.slice().sort(compareTemplatesForLibrary);
+  const orderedTemplates = templates
+    .slice()
+    .sort((leftTemplate, rightTemplate) => compareTemplatesForLibrary(leftTemplate, rightTemplate, locale));
   const sections: TemplateLibrarySection[] = [];
+  const sectionMeta = TEMPLATE_LIBRARY_SECTION_META_BY_LOCALE[locale];
 
   for (const sectionId of FOCUS_ACTIVITY_CLUSTERS) {
     const sectionTemplates = orderedTemplates.filter(
@@ -324,8 +555,8 @@ export function buildTemplateLibrarySections(
 
     sections.push({
       id: sectionId,
-      label: TEMPLATE_LIBRARY_SECTION_META[sectionId].label,
-      description: TEMPLATE_LIBRARY_SECTION_META[sectionId].description,
+      label: sectionMeta[sectionId].label,
+      description: sectionMeta[sectionId].description,
       templates: sectionTemplates,
     });
   }
@@ -337,8 +568,8 @@ export function buildTemplateLibrarySections(
   if (supportingTemplates.length > 0) {
     sections.push({
       id: 'supporting',
-      label: TEMPLATE_LIBRARY_SECTION_META.supporting.label,
-      description: TEMPLATE_LIBRARY_SECTION_META.supporting.description,
+      label: sectionMeta.supporting.label,
+      description: sectionMeta.supporting.description,
       templates: supportingTemplates,
     });
   }
